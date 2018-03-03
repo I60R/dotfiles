@@ -1,0 +1,35 @@
+! FONTCONFIG
+
+Xft.dpi:                                     96
+Xft.antialias:                               true
+Xft.hinting:                                 true
+Xft.rgba:                                    rgb
+Xft.autohint:                                true
+Xft.hintstyle:                               hintslight
+Xft.lcdfilter:                               lcddefault
+
+
+! XSCREENSAVER
+
+xscreensaver.splash:                         true
+
+xscreensaver.Dialog.foreground:              #1F2628
+xscreensaver.Dialog.background:              #1F2628
+xscreensaver.Dialog.topShadowColor:          #1F2628
+xscreensaver.Dialog.bottomShadowColor:       #1F2628
+xscreensaver.Dialog.Button.foreground:       #ffffff
+xscreensaver.Dialog.Button.background:       #1F2628
+
+xscreensaver.Dialog.text.foreground:         #ffffff
+xscreensaver.Dialog.text.background:         #1F2628
+xscreensaver.Dialog.internalBorderWidth:     20
+xscreensaver.Dialog.borderWidth:             10
+xscreensaver.Dialog.borderColor:  	         #34BE5B
+xscreensaver.Dialog.shadowThickness:         2
+
+xscreensaver.passwd.thermometer.foreground:  #34BE5B
+xscreensaver.passwd.thermometer.background:  #1F2628
+xscreensaver.passwd.thermometer.width:       100
+
+xscreensaver.dateFormat:                     %I:%M%P %Y %b %d
+
