@@ -1,0 +1,104 @@
+
+
+        # COONTROLS
+
+mod4 + Escape
+    xfce4-popup-whiskermenu
+
+mod4 + control + Escape
+    xflock4
+
+control + alt + Delete
+    alacritty -e htop
+
+control + shift + Escape
+    pkill -USR1 -x sxhkd
+
+
+        # LAUNCHERS
+
+mod4 + control + c
+    colorpicker --short --one-shot --preview 2> /dev/null | xsel
+mod4 + control + q
+    sel2qr
+mod4 + control + t
+    translate-ru
+mod4 + control + e
+    alacritty -e lua
+mod4 + control + i
+    alacritty -e nvim
+
+mod4 + Return ;                   {Return, slash,   Escape,  d,           p,         }
+    alacritty --working-directory {~/,     /,       $(xcwd), ~/Downloads, ~/Pictures } -e nvim term://zsh
+
+mod4 + backslash ;  {Escape,  slash, Return,  d,           p,         }
+    thunar          {~/,      /,     $(xcwd), ~/Downloads, ~/Pictures }
+
+mod4 + s ;       {a,         p}
+    alacritty -e {alsamixer, pulsemixer}
+mod4 + s ; m
+    pavucontrol
+
+
+        # SCREENSHOT & GIF RECORD
+
+mod4 + control + r ; {1,2,3,4,5,6,7,8,9}
+    recordscreen {3,6,9,16,25,36,49,64,81}
+
+mod4 + control + r ; Return
+    xfce4-screenshooter
+mod4 + control + r ; 0
+    xfce4-screenshooter --mouse --region     -s ~/Pictures/screenshot
+mod4 + control + r ; f
+    xfce4-screenshooter --mouse --fullscreen -s ~/Pictures/screenshot
+mod4 + control + r ; w
+    xfce4-screenshooter --mouse --window     -s ~/Pictures/screenshot
+mod4 + control + r ; c
+    xfce4-screenshooter --mouse --clipboard  -s ~/Pictures/screenshot
+
+
+        # MOUSE HANDLING
+
+alt + mod4 + {1,2,3,4,5,6,7,8,9}
+    echo {1,10,40,80,150,300,400,600,5000} > /tmp/mousemove
+
+alt + mod4 + h
+    xdotool mousemove_relative --  -$(if [[ -f /tmp/mousemove ]]; then; cat /tmp/mousemove; else; echo 60; fi) 0
+alt + mod4 + k
+    xdotool mousemove_relative --  0 -$(if [[ -f /tmp/mousemove ]]; then; cat /tmp/mousemove; else; echo 60; fi)
+alt + mod4 + l
+    xdotool mousemove_relative --  $(if [[ -f /tmp/mousemove ]]; then; cat /tmp/mousemove; else; echo 60; fi) 0
+alt + mod4 + j
+    xdotool mousemove_relative --  0 $(if [[ -f /tmp/mousemove ]]; then; cat /tmp/mousemove; else; echo 60; fi)
+
+
+alt + mod4 + Return
+    xdotool click 1
+alt + mod4 + shift + Return
+    xdotool click 1 click 1
+alt + mod4 + space
+    xdotool click 2
+alt + mod4 + shift + space
+    xdotool click 2 click 2
+alt + mod4 + semicolon
+    xdotool click 3
+alt + mod4 + u
+    xdotool getwindowfocus click 4
+alt + mod4 + n
+    xdotool getwindowfocus click 5
+
+
+alt + mod4 + o
+    xdotool mousemove  5000 5000
+alt + mod4 + O
+    xdotool mousemove  0 0
+
+
+        # KEYBOARD KEYS
+
+control + mod4 + @{h,j,k,l}
+    ; xdotool key --clearmodifiers {Left,Down,Up,Right}
+
+@control + mod4 + {J,K}
+    ; xdotool key --clearmodifiers {Page_Down, Page_Up}
+
