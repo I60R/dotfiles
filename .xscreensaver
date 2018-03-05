@@ -1,0 +1,339 @@
+# XScreenSaver Preferences File
+# Written by xscreensaver-demo 5.38 for igor on Mon Mar  5 03:56:08 2018.
+# https://www.jwz.org/xscreensaver/
+
+timeout:	0:10:00
+cycle:		0:05:00
+lock:		False
+lockTimeout:	0:10:00
+passwdTimeout:	0:00:30
+visualID:	default
+installColormap:    True
+verbose:	False
+timestamp:	True
+splash:		True
+splashDuration:	0:00:05
+demoCommand:	xscreensaver-demo
+prefsCommand:	xscreensaver-demo -prefs
+nice:		10
+memoryLimit:	0
+fade:		False
+unfade:		False
+fadeSeconds:	0:00:03
+fadeTicks:	20
+captureStderr:	True
+ignoreUninstalledPrograms:False
+font:		*-medium-r-*-140-*-m-*
+dpmsEnabled:	True
+dpmsQuickOff:	False
+dpmsStandby:	2:00:00
+dpmsSuspend:	2:00:00
+dpmsOff:	4:00:00
+grabDesktopImages:  True
+grabVideoFrames:    True
+chooseRandomImages: False
+imageDirectory:	
+
+mode:		random
+selected:	105
+
+textMode:	date
+textLiteral:	XScreenSaver
+textFile:	
+textProgram:	fortune
+textURL:	http://en.wikipedia.org/w/index.php?title=Special:NewPages&feed=rss
+
+programs:								      \
+				maze -root -solve-delay 29323 -ignorant	      \
+				  -pre-delay 4285715 -post-delay 3684211    \n\
+				electricsheep --root 1			    \n\
+- GL: 				superquadrics -root			    \n\
+-				attraction -root			    \n\
+-				blitspin -root				    \n\
+-				greynetic -root				    \n\
+				helix -root -delay 1			    \n\
+				hopalong -root -cycles 90226 -sine	      \
+				  -martin -popcorn -jong -rr -ejk1 -ejk2      \
+				  -ejk3 -ejk4 -ejk5 -ejk6		    \n\
+				imsmap -root				    \n\
+-				noseguy -root				    \n\
+-				pyro -root				    \n\
+-				qix -root				    \n\
+				rocks -root -delay 100000 -count 200	      \
+				  -colors 1				    \n\
+				rorschach -root -iterations 8947 -offset      \
+				  4 -ysymmetry -delay 4			    \n\
+				decayscreen -root			    \n\
+				flame -root -iterations 50 -points 34944      \
+				  -colors 81				    \n\
+-				halo -root -delay 60317 -count 10 -colors     \
+				  132 -mode ramp -animate		    \n\
+-				slidescreen -root			    \n\
+				pedal -root -delay 3 -maxlines 2311	    \n\
+-				bouboule -root				    \n\
+				braid -root -ncolors 255 -size -4	    \n\
+				coral -root -delay 31 -density 30 -seeds 17 \n\
+				deco -root				    \n\
+				drift -root -count 73 -ncolors 1	    \n\
+-				fadeplot -root -delay 32540 -count 30	      \
+				  -cycles 10000 -ncolors 255		    \n\
+				galaxy -root -count -3 -cycles 710	    \n\
+-				goop -root				    \n\
+-				grav -root				    \n\
+				ifs -root -functions 4 -detail 9	    \n\
+  GL: 				jigsaw -root -complexity 1.9085		      \
+				  -resolution 76			    \n\
+-				julia -root				    \n\
+				kaleidescope -root -nsegments 20	      \
+				  -symmetry 13 -ntrails 159		    \n\
+- GL: 				moebius -root				    \n\
+				moire -root -delay 1 -ncolors 255 -offset 1 \n\
+- GL: 				morph3d -root				    \n\
+-				mountain -root				    \n\
+-				munch -root				    \n\
+-				penrose -root				    \n\
+  GL: 				pipes -root -delay 44366 -cycles 64	      \
+				  -factory 4 -tightturns -count 0	      \
+				  -wireframe				    \n\
+				rd-bomb -root -epoch 300000 -reaction 1	      \
+				  -diffusion 1 -radius 1		    \n\
+- GL: 				rubik -root				    \n\
+				sierpinski -root -delay 31746 -count 4371     \
+				  -cycles 48 -ncolors 211		    \n\
+				slip -root				    \n\
+- GL: 				sproingies -root			    \n\
+-				starfish -root -mode zoom -duration 12	      \
+				  -thickness 6 -colors 209		    \n\
+				strange -root -delay 33913 -points 8748	      \
+				  -ncolors 1				    \n\
+				swirl -root -delay 27820 -count 11	      \
+				  -ncolors 64				    \n\
+				triangle -root -ncolors 126		    \n\
+-				xjack -root				    \n\
+				xlyap -root -delay 9023 -linger 10	    \n\
+- GL: 				atlantis -root				    \n\
+				bsod -root				    \n\
+- GL: 				bubble3d -root				    \n\
+- GL: 				cage -root				    \n\
+				crystal -root -ncolors 178 -count 300 -nx     \
+				  10 -ny -5 -grid -centre		    \n\
+-				cynosure -root				    \n\
+				discrete -root -ncolors 101		    \n\
+				distort -root -number 2 -reflect -magnify     \
+				  -blackhole -vortex			    \n\
+-				epicycle -root				    \n\
+				flow -root -delay 15873 -count 5000	      \
+				  -cycles 736508 -ncolors 106 -size -17	      \
+				  -no-ride -no-box			    \n\
+- GL: 				glplanet -root				    \n\
+-				interference -root -count 8 -ncolors 26	    \n\
+				kumppa -root -delay 30282		    \n\
+- GL: 				lament -root				    \n\
+				moire2 -root				    \n\
+- GL: 				sonar -root				    \n\
+- GL: 				stairs -root				    \n\
+-				truchet -root				    \n\
+-				vidwhacker -root			    \n\
+-				blaster -root				    \n\
+-				bumps -root				    \n\
+				ccurve -root -pause 0.4 -limit 300000	    \n\
+-				compass -root				    \n\
+-				deluxe -root				    \n\
+-				demon -root -count 5			    \n\
+- GL: 				extrusion -root				    \n\
+				loop -root -cycles 3662			    \n\
+-				penetrate -root				    \n\
+				petri -root -delay 18045 -diaglim 1.5038      \
+				  -instantdeathchan 0 -mindeathspeed 0	      \
+				  -maxdeathspeed 0 -minlifespan 0	      \
+				  -maxlifespan 3000			    \n\
+-				phosphor -root				    \n\
+- GL: 				pulsar -root				    \n\
+-				ripples -root				    \n\
+-				shadebobs -root				    \n\
+- GL: 				sierpinski3d -root			    \n\
+-				spotlight -root				    \n\
+				squiral -root -disorder 0.0188		      \
+				  -handedness 1				    \n\
+-				wander -root				    \n\
+-				webcollage -root			    \n\
+-				xflame -root				    \n\
+				xmatrix -root				    \n\
+  GL: 				gflux -root				    \n\
+-				nerverot -root				    \n\
+				xrayswarm -root -delay 5263		    \n\
+				xspirograph -root -subdelay 52632 -delay      \
+				  15 -layers 4				    \n\
+- GL: 				circuit -root				    \n\
+- GL: 				dangerball -root -delay 21805 -speed	      \
+				  0.2079 -count 49 -wireframe		    \n\
+- GL: 				dnalogo -root				    \n\
+- GL: 				engine -root				    \n\
+  GL: 				flipscreen3d -root			    \n\
+- GL: 				gltext -root				    \n\
+- GL: 				menger -root				    \n\
+  GL: 				molecule -root				    \n\
+				rotzoomer -root				    \n\
+-				speedmine -root				    \n\
+- GL: 				starwars -root				    \n\
+- GL: 				stonerview -root			    \n\
+				vermiculate -root -speed 496		    \n\
+				whirlwindwarp -root			    \n\
+				zoom -root				    \n\
+-				anemone -root				    \n\
+				apollonian -root			    \n\
+- GL: 				boxed -root				    \n\
+  any: 				cubenetic -root -count 20 -wave-speed 150     \
+				  -wave-radius 261 -waves 1 -wireframe	    \n\
+  GL: 				endgame -root				    \n\
+				euler2d -root -delay 0 -count 5000	      \
+				  -eulertail 500 -cycles 2200 -ncolors 20   \n\
+				fluidballs -root -gravity 0.0521 -wind	      \
+				  0.1 -elasticity 1			    \n\
+  GL: 				flurry -root				    \n\
+- GL: 				glblur -root -delay 22222 -blursize 58	    \n\
+- GL: 				glsnake -root				    \n\
+-				halftone -root -count 5 -spacing 30	      \
+				  -sizefactor 1				    \n\
+- GL: 				juggler3d -root				    \n\
+- GL: 				lavalite -root				    \n\
+-				polyominoes -root			    \n\
+- GL: 				queens -root				    \n\
+- GL: 				sballs -root				    \n\
+- GL: 				spheremonics -root			    \n\
+				thornbird -root -count 331		    \n\
+-				twang -root				    \n\
+- GL: 				antspotlight -root			    \n\
+-				apple2 -root				    \n\
+- GL: 				atunnel -root				    \n\
+				barcode -root -delay 4762		    \n\
+- GL: 				blinkbox -root				    \n\
+- GL: 				blocktube -root				    \n\
+- GL: 				bouncingcow -root			    \n\
+  any: 				cloudlife -root -cycle-delay 48592	      \
+				  -max-age 120 -initial-density 11	      \
+				  -cell-size 1				    \n\
+- GL: 				cubestorm -root				    \n\
+				eruption -root -delay 87324 -particles	      \
+				  903 -cooloff 4 -cycles 115		    \n\
+- GL: 				flipflop -root				    \n\
+- GL: 				flyingtoasters -root			    \n\
+-				fontglide -root -trails			    \n\
+  GL: 				gleidescope -root -size 2 -duration 26	      \
+				  -zoom					    \n\
+- GL: 				glknots -root				    \n\
+  GL: 				glmatrix -root				    \n\
+- GL: 				glslideshow -root			    \n\
+  GL: 				hypertorus -root -mode transparent	      \
+				  -appearance spirals-16 -twosided	      \
+				  -speed-wx 1.2958 -speed-xy 0.9014	      \
+				  -speed-xz 1.7465			    \n\
+- GL: 				jigglypuff -root -color clownbarf -tetra    \n\
+				metaballs -root -cycles 1539 -ncolors 231     \
+				  -count 44 -radius 76 -delta 11	    \n\
+  GL: 				mirrorblob -root			    \n\
+-				piecewise -root				    \n\
+  GL: 				polytopes -root				    \n\
+-				pong -root				    \n\
+-				popsquares -root			    \n\
+  GL: 				surfaces -root -mode line-loops -wander	    \n\
+				xanalogtv -root				    \n\
+-				abstractile -root			    \n\
+-				anemotaxis -root -delay 52113 -distance	      \
+				  125 -sources 37 -searchers 33		    \n\
+- GL: 				antinspect -root			    \n\
+				fireworkx -root -no-flash		    \n\
+				fuzzyflakes -root -delay 12698 -speed 50      \
+				  -layers 10 -random-colors -color	      \
+				  #FFFF00 -arms 1 -thickness 35		      \
+				  -bthickness 0 -radius 21		    \n\
+				interaggregate -root -num-circles 108	    \n\
+				intermomentary -root -draw-delay 22556	      \
+				  -num-discs 200			    \n\
+				memscroller -root			    \n\
+- GL: 				noof -root				    \n\
+				pacman -root				    \n\
+- GL: 				pinion -root				    \n\
+  GL: 				polyhedra -root				    \n\
+- GL: 				providence -root -delay 0		    \n\
+				substrate -root -max-cycles 25000	      \
+				  -sand-grains 93 -circle-percent 80	      \
+				  -initial-cracks 4			    \n\
+				wormhole -root -zspeed 30 -stars 100	    \n\
+- GL: 				antmaze -root				    \n\
+- GL: 				boing -root				    \n\
+-				boxfit -root				    \n\
+- GL: 				carousel -root				    \n\
+				celtic -root				    \n\
+- GL: 				crackberg -root				    \n\
+  GL: 				cube21 -root -delay 0			    \n\
+				fiberlamp -root -delay 0		    \n\
+- GL: 				fliptext -root				    \n\
+- GL: 				glhanoi -root				    \n\
+- GL: 				tangram -root				    \n\
+- GL: 				timetunnel -root			    \n\
+- GL: 				glschool -root				    \n\
+- GL: 				topblock -root				    \n\
+  GL: 				cubicgrid -root -speed 9.862 -zoom 59	    \n\
+				cwaves -root -waves 7 -colors 93	    \n\
+- GL: 				gears -root				    \n\
+  GL: 				glcells -root -delay 11278 -pause 84	      \
+				  -maxcells 1464 -radius 43 -quality 2	      \
+				  -maxfood 47				    \n\
+- GL: 				lockward -root				    \n\
+				m6502 -root				    \n\
+- GL: 				moebiusgears -root -count 13		    \n\
+- GL: 				voronoi -root				    \n\
+- GL: 				hypnowheel -root			    \n\
+- GL: 				klein -root				    \n\
+-				lcdscrub -root -delay 338346 -spread 84	      \
+				  -cycles 1				    \n\
+- GL: 				photopile -root				    \n\
+- GL: 				skytentacles -root			    \n\
+- GL: 				rubikblocks -root			    \n\
+- GL: 				companioncube -root			    \n\
+- GL: 				hilbert -root				    \n\
+- GL: 				tronbit -root				    \n\
+- GL: 				geodesic -root				    \n\
+-				hexadrop -root				    \n\
+- GL: 				kaleidocycle -root			    \n\
+- GL: 				quasicrystal -root			    \n\
+  GL: 				unknownpleasures -root -delay 63910	      \
+				  -count 74 -resolution 169		    \n\
+- GL: 				projectiveplane -root			    \n\
+				tessellimage -root			    \n\
+				binaryring -root			    \n\
+- GL: 				cityflow -root				    \n\
+- GL: 				geodesicgears -root			    \n\
+  GL: 				winduprobot -root -speed 2.6546 -size	      \
+				  0.4486 -talk 1 -no-texture -no-fade	    \n\
+  GL: 				romanboy -root				    \n\
+- GL: 				splitflap -root				    \n\
+				testx11 -root				    \n\
+- GL: 				cubestack -root				    \n\
+  GL: 				cubetwist -root -delay 0		    \n\
+- GL: 				discoball -root				    \n\
+- GL: 				dymaxionmap -root			    \n\
+  GL: 				energystream -root			    \n\
+- GL: 				hexstrut -root				    \n\
+- GL: 				hydrostat -root -delay 0 -count 1	      \
+				  -head-radius 10 -tentacles 51		      \
+				  -thickness 4 -length 122 -no-pulse	      \
+				  -wireframe				    \n\
+  GL: 				raverhoop -root				    \n\
+- GL: 				splodesic -root				    \n\
+  GL: 				unicrud -root				    \n\
+  GL: 				esper -root				    \n\
+  GL: 				vigilance -root				    \n\
+
+
+pointerPollTime:    0:00:05
+pointerHysteresis:  10
+windowCreationTimeout:0:00:30
+initialDelay:	0:00:00
+GetViewPortIsFullOfLies:False
+procInterrupts:	True
+xinputExtensionDev: False
+overlayStderr:	True
+authWarningSlack:   20
+
