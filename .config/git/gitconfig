@@ -1,0 +1,41 @@
+[alias]
+  switch = "!f(){ git symbolic-ref HEAD refs/heads/$1 && git reset $1; }; f"
+  setup  = "!f(){ for s in $@; do for b in $(git branch --list "*$s/*"); do git checkout $b -- .; echo "+$b"; done; done; }; f"
+  track  = "!f(){ for b in $(git branch -r | grep "$1/" | sed "s/$1\\\\///g"); do git branch --track $b $1/$b; done; }; f"
+
+[url "https://github.com/"]
+  insteadOf = gh:
+[url "https://gitlab.com/"]
+  insteadOf = gl:
+
+[credential]
+  helper = cache --timeout=300
+
+[user]
+  email = 160R@protonmail.com
+  name = 160R
+
+[color]
+  ui = true
+
+[push]
+  default = simple
+
+[pull]
+  rebase = true
+
+[rebase]
+  autoStash = true
+
+[rerere]
+  enabled = true
+
+[core]
+  compression = 9
+  editor = nvr --remote-wait-silent
+
+[diff]
+  tool = icdiff
+
+[difftool "icdiff"]
+  cmd = icdiff -r $LOCAL $REMOTE | $PAGER
