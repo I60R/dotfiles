@@ -29,8 +29,8 @@ main :: IO ()
 main = do
   dbus <- D.connectSession
   getWellKnownName dbus
-  xmonad $ docks $ xfceConfig {
-    logHook =
+  xmonad $ docks $ xfceConfig
+    { logHook =
         do updatePointer (0.5, 0.5) (0, 0)
            dynamicLogWithPP (prettyPrinter dbus)
            fadeInactiveLogHook 0.8
@@ -39,24 +39,24 @@ main = do
         do setWMName "LG3D"
            ewmhDesktopsStartup
            docksStartupHook
-    , manageHook =
-        moveHook <+> manageHook xfceConfig <+> manageHook def <+> manageDocks
-    , layoutHook = layouts
+    , manageHook = myManageHook
+    , layoutHook = myLayoutHook
     , handleEventHook = ewmhDesktopsEventHook <+> fullscreenEventHook
     , terminal = "alacritty -e nvim term://zsh"
-    , focusFollowsMouse = True
     , borderWidth = 0
     , modMask = mod4Mask
     }
 
-moveHook =
-  composeAll
+myManageHook = composeAll
   [ className =? "Firefox"   --> doShift "1"
   , className =? "Skype"     --> doShift "7"
   , className =? "Evolution" --> doShift "9"
+  , className =? "Peek"      --> doFloat
+  , manageHook xfceConfig
+  , manageDocks
   ]
 
-layouts = avoidStruts (tiled ||| Mirror tiled ||| Full)
+myLayoutHook = avoidStruts (tiled ||| Mirror tiled ||| Full)
   where
     tiled = magnifiercz' 1.33 $ layoutHintsToCenter $ Tall 1 (3 / 100) (1 / 2)
 
@@ -74,9 +74,7 @@ prettyPrinter dbus = def
 
 getWellKnownName :: D.Client -> IO ()
 getWellKnownName dbus = do
-  D.requestName
-    dbus
-    (D.busName_ "org.xmonad.Log")
+  D.requestName dbus (D.busName_ "org.xmonad.Log")
     [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
   return ()
 
