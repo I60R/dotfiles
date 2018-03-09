@@ -42,12 +42,11 @@ mod4 + s ; m
 
         # SCREENSHOT & GIF RECORD
 
-mod4 + control + r ; {1,2,3,4,5,6,7,8,9}
-    recordscreen {3,6,9,16,25,36,49,64,81}
-
+mod4 + control + R
+    peek
 mod4 + control + r ; Return
     xfce4-screenshooter
-mod4 + control + r ; 0
+mod4 + control + r ; r
     xfce4-screenshooter --mouse --region     -s ~/Pictures/screenshot
 mod4 + control + r ; f
     xfce4-screenshooter --mouse --fullscreen -s ~/Pictures/screenshot
