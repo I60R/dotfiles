@@ -65,6 +65,7 @@ function! s:SetUpPlugins()
   Plug 'majutsushi/tagbar'
 
   Plug 'sbdchd/neoformat'
+	Plug 'guns/xterm-color-table.vim'
   Plug 'airodactyl/neovim-ranger'
   Plug 'tpope/vim-eunuch'
   Plug 'antoyo/vim-licenses'
@@ -393,28 +394,40 @@ function! s:SetUpPluginVariables()
   let g:tagbar_map_togglesort = 'S'
 
   let g:switch_mapping = ""
-  let g:switch_custom_definitions = [
-    \  ['Left', 'Right', 'Up', 'Down'],
+	function! s:build_switch_custom_definitions(...)
+		let definitions = []
+		for words in a:000
+			call add(definitions, words)
+			let uppercase_definitions = []
+			let lowercase_definitions = []
+			let titlecase_definitions = []
+			for word in words
+				let uppercase = toupper(word)
+				if uppercase !=# word | call add(uppercase_definitions, uppercase) | endif
+				let titlecase = substitute(word, "\\<.", "\\u&", "")
+				if titlecase !=# word | call add(titlecase_definitions, titlecase) | endif
+			endfor
+			if len(uppercase_definitions) != 0 | call add(definitions, uppercase_definitions) | endif
+			if len(lowercase_definitions) != 0 | call add(definitions, lowercase_definitions) | endif
+			if len(titlecase_definitions) != 0 | call add(definitions, titlecase_definitions) | endif
+		endfor
+		return definitions
+	endfunction
+	let g:switch_custom_definitions = s:build_switch_custom_definitions(
     \  ['left', 'right', 'up', 'down'],
-    \  ['Next', 'Prev'],
-    \  ['next', 'prev'],
-    \  ['Enable', 'Disable'],
+    \  ['next', 'previous'],
     \  ['enable', 'disable'],
-    \  [ 'pick', 'reword', 'edit', 'squash', 'fixup', 'exec' ],
-    \  ['Lesser', 'Smaller', 'Bigger', 'Greater'],
+    \  ['enabled', 'disabled'],
+    \  ['pick', 'reword', 'edit', 'squash', 'fixup', 'exec'],
     \  ['lesser', 'smaller', 'bigger', 'greater'],
-    \  ['width', 'height', 'Width', 'Height'],
+    \  ['width', 'height'],
     \  ['x', 'y', 'w', 'h'],
-    \  ['X', 'Y', 'W', 'H'],
-    \  ['On', 'Off'],
-    \  ['on', 'off'],
-    \  ['!=', '==', '>', '<'],
-    \  ['Yes', 'No'],
     \  ['yes', 'no'],
-    \  ['0', '1'],
-    \  ['Put', 'Get', 'Set'],
+    \  ['on', 'off'],
     \  ['put', 'get', 'set'],
-    \ ]
+    \  ['!=', '=='],
+    \  ['>', '<'],
+    \  ['0', '1'])
 
   let g:better_whitespace_filetypes_blacklist = [
     \  'diff',
