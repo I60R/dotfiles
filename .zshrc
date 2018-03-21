@@ -83,7 +83,7 @@ zplug load
 
 alias            s="sudo "
 alias            o="xdg-open "
-alias            t="exa -Tla "
+alias            t="exa -Tla -I .git"
 alias            j="jump "
 for i in $(seq 1 9); do
     alias       "K$i"="exa -labHUhgTL$i --git --group-directories-first -I .git "
@@ -113,6 +113,7 @@ alias          rm!="rm -rf"
 alias          ls="ls --color=always"
 
 
+alias          '.'='nvr -cc ":term ranger $PWD" -c ":norm! i"'
 alias -g     '<<<'='tail -f '
 alias -g      '~!'="/run/user/$UID"
 alias -g      '\\'=' | $PAGER '
