@@ -65,7 +65,7 @@ function! s:SetUpPlugins()
   Plug 'majutsushi/tagbar'
 
   Plug 'sbdchd/neoformat'
-	Plug 'guns/xterm-color-table.vim'
+  Plug 'guns/xterm-color-table.vim'
   Plug 'airodactyl/neovim-ranger'
   Plug 'tpope/vim-eunuch'
   Plug 'antoyo/vim-licenses'
@@ -105,7 +105,7 @@ function! s:SetUpKeyMappings()
 
     nmap <expr>      MM               ":setl so=" . ((&so == 0) ? 999 : 0) . "\<CR>M"
 
-    nmap          	 <Leader>         zz
+    nmap             <Leader>         zz
 
     nmap             *                :call InterestingWords('n')<CR>
   endfunction()
@@ -129,16 +129,16 @@ function! s:SetUpKeyMappings()
     inoremap <expr>  <Tab>            pumvisible() ? "\<C-n>" : "\<Tab>"
     inoremap <expr>  <S-Tab>          pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-		let g:lexima_no_default_rules = 1 "based on github.com/cohama/lexima.vim/issues/65#issuecomment-339338677
-		call lexima#set_default_rules()
-		call lexima#insmode#map_hook('before', '<CR>', '')
-		function! s:on_cr() abort
-			let l:e = pumvisible() ? "\<C-y>" : ""
-			let l:e.= neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : lexima#expand('<CR>', 'i')
-			return l:e
-		endfunction
-		imap <expr>  		 <CR> 					  <SID>on_cr()
-		smap <expr>  		 <CR> 					  <SID>on_cr()
+    let g:lexima_no_default_rules = 1 "based on github.com/cohama/lexima.vim/issues/65#issuecomment-339338677
+    call lexima#set_default_rules()
+    call lexima#insmode#map_hook('before', '<CR>', '')
+    function! s:on_cr() abort
+      let l:e = pumvisible() ? "\<C-y>" : ""
+      let l:e.= neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : lexima#expand('<CR>', 'i')
+      return l:e
+    endfunction
+    imap <expr>       <CR>             <SID>on_cr()
+    smap <expr>       <CR>             <SID>on_cr()
   endfunction
 
 
@@ -251,25 +251,25 @@ function! s:SetUpAutoCommands()
 
   if executable('clangd')
     au User lsp_setup call lsp#register_server({
-		  \  'name': 'clangd',
+      \  'name': 'clangd',
       \  'cmd': {server_info->['clangd']},
       \  'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
       \ })
-	endif
-	if executable('rls')
+  endif
+  if executable('rls')
     au User lsp_setup call lsp#register_server({
       \  'name': 'rls',
       \  'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
       \  'whitelist': ['rust'],
       \ })
   endif
-	au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+  au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
     \  'name': 'file',
     \  'whitelist': ['*'],
     \  'priority': 10,
     \  'completor': function('asyncomplete#sources#file#completor')
     \ }))
-	au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
+  au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
     \  'name': 'tags',
     \  'whitelist': ['c', 'markdown'],
     \  'completor': function('asyncomplete#sources#tags#completor'),
@@ -277,12 +277,12 @@ function! s:SetUpAutoCommands()
     \    'max_file_size': 50000000,
     \  }
     \ }))
-	au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
+  au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
     \  'name': 'necovim',
     \  'whitelist': ['vim'],
     \  'completor': function('asyncomplete#sources#necovim#completor'),
     \ }))
-	call asyncomplete#register_source(asyncomplete#sources#neosnippet#get_source_options({
+  call asyncomplete#register_source(asyncomplete#sources#neosnippet#get_source_options({
     \  'name': 'neosnippet',
     \  'whitelist': ['*'],
     \  'completor': function('asyncomplete#sources#neosnippet#completor'),
@@ -293,7 +293,7 @@ function! s:SetUpAutoCommands()
     \  'blacklist': ['go'],
     \  'completor': function('asyncomplete#sources#buffer#completor'),
     \ }))
-	call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
+  call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
     \  'name': 'omni',
     \  'whitelist': ['*'],
     \  'blacklist': ['html'],
@@ -394,26 +394,26 @@ function! s:SetUpPluginVariables()
   let g:tagbar_map_togglesort = 'S'
 
   let g:switch_mapping = ""
-	function! s:build_switch_custom_definitions(...)
-		let definitions = []
-		for words in a:000
-			call add(definitions, words)
-			let uppercase_definitions = []
-			let lowercase_definitions = []
-			let titlecase_definitions = []
-			for word in words
-				let uppercase = toupper(word)
-				if uppercase !=# word | call add(uppercase_definitions, uppercase) | endif
-				let titlecase = substitute(word, "\\<.", "\\u&", "")
-				if titlecase !=# word | call add(titlecase_definitions, titlecase) | endif
-			endfor
-			if len(uppercase_definitions) != 0 | call add(definitions, uppercase_definitions) | endif
-			if len(lowercase_definitions) != 0 | call add(definitions, lowercase_definitions) | endif
-			if len(titlecase_definitions) != 0 | call add(definitions, titlecase_definitions) | endif
-		endfor
-		return definitions
-	endfunction
-	let g:switch_custom_definitions = s:build_switch_custom_definitions(
+  function! s:build_switch_custom_definitions(...)
+    let definitions = []
+    for words in a:000
+      call add(definitions, words)
+      let uppercase_definitions = []
+      let lowercase_definitions = []
+      let titlecase_definitions = []
+      for word in words
+        let uppercase = toupper(word)
+        if uppercase !=# word | call add(uppercase_definitions, uppercase) | endif
+        let titlecase = substitute(word, "\\<.", "\\u&", "")
+        if titlecase !=# word | call add(titlecase_definitions, titlecase) | endif
+      endfor
+      if len(uppercase_definitions) != 0 | call add(definitions, uppercase_definitions) | endif
+      if len(lowercase_definitions) != 0 | call add(definitions, lowercase_definitions) | endif
+      if len(titlecase_definitions) != 0 | call add(definitions, titlecase_definitions) | endif
+    endfor
+    return definitions
+  endfunction
+  let g:switch_custom_definitions = s:build_switch_custom_definitions(
     \  ['left', 'right', 'up', 'down'],
     \  ['next', 'previous'],
     \  ['enable', 'disable'],
