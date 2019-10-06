@@ -1,7 +1,7 @@
 [alias]
-  switch = "!f(){ git symbolic-ref HEAD refs/heads/$1 && git reset $1; }; f"
-  setup  = "!f(){ for s in $@; do for b in $(git branch --list "*$s/*"); do git checkout $b -- .; echo "+$b"; done; done; }; f"
-  track  = "!f(){ for b in $(git branch -r | grep "$1/" | sed "s/$1\\\\///g"); do git branch --track $b $1/$b; done; }; f"
+  focus = "!f(){ git symbolic-ref HEAD refs/heads/$1 && git reset $1; }; f"
+  setup = "!f(){ for s in $@; do for b in $(git branch --list "*$s/*"); do git checkout $b -- .; echo "+$b"; done; done; }; f"
+  track = "!f(){ for b in $(git branch -r | grep "$1/" | sed "s/$1\\\\///g"); do git branch --track $b $1/$b; done; }; f"
 
 [url "https://github.com/"]
   insteadOf = gh:
@@ -33,9 +33,10 @@
 [core]
   compression = 9
   editor = nvr --remote-wait-silent
+  pager = page -P
 
 [diff]
   tool = icdiff
 
 [difftool "icdiff"]
-  cmd = icdiff -r $LOCAL $REMOTE | $PAGER
+  cmd = icdiff -r $LOCAL $REMOTE | page
