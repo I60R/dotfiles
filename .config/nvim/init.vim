@@ -1,93 +1,108 @@
-
-
 function! s:SetUpPlugins()
-  call plug#begin('~/.config/nvim/plugged/')
+  packadd minpac
 
-  Plug 'joshdick/onedark.vim'
-  Plug 'ryanoasis/vim-devicons'
-  Plug 'itchyny/vim-highlighturl'
+  call minpac#init()
+  call minpac#add('k-takata/minpac', {'type': 'opt'})
 
-  Plug 'itchyny/lightline.vim'
-    \| Plug 'mgee/lightline-bufferline'
+  call minpac#add('Th3Whit3Wolf/one-nvim')
+  call minpac#add('ryanoasis/vim-devicons')
+  call minpac#add('itchyny/vim-highlighturl')
 
-  Plug 'junegunn/goyo.vim'
-  Plug 'kopischke/vim-stay'
+  call minpac#add('itchyny/lightline.vim')
+    \| call minpac#add('mgee/lightline-bufferline')
+    \| call minpac#add('itchyny/vim-gitbranch')
 
-  Plug 'machakann/vim-highlightedyank'
-  Plug 'lfv89/vim-interestingwords'
+  call minpac#add('junegunn/goyo.vim')
+  call minpac#add('kopischke/vim-stay')
+  call minpac#add('junegunn/vim-peekaboo')
 
-  Plug 'kana/vim-repeat'
-  Plug 'kana/vim-operator-user'
-    \| Plug 'rhysd/vim-operator-surround'
+  call minpac#add('machakann/vim-highlightedyank')
+  call minpac#add('DanilaMihailov/beacon.nvim')
+  call minpac#add('norcalli/nvim-colorizer.lua')
 
-  Plug 'kana/vim-textobj-user'
-    \| Plug 'wellle/targets.vim'
-    \| Plug 'rhysd/vim-textobj-anyblock'
-    \| Plug 'rhysd/vim-textobj-conflict'
-    \| Plug 'glts/vim-textobj-comment'
-    \| Plug 'kana/vim-textobj-lastpat'
-    \| Plug 'kana/vim-textobj-indent'
-    \| Plug 'kana/vim-textobj-line'
-    \| Plug 'I60R/vim-textobj-nonwhitespace'
+  call minpac#add('inkarkat/vim-ingo-library')
+    \| call minpac#add('inkarkat/vim-mark')
 
-  Plug 'prabirshrestha/asyncomplete.vim'
-    \| Plug 'prabirshrestha/async.vim' | Plug 'prabirshrestha/vim-lsp' | Plug 'prabirshrestha/asyncomplete-lsp.vim'
-    \| Plug 'Shougo/neosnippet.vim' | Plug 'Shougo/neosnippet-snippets' | Plug 'prabirshrestha/asyncomplete-neosnippet.vim'
-    \| Plug 'Shougo/neco-vim' | Plug 'prabirshrestha/asyncomplete-necovim.vim'
-    \| Plug 'prabirshrestha/asyncomplete-buffer.vim'
-    \| Plug 'prabirshrestha/asyncomplete-file.vim'
-    \| Plug 'prabirshrestha/asyncomplete-tags.vim'
-    \| Plug 'yami-beta/asyncomplete-omni.vim'
-  Plug 'lotabout/skim', { 'dir': '~/.skim', 'do': './install' }
-  Plug 'lotabout/skim.vim'
-  Plug 'aperezdc/vim-template'
+  call minpac#add('kana/vim-repeat')
+  call minpac#add('junegunn/vim-slash')
+  call minpac#add('kana/vim-operator-user')
+    \| call minpac#add('rhysd/vim-operator-surround')
 
-  Plug 'w0rp/ale'
-  Plug 'rhysd/vim-grammarous'
-  Plug 'ntpeters/vim-better-whitespace'
-  Plug 'ludovicchabant/vim-gutentags'
-  Plug 'junegunn/vim-peekaboo'
-  Plug 'luochen1990/indent-detector.vim'
-  Plug 'tpope/vim-characterize'
-  Plug 'dylanaraps/root.vim'
+  call minpac#add('machakann/vim-sandwich')
+  call minpac#add('kana/vim-textobj-user')
+    \| call minpac#add('wellle/targets.vim')
+    \| call minpac#add('rhysd/vim-textobj-anyblock')
+    \| call minpac#add('rhysd/vim-textobj-conflict')
+    \| call minpac#add('glts/vim-textobj-comment')
+    \| call minpac#add('kana/vim-textobj-lastpat')
+    \| call minpac#add('kana/vim-textobj-indent')
+    \| call minpac#add('kana/vim-textobj-line')
+    \| call minpac#add('I60R/vim-textobj-nonwhitespace')
 
-  Plug 'easymotion/vim-easymotion'
-  Plug 'bkad/CamelCaseMotion'
 
-  Plug 'tommcdo/vim-exchange'
-  Plug 'AndrewRadev/switch.vim'
-  Plug 'tomtom/tcomment_vim'
-  Plug 'cohama/lexima.vim'
-  Plug 'junegunn/vim-easy-align'
-  Plug 'matze/vim-move'
-  Plug 'triglav/vim-visual-increment'
-  Plug 'terryma/vim-expand-region'
-  Plug 'majutsushi/tagbar'
+  call minpac#add('hrsh7th/nvim-compe')
+    \| call minpac#add('hrsh7th/vim-vsnip')
+    \| call minpac#add('neovim/nvim-lsp')
+    \| call minpac#add('tamago324/compe-zsh')
+    \| call minpac#add('GoldsteinE/compe-latex-symbols')
 
-  Plug 'sbdchd/neoformat'
-  Plug 'guns/xterm-color-table.vim'
-  Plug 'airodactyl/neovim-ranger'
-  Plug 'tpope/vim-eunuch'
-  Plug 'antoyo/vim-licenses'
-  Plug 'fidian/hexmode'
 
-  Plug 'gisphm/vim-gitignore'
-  Plug 'mhinz/vim-signify'
+  call minpac#add('lotabout/skim', { 'do': '!./install' })
+  call minpac#add('lotabout/skim.vim')
+  call minpac#add('aperezdc/vim-template')
 
-  Plug 'sheerun/vim-polyglot'
+  call minpac#add('w0rp/ale')
+  call minpac#add('ntpeters/vim-better-whitespace')
+  call minpac#add('tpope/vim-sleuth')
+  call minpac#add('tpope/vim-characterize')
+  call minpac#add('dylanaraps/root.vim')
 
-  Plug 'vim-pandoc/vim-pandoc'
-  Plug 'vim-pandoc/vim-pandoc-syntax'
+  call minpac#add('easymotion/vim-easymotion')
+  call minpac#add('bkad/CamelCaseMotion')
 
-  call plug#end()
+  call minpac#add('mg979/vim-visual-multi', { 'branch': 'test' })
+  call minpac#add('tommcdo/vim-exchange')
+  call minpac#add('AndrewRadev/switch.vim')
+  call minpac#add('tomtom/tcomment_vim')
+  call minpac#add('cohama/lexima.vim')
+  call minpac#add('junegunn/vim-easy-align')
+  call minpac#add('matze/vim-move')
+  call minpac#add('triglav/vim-visual-increment')
+  call minpac#add('terryma/vim-expand-region')
+  call minpac#add('majutsushi/tagbar')
+
+  call minpac#add('sbdchd/neoformat')
+  call minpac#add('guns/xterm-color-table.vim')
+  call minpac#add('airodactyl/neovim-ranger')
+  call minpac#add('tpope/vim-eunuch')
+  call minpac#add('antoyo/vim-licenses')
+  call minpac#add('fidian/hexmode')
+  call minpac#add('lambdalisue/suda.vim')
+
+  call minpac#add('gisphm/vim-gitignore')
+  call minpac#add('f-person/git-blame.nvim')
+  call minpac#add('lewis6991/gitsigns.nvim')
+    \| call minpac#add('nvim-lua/plenary.nvim')
+
+
+
+  call minpac#add('sheerun/vim-polyglot')
+
+  call minpac#add('plasticboy/vim-markdown')
+  call minpac#add('hail2u/vim-css3-syntax')
+  call minpac#add('elzr/vim-json')
+  call minpac#add('dzeban/vim-log-syntax')
+  call minpac#add('lervag/vimtex')
+
+  packloadall
 endfunction
 
 
 function! s:SetUpKeyMappings()
 
   function! s:common()
-    tnoremap         <Esc>            <C-\><C-n>
-
+    tnoremap         <Esc><Esc><Esc>  <C-\><C-n>M
+    tnoremap         <Esc><Esc>       <C-\><C-n>
     map <silent>     <Esc><Esc>       <Esc>:call OnEscape()<CR>
     function! OnEscape()
       TagbarClose
@@ -98,16 +113,16 @@ function! s:SetUpKeyMappings()
 
     map              <Space>          \
     map              <M-`>            :Buffers<CR>
-    nmap             <Leader><Space>  :Goyo<CR>
+    nmap             <Leader><Space>  :Goyo 120<CR>
 
-    map              s                <Plug>(easymotion-s)
-    map              S                <Plug>(easymotion-bd-jk)
+    map              f                <Plug>(easymotion-s)
+    map              F                <Plug>(easymotion-bd-jk)
 
     nmap <expr>      MM               ":setl so=" . ((&so == 0) ? 999 : 0) . "\<CR>M"
 
     nmap             <Leader>         zz
 
-    nmap             *                :call InterestingWords('n')<CR>
+    "nmap             *                :call InterestingWords('n')<CR>
   endfunction()
 
   function! s:editing()
@@ -121,7 +136,7 @@ function! s:SetUpKeyMappings()
     xmap             \|               <Plug>(EasyAlign)
   endfunction
 
-  function! s:complete()
+  function! s:complete_old()
     imap             <C-c>            <Esc>
 
     imap             <C-Space>        <C-n>
@@ -141,17 +156,72 @@ function! s:SetUpKeyMappings()
     smap <expr>       <CR>             <SID>on_cr()
   endfunction
 
+  function! s:complete()
+    " NOTE: Order is important. You can't lazy loading lexima.vim.
+    let g:lexima_no_default_rules = v:true
+    call lexima#set_default_rules()
+    inoremap <silent><expr> <C-Space> compe#complete()
+    inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
+    inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+    inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+    inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+
+    lua << EOF
+    local t = function(str)
+      return vim.api.nvim_replace_termcodes(str, true, true, true)
+    end
+
+    local check_back_space = function()
+        local col = vim.fn.col('.') - 1
+        if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+            return true
+        else
+            return false
+        end
+    end
+
+    -- Use (s-)tab to:
+    --- move to prev/next item in completion menuone
+    --- jump to prev/next snippet's placeholder
+    _G.tab_complete = function()
+      if vim.fn.pumvisible() == 1 then
+        return t "<C-n>"
+      elseif vim.fn.call("vsnip#available", {1}) == 1 then
+        return t "<Plug>(vsnip-expand-or-jump)"
+      elseif check_back_space() then
+        return t "<Tab>"
+      else
+        return vim.fn['compe#complete']()
+      end
+    end
+    _G.s_tab_complete = function()
+      if vim.fn.pumvisible() == 1 then
+        return t "<C-p>"
+      elseif vim.fn.call("vsnip#jumpable", {-1}) == 1 then
+        return t "<Plug>(vsnip-jump-prev)"
+      else
+        return t "<S-Tab>"
+      end
+    end
+
+    vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
+    vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
+    vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+    vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+EOF
+  endfunction
+
 
   function! s:shortcut()
-    map              <M-q>            :bd<CR>
-    map              <M-Q>            :bd!<CR>
-    tmap             <M-q>            <Esc>:bd<CR>
-    tmap             <M-Q>            <Esc>:bd!<CR>
+    map              <M-q>            :b # \| bd #<CR>
+    map              <M-Q>            :b # \| bd! #<CR>
+    tmap             <M-q>            <Esc><Esc>:b # \| bd #<CR>
+    tmap             <M-Q>            <Esc><Esc>:b # \| bd! $<CR>
 
     nmap             <M-Right>        :bnext<CR>
     nmap             <M-Left>         :bprevious<CR>
-    tmap             <M-Right>        <Esc>:bnext<CR>
-    tmap             <M-Left>         <Esc>:bprevious<CR>
+    tmap             <M-Right>        <Esc><Esc>:bnext<CR>
+    tmap             <M-Left>         <Esc><Esc>:bprevious<CR>
 
     map              <M-1>            <Plug>lightline#bufferline#go(1)
     map              <M-2>            <Plug>lightline#bufferline#go(2)
@@ -163,16 +233,16 @@ function! s:SetUpKeyMappings()
     map              <M-8>            <Plug>lightline#bufferline#go(8)
     map              <M-9>            <Plug>lightline#bufferline#go(9)
     map              <M-0>            <Plug>lightline#bufferline#go(10)
-    tmap             <M-1>            <Esc><Plug>lightline#bufferline#go(1)
-    tmap             <M-2>            <Esc><Plug>lightline#bufferline#go(2)
-    tmap             <M-3>            <Esc><Plug>lightline#bufferline#go(3)
-    tmap             <M-4>            <Esc><Plug>lightline#bufferline#go(4)
-    tmap             <M-5>            <Esc><Plug>lightline#bufferline#go(5)
-    tmap             <M-6>            <Esc><Plug>lightline#bufferline#go(6)
-    tmap             <M-7>            <Esc><Plug>lightline#bufferline#go(7)
-    tmap             <M-8>            <Esc><Plug>lightline#bufferline#go(8)
-    tmap             <M-9>            <Esc><Plug>lightline#bufferline#go(9)
-    tmap             <M-0>            <Esc><Plug>lightline#bufferline#go(10)
+    tmap             <M-1>            <Esc><Esc><Plug>lightline#bufferline#go(1)
+    tmap             <M-2>            <Esc><Esc><Plug>lightline#bufferline#go(2)
+    tmap             <M-3>            <Esc><Esc><Plug>lightline#bufferline#go(3)
+    tmap             <M-4>            <Esc><Esc><Plug>lightline#bufferline#go(4)
+    tmap             <M-5>            <Esc><Esc><Plug>lightline#bufferline#go(5)
+    tmap             <M-6>            <Esc><Esc><Plug>lightline#bufferline#go(6)
+    tmap             <M-7>            <Esc><Esc><Plug>lightline#bufferline#go(7)
+    tmap             <M-8>            <Esc><Esc><Plug>lightline#bufferline#go(8)
+    tmap             <M-9>            <Esc><Esc><Plug>lightline#bufferline#go(9)
+    tmap             <M-0>            <Esc><Esc><Plug>lightline#bufferline#go(10)
 
     map              <F10>            :TagbarToggle<CR>
 
@@ -188,31 +258,37 @@ function! s:SetUpKeyMappings()
     xmap            aw                <Plug>CamelCaseMotion_aw
     onoremap        iW                iw
     xnoremap        iW                iw
-    nnoremap         W                w
-    onoremap         W                w
-    xnoremap         W                w
+    nnoremap         W                :call SkipSymbols("w")<CR>
+    onoremap         W                :call SkipSymbols("w")<CR>
+    xnoremap         W                :call SkipSymbols("w")<CR>
 
-    map              b                <Plug>CamelCaseMotion_b
-    omap            ib                <Plug>CamelCaseMotion_ib
-    xmap            ib                <Plug>CamelCaseMotion_ib
-    omap            ab                <Plug>CamelCaseMotion_ab
-    xmap            ab                <Plug>CamelCaseMotion_ab
-    onoremap        iB                ib
-    xnoremap        iB                ib
-    nnoremap         B                b
-    onoremap         B                b
-    xnoremap         B                b
+    map              e                <Plug>CamelCaseMotion_b
+    omap            ie                <Plug>CamelCaseMotion_ib
+    xmap            ie                <Plug>CamelCaseMotion_ib
+    omap            ae                <Plug>CamelCaseMotion_ab
+    xmap            ae                <Plug>CamelCaseMotion_ab
+    onoremap        iE                ib
+    xnoremap        iE                ib
+    nnoremap         E                :call SkipSymbols("b")<CR>
+    onoremap         E                :call SkipSymbols("b")<CR>
+    xnoremap         E                :call SkipSymbols("b")<CR>
 
-    map              e                <Plug>CamelCaseMotion_e
-    omap            ie                <Plug>CamelCaseMotion_ie
-    xmap            ie                <Plug>CamelCaseMotion_ie
-    omap            ae                <Plug>CamelCaseMotion_ae
-    xmap            ae                <Plug>CamelCaseMotion_ae
-    onoremap        iE                ie
-    xnoremap        iE                if
-    nnoremap         E                e
-    onoremap         E                e
-    xnoremap         E                e
+    map              b                <Plug>CamelCaseMotion_e
+    omap            ib                <Plug>CamelCaseMotion_ie
+    xmap            ib                <Plug>CamelCaseMotion_ie
+    omap            ab                <Plug>CamelCaseMotion_ae
+    xmap            ab                <Plug>CamelCaseMotion_ae
+    onoremap        iB                ie
+    xnoremap        iB                if
+    nnoremap         B                :call SkipSymbols("e")<CR>
+    onoremap         B                :call SkipSymbols("e")<CR>
+    xnoremap         B                :call SkipSymbols("e")<CR>
+
+    function! SkipSymbols(motion)
+      let b:iskeyword_backup=&iskeyword
+      let &iskeyword=""
+      exe ':call feedkeys("' . a:motion . ':let &isk=b:iskeyword_backup\<CR>", "n")'
+    endfunction
   endfunction
 
   function! s:textobject()
@@ -234,72 +310,76 @@ endfunction
 
 function! s:SetUpAutoCommands()
   au CursorHold  *
-  \ checktime
+    \ checktime
 
   au BufEnter *
-  \ if index(g:better_whitespace_filetypes_blacklist, &ft) < 0 | exec 'EnableStripWhitespaceOnSave' | endif
-
-  au TermOpen *
-  \ setlocal scrolloff=999
+    \ if index(g:better_whitespace_filetypes_blacklist, &ft) < 0 | exec 'EnableStripWhitespaceOnSave' | endif |
+    \ if empty(&ft) && &buftype != 'terminal' | set filetype=markdown | endif |
+    \ :ColorizerAttachToBuffer
 
   au! CompleteDone *
-  \ if pumvisible() == 0 | pclose | endif
+    \ if pumvisible() == 0 | pclose | endif
+
+  au! User GoyoLeave
+    \ hi Normal guibg=NONE ctermbg=NONE
+
+  function! PageClose(page_alternate_bufnr)
+    bd!
+    if bufnr('%') == a:page_alternate_bufnr && mode('%') == 'n'
+      norm a
+    endif
+  endfunction
+  au User PageOpen
+    \ | exe 'map <buffer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>'
+    \ | exe 'tmap <bufer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>'
 
   if &diff
     let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
   endif
 
-  if executable('clangd')
-    au User lsp_setup call lsp#register_server({
-      \  'name': 'clangd',
-      \  'cmd': {server_info->['clangd']},
-      \  'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-      \ })
-  endif
-  if executable('rls')
-    au User lsp_setup call lsp#register_server({
-      \  'name': 'rls',
-      \  'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
-      \  'whitelist': ['rust'],
-      \ })
-  endif
-  au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-    \  'name': 'file',
-    \  'whitelist': ['*'],
-    \  'priority': 10,
-    \  'completor': function('asyncomplete#sources#file#completor')
-    \ }))
-  au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
-    \  'name': 'tags',
-    \  'whitelist': ['c', 'markdown'],
-    \  'completor': function('asyncomplete#sources#tags#completor'),
-    \  'config': {
-    \    'max_file_size': 50000000,
-    \  }
-    \ }))
-  au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#necovim#get_source_options({
-    \  'name': 'necovim',
-    \  'whitelist': ['vim'],
-    \  'completor': function('asyncomplete#sources#necovim#completor'),
-    \ }))
-  call asyncomplete#register_source(asyncomplete#sources#neosnippet#get_source_options({
-    \  'name': 'neosnippet',
-    \  'whitelist': ['*'],
-    \  'completor': function('asyncomplete#sources#neosnippet#completor'),
-    \ }))
-  call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-    \  'name': 'buffer',
-    \  'whitelist': ['*'],
-    \  'blacklist': ['go'],
-    \  'completor': function('asyncomplete#sources#buffer#completor'),
-    \ }))
-  call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
-    \  'name': 'omni',
-    \  'whitelist': ['*'],
-    \  'blacklist': ['html'],
-    \  'completor': function('asyncomplete#sources#omni#completor')
-    \ }))
+  lua << EOF
+  local lsp = require('lspconfig')
+  lsp.bashls.setup {}
+  lsp.clangd.setup {}
+  lsp.pyls.setup {}
+  lsp.sumneko_lua.setup {}
+  lsp.texlab.setup {}
+
+  local compe = require('compe')
+  compe.setup {
+    enabled = true;
+    autocomplete = true;
+    debug = false;
+    min_length = 1;
+    preselect = 'enable';
+    throttle_time = 80;
+    source_timeout = 200;
+    incomplete_delay = 400;
+    max_abbr_width = 100;
+    max_kind_width = 100;
+    max_menu_width = 100;
+    documentation = true;
+    source = {
+      path = true;
+      buffer = true;
+      calc = true;
+      nvim_lsp = true;
+      nvim_lua = true;
+      vsnip = true;
+      zsh = true;
+      latex_symbols = true;
+    };
+  }
+
+  local lspkind = require('lspkind')
+  lspkind.init()
+
+  local gitsigns = require('gitsigns')
+  gitsigns.setup()
+EOF
+
 endfunction
+
 
 
 function! s:SetUpAppearance()
@@ -308,37 +388,38 @@ function! s:SetUpAppearance()
 
   syntax enable
 
+  function! GitbranchFunction()
+    return winwidth(0) > 90 ? (&buftype != 'terminal' ? gitbranch#name() : '') : ''
+  endfunction
+
   function! FiletypeFunction()
-    return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+    return winwidth(0) > 80 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
   endfunction
 
   function! FileformatFunction()
-    return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+    return winwidth(0) > 60 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
   endfunction
 
-  let g:onedark_terminal_italics = 1
   let g:lightline = {
-    \ 'colorscheme': 'onedark',
+    \ 'colorscheme': 'one',
     \ 'enable': {
     \   'statusline': 0,
     \   'tabline': 1
     \ },
     \ 'tabline': {
-    \   'left': [ [ 'bufnum' ], ['buffers'], ],
-    \   'right': [ [ 'lines' ], [ 'fileencoding', 'fileformat', ], [ 'filetype'] ],
+    \   'left': [ [ 'bufnum' ], [ 'buffers' ], ],
+    \   'right': [ [ 'fileencoding', 'fileformat' ], [ 'gitbranch', 'filetype' ] ],
     \ },
     \ 'component_expand': {
     \   'buffers': 'lightline#bufferline#buffers',
-    \ },
-    \ 'component': {
-    \   'lines': '%L'
     \ },
     \ 'component_type': {
     \   'buffers': 'tabsel',
     \ },
     \ 'component_function': {
-    \   'filetype': 'FiletypeFunction',
     \   'fileformat': 'FileformatFunction',
+    \   'filetype': 'FiletypeFunction',
+    \   'gitbranch': 'GitbranchFunction'
     \ },
     \ 'tabline_separator': {
     \    'left': ' ',
@@ -349,13 +430,24 @@ function! s:SetUpAppearance()
     \    'right': '',
     \ }
   \}
+  let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
+  let s:palette.tabline.middle = [ [ 'NONE', 'NONE', 'NONE', 'NONE' ] ]
 
   let g:lightline#bufferline#number_map = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
   let g:lightline#bufferline#show_number = 2
+  let g:lightline#bufferline#number_separator = ''
+  let g:lightline#bufferline#enable_devicons = 1
   let g:lightline#bufferline#unicode_symbols = 1
-  let g:lightline#bufferline#shorten_path = 1
 
-  colorscheme onedark " apprentice . tangoshady
+  colorscheme one-nvim " onedark . apprentice . tangoshady
+
+  lua << EOF
+  vim.g.one_nvim_transparent_bg = true
+EOF
+
+  hi Normal ctermbg=NONE guibg=NONE
+
+  hi clear SignColumn
 endfunction
 
 
@@ -373,7 +465,8 @@ function! s:SetUpPluginVariables()
 
   let g:asyncomplete_remove_duplicates = 1
 
-  let g:pandoc#modules#disabled = [ "spell" ]
+  let g:vim_markdown_folding_disabled = 1
+  let g:vim_markdown_toc_autofit = 1
 
   let g:fzf_buffers_jump = 1
 
@@ -438,6 +531,13 @@ function! s:SetUpPluginVariables()
     \  'help'
     \ ]
 
+  let g:vimtex_compiler_progname = 'nvr'
+  let g:vimtex_view_method = 'zathura'
+  let g:tex_flavor = "latex"
+
+  let g:suda#prefix = 'sudo://'
+  let g:suda_smart_edit = 1
+
 endfunction
 
 
@@ -445,6 +545,10 @@ function! s:SetUpVimVariables()
   setglobal showmode
   setglobal modeline
   setglobal modelines=5
+  setglobal synmaxcol=9999
+
+  setglobal title
+  setglobal titlestring=%{expand(\"%:p:h\")}
 
   setglobal ttimeoutlen=50
   setglobal nobackup nowb noswapfile
@@ -455,32 +559,34 @@ function! s:SetUpVimVariables()
   setglobal mouse=a
   setglobal selection=exclusive
   setglobal virtualedit+=block
-  setglobal conceallevel=2 concealcursor=niv
+  setglobal conceallevel=0 concealcursor=niv
+  setglobal wildignorecase
   setglobal fillchars=""
 
   setglobal nohlsearch
   setglobal inccommand=split
 
-  setglobal completeopt+=preview
+  setglobal completeopt=menuone,noselect
 
   setglobal undofile
   setglobal undolevels=10000
   setglobal undoreload=100000
 
-  setglobal foldlevel=0
+  setglobal foldlevel=0 nofoldenable
 
   setglobal signcolumn=yes
   setglobal showtabline=2 laststatus=0
   setglobal hidden
-  setglobal wildmode=list:longest,full
   setglobal shortmess+=c
   setglobal lazyredraw
+  setglobal pumblend=15
 
   setglobal number numberwidth=1
 
   setglobal shiftwidth=4 tabstop=4 expandtab
   setglobal smartindent showmatch mat=2
   setglobal smartcase ignorecase
+  setglobal linebreak
 
   setglobal whichwrap+=<,>,h,l,[,]
 
