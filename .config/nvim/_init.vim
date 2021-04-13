@@ -1,104 +1,7 @@
-function! s:SetUpPlugins()
-  packadd minpac
-
-  call minpac#init()
-  call minpac#add('k-takata/minpac', {'type': 'opt'})
-
-  call minpac#add('Th3Whit3Wolf/one-nvim')
-  call minpac#add('ryanoasis/vim-devicons')
-  call minpac#add('itchyny/vim-highlighturl')
-
-  call minpac#add('itchyny/lightline.vim')
-    \| call minpac#add('mgee/lightline-bufferline')
-    \| call minpac#add('itchyny/vim-gitbranch')
-
-  call minpac#add('junegunn/goyo.vim')
-  call minpac#add('kopischke/vim-stay')
-  call minpac#add('junegunn/vim-peekaboo')
-
-  call minpac#add('machakann/vim-highlightedyank')
-  call minpac#add('DanilaMihailov/beacon.nvim')
-  call minpac#add('norcalli/nvim-colorizer.lua')
-
-  call minpac#add('inkarkat/vim-ingo-library')
-    \| call minpac#add('inkarkat/vim-mark')
-
-  call minpac#add('kana/vim-repeat')
-  call minpac#add('junegunn/vim-slash')
-  call minpac#add('kana/vim-operator-user')
-    \| call minpac#add('rhysd/vim-operator-surround')
-
-  call minpac#add('machakann/vim-sandwich')
-  call minpac#add('kana/vim-textobj-user')
-    \| call minpac#add('wellle/targets.vim')
-    \| call minpac#add('rhysd/vim-textobj-anyblock')
-    \| call minpac#add('rhysd/vim-textobj-conflict')
-    \| call minpac#add('glts/vim-textobj-comment')
-    \| call minpac#add('kana/vim-textobj-lastpat')
-    \| call minpac#add('kana/vim-textobj-indent')
-    \| call minpac#add('kana/vim-textobj-line')
-    \| call minpac#add('I60R/vim-textobj-nonwhitespace')
-
-
-  call minpac#add('hrsh7th/nvim-compe')
-    \| call minpac#add('hrsh7th/vim-vsnip')
-    \| call minpac#add('neovim/nvim-lsp')
-    \| call minpac#add('tamago324/compe-zsh')
-    \| call minpac#add('GoldsteinE/compe-latex-symbols')
-
-
-  call minpac#add('lotabout/skim', { 'do': '!./install' })
-  call minpac#add('lotabout/skim.vim')
-  call minpac#add('aperezdc/vim-template')
-
-  call minpac#add('w0rp/ale')
-  call minpac#add('ntpeters/vim-better-whitespace')
-  call minpac#add('tpope/vim-sleuth')
-  call minpac#add('tpope/vim-characterize')
-  call minpac#add('dylanaraps/root.vim')
-
-  call minpac#add('easymotion/vim-easymotion')
-  call minpac#add('bkad/CamelCaseMotion')
-
-  call minpac#add('mg979/vim-visual-multi', { 'branch': 'test' })
-  call minpac#add('tommcdo/vim-exchange')
-  call minpac#add('AndrewRadev/switch.vim')
-  call minpac#add('tomtom/tcomment_vim')
-  call minpac#add('cohama/lexima.vim')
-  call minpac#add('junegunn/vim-easy-align')
-  call minpac#add('matze/vim-move')
-  call minpac#add('triglav/vim-visual-increment')
-  call minpac#add('terryma/vim-expand-region')
-  call minpac#add('majutsushi/tagbar')
-
-  call minpac#add('sbdchd/neoformat')
-  call minpac#add('guns/xterm-color-table.vim')
-  call minpac#add('airodactyl/neovim-ranger')
-  call minpac#add('tpope/vim-eunuch')
-  call minpac#add('antoyo/vim-licenses')
-  call minpac#add('fidian/hexmode')
-  call minpac#add('lambdalisue/suda.vim')
-
-  call minpac#add('gisphm/vim-gitignore')
-  call minpac#add('f-person/git-blame.nvim')
-  call minpac#add('lewis6991/gitsigns.nvim')
-    \| call minpac#add('nvim-lua/plenary.nvim')
-
-
-
-  call minpac#add('sheerun/vim-polyglot')
-
-  call minpac#add('plasticboy/vim-markdown')
-  call minpac#add('hail2u/vim-css3-syntax')
-  call minpac#add('elzr/vim-json')
-  call minpac#add('dzeban/vim-log-syntax')
-  call minpac#add('lervag/vimtex')
-
-  packloadall
-endfunction
-
-
 function! s:SetUpKeyMappings()
+
+  nmap <silent>   <Space><Space>              :Goyo<CR>
+  nmap <silent>   <Space>                     <Leader>
 
   function! s:common()
     tnoremap         <Esc><Esc><Esc>  <C-\><C-n>M
@@ -111,9 +14,7 @@ function! s:SetUpKeyMappings()
       lclose
     endfunction
 
-    map              <Space>          \
     map              <M-`>            :Buffers<CR>
-    nmap             <Leader><Space>  :Goyo 120<CR>
 
     map              f                <Plug>(easymotion-s)
     map              F                <Plug>(easymotion-bd-jk)
@@ -134,26 +35,6 @@ function! s:SetUpKeyMappings()
 
     nmap             \|               <Plug>(EasyAlign)
     xmap             \|               <Plug>(EasyAlign)
-  endfunction
-
-  function! s:complete_old()
-    imap             <C-c>            <Esc>
-
-    imap             <C-Space>        <C-n>
-
-    inoremap <expr>  <Tab>            pumvisible() ? "\<C-n>" : "\<Tab>"
-    inoremap <expr>  <S-Tab>          pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-    let g:lexima_no_default_rules = 1 "based on github.com/cohama/lexima.vim/issues/65#issuecomment-339338677
-    call lexima#set_default_rules()
-    call lexima#insmode#map_hook('before', '<CR>', '')
-    function! s:on_cr() abort
-      let l:e = pumvisible() ? "\<C-y>" : ""
-      let l:e.= neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : lexima#expand('<CR>', 'i')
-      return l:e
-    endfunction
-    imap <expr>       <CR>             <SID>on_cr()
-    smap <expr>       <CR>             <SID>on_cr()
   endfunction
 
   function! s:complete()
@@ -315,6 +196,7 @@ function! s:SetUpAutoCommands()
   au BufEnter *
     \ if index(g:better_whitespace_filetypes_blacklist, &ft) < 0 | exec 'EnableStripWhitespaceOnSave' | endif |
     \ if empty(&ft) && &buftype != 'terminal' | set filetype=markdown | endif |
+    \ if &buftype == 'terminal' | set filetype=noft | endif |
     \ :ColorizerAttachToBuffer
 
   au! CompleteDone *
@@ -338,12 +220,65 @@ function! s:SetUpAutoCommands()
   endif
 
   lua << EOF
-  local lsp = require('lspconfig')
-  lsp.bashls.setup {}
-  lsp.clangd.setup {}
-  lsp.pyls.setup {}
-  lsp.sumneko_lua.setup {}
-  lsp.texlab.setup {}
+  local nvim_lsp = require('lspconfig')
+  nvim_lsp.bashls.setup {}
+  nvim_lsp.clangd.setup {}
+  nvim_lsp.pyls.setup {}
+  nvim_lsp.sumneko_lua.setup { cmd = { 'lua-language-server', '-E', '/usr/share/lua-language-server', "/main.lua" } }
+  nvim_lsp.texlab.setup {}
+  nvim_lsp.rust_analyzer.setup {}
+  local on_attach = function(client, bufnr)
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+    buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    -- Mappings.
+    local opts = { noremap=true, silent=true }
+    buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+    buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+    buf_set_keymap('n', '<Leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+    buf_set_keymap('n', '<Leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+    buf_set_keymap('n', '<Leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+    buf_set_keymap('n', '<Leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+    buf_set_keymap('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    buf_set_keymap('n', '<Leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+    buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+    buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+    buf_set_keymap('n', '<Leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+
+    -- Set some keybinds conditional on server capabilities
+    if client.resolved_capabilities.document_formatting then
+      buf_set_keymap("n", "<Leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+    elseif client.resolved_capabilities.document_range_formatting then
+      buf_set_keymap("n", "<Leader>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+    end
+
+    -- Set autocommands conditional on server_capabilities
+    if client.resolved_capabilities.document_highlight then
+      vim.api.nvim_exec([[
+        hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
+        hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
+        hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+        augroup lsp_document_highlight
+          autocmd! * <buffer>
+          autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+          autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+        augroup END
+      ]], false)
+    end
+  end
+
+  -- Use a loop to conveniently both setup defined servers
+  -- and map buffer local keybindings when the language server attaches
+  local servers = { "pyright", "rust_analyzer", "tsserver" }
+  for _, lsp in ipairs(servers) do
+    nvim_lsp[lsp].setup { on_attach = on_attach }
+  end
 
   local compe = require('compe')
   compe.setup {
@@ -376,6 +311,13 @@ function! s:SetUpAutoCommands()
 
   local gitsigns = require('gitsigns')
   gitsigns.setup()
+
+  local tree_sitter = require('nvim-treesitter.configs')
+  tree_sitter.setup {
+    ensure_installed = 'maintained',
+    highlight = { enabled = true },
+    indent = { enabled = true }
+  }
 EOF
 
 endfunction
@@ -463,12 +405,12 @@ function! s:SetUpPluginVariables()
 
   let g:ale_completion_enabled = 1
 
-  let g:asyncomplete_remove_duplicates = 1
-
   let g:vim_markdown_folding_disabled = 1
   let g:vim_markdown_toc_autofit = 1
 
   let g:fzf_buffers_jump = 1
+
+  let g:goyo_width = 150
 
   let g:tagbar_autofocus = 1
   let g:tagbar_autoclose = 1
@@ -530,6 +472,9 @@ function! s:SetUpPluginVariables()
     \  'qf',
     \  'help'
     \ ]
+
+  let g:indent_blankline_char = '┊'
+  let g:indentLine_char = '┊'
 
   let g:vimtex_compiler_progname = 'nvr'
   let g:vimtex_view_method = 'zathura'
@@ -596,7 +541,6 @@ endfunction
 
 call s:SetUpVimVariables()
 call s:SetUpPluginVariables()
-call s:SetUpPlugins()
 call s:SetUpKeyMappings()
 call s:SetUpAutoCommands()
 call s:SetUpAppearance()
