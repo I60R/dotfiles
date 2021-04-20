@@ -87,27 +87,6 @@ scrolling:
   # scrollback is enabled (history > 0).
   multiplier: 3
 
-  # Faux Scrolling
-  #
-  # The `faux_multiplier` setting controls the number of lines the terminal
-  # should scroll when the alternate screen buffer is active. This is used
-  # to allow mouse scrolling for applications like `man`.
-  #
-  # Specifying `0` will disable faux scrolling.
-  faux_multiplier: 3
-
-  # Scroll to the bottom when new text is written to the terminal.
-  auto_scroll: false
-
-# Spaces per Tab (changes require restart)
-#
-# This setting defines the width of a tab in cells.
-#
-# Some applications, like Emacs, rely on knowing about the width of a tab.
-# To prevent unexpected behavior in these applications, it's also required to
-# change the `it` value in terminfo when altering this setting.
-tabspaces: 4
-
 # Font configuration (changes require restart)
 font:
   # Normal (roman) font face
@@ -118,10 +97,10 @@ font:
     #   - (macOS) Menlo
     #   - (Linux) monospace
     #   - (Windows) Consolas
-    family: Fira Code
+    family: Iosevka
 
     # The `style` can be specified to pick a specific face.
-    style: Retina
+    style: Light
 
   # Bold font face
   bold:
@@ -129,10 +108,10 @@ font:
     #
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Fira Code
+    family: Iosevka
 
     # The `style` can be specified to pick a specific face.
-    style: Bold
+    style: Heavy
 
   # Italic font face
   italic:
@@ -140,7 +119,7 @@ font:
     #
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Fira Code
+    family: Iosevka
 
     # The `style` can be specified to pick a specific face.
     style: Italic
@@ -151,19 +130,19 @@ font:
     #
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Fira Code
+    family: Iosevka
 
     # The `style` can be specified to pick a specific face.
     style: Bold Italic
 
   # Point size
-  size: 10.5
+  size: 10
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
   offset:
     x: -1
-    y: -2
+    y: 0
 
   # Glyph offset determines the locations of the glyphs within their cells with
   # the default being at the bottom. Increasing `x` moves the glyph to the right,
@@ -203,8 +182,8 @@ colors:
     # The dimmed foreground color is calculated automatically if it is not present.
     # If the bright foreground color is not set, or `draw_bold_text_with_bright_colors`
     # is `false`, the normal foreground color will be used.
-    #dim_foreground: '0x9a9a9a'
-    #bright_foreground: '0xffffff'
+    dim_foreground: '0x9a9a9a'
+    bright_foreground: '0xffffff'
 
   # Cursor colors
   #
@@ -249,15 +228,15 @@ colors:
   #
   # If the dim colors are not set, they will be calculated automatically based
   # on the `normal` colors.
-  #dim:
-  #  black:   '0x000000'
-  #  red:     '0x8c3336'
-  #  green:   '0x7a8530'
-  #  yellow:  '0x97822e'
-  #  blue:    '0x506d8f'
-  #  magenta: '0x80638e'
-  #  cyan:    '0x497e7a'
-  #  white:   '0x9a9a9a'
+  dim:
+    black:   '0x000000'
+    red:     '0x8c3336'
+    green:   '0x7a8530'
+    yellow:  '0x97822e'
+    blue:    '0x506d8f'
+    magenta: '0x80638e'
+    cyan:    '0x497e7a'
+    white:   '0x9a9a9a'
 
   # Indexed Colors
   #
@@ -299,7 +278,7 @@ visual_bell:
 #
 # Window opacity as a floating point number from `0.0` to `1.0`.
 # The value `0.0` is completely transparent and `1.0` is opaque.
-background_opacity: 0.9
+background_opacity: 0.8
 
 selection:
   semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"
