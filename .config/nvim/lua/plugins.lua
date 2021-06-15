@@ -1,5 +1,3 @@
-vim.cmd 'packadd packer.nvim'
-
 local packer = require('packer')
 packer.init {
   display = {
@@ -11,7 +9,7 @@ packer.reset()
 return packer.startup(function()
   use 'wbthomason/packer.nvim'
 
-  use 'Th3Whit3Wolf/one-nvim'
+  use 'folke/tokyonight.nvim'
   use 'ryanoasis/vim-devicons'
 
   use {
@@ -21,9 +19,13 @@ return packer.startup(function()
 
   use 'junegunn/vim-peekaboo'
   use 'machakann/vim-highlightedyank'
+  use 'winston0410/cmd-parser.nvim'
+  use 'winston0410/range-highlight.nvim'
   use 'itchyny/vim-highlighturl'
   use 'norcalli/nvim-colorizer.lua'
   use 'DanilaMihailov/beacon.nvim'
+  use 'junegunn/vim-slash'
+  use 'kevinhwang91/nvim-hlslens'
   use 'lukas-reineke/indent-blankline.nvim'
   use 'Yggdroot/indentLine'
 
@@ -33,7 +35,6 @@ return packer.startup(function()
   use { 'majutsushi/tagbar', keys = '<F10>' }
 
   use 'kana/vim-repeat'
-  use 'junegunn/vim-slash'
 
   use 'machakann/vim-sandwich'
   use {
@@ -80,14 +81,15 @@ return packer.startup(function()
   use 'dylanaraps/root.vim'
   use 'airodactyl/neovim-ranger'
 
-  use 'easymotion/vim-easymotion'
+  use 'phaazon/hop.nvim'
   use 'bkad/CamelCaseMotion'
   use 'mg979/vim-visual-multi'
 
   use { 'tommcdo/vim-exchange', keys = 'cx' }
   use { 'AndrewRadev/switch.vim', keys = 't' }
+  use { 'arthurxavierx/vim-caser', keys = 'gs' }
   use 'junegunn/vim-easy-align'
-  use 'tomtom/tcomment_vim'
+  use 'winston0410/commented.nvim'
   use 'cohama/lexima.vim'
   use 'matze/vim-move'
   use 'triglav/vim-visual-increment'
@@ -106,6 +108,7 @@ return packer.startup(function()
   use {
     'nvim-treesitter/nvim-treesitter', run = ":TSUpdate",
     {
+      'nvim-treesitter/playground',
       'plasticboy/vim-markdown',
       'dzeban/vim-log-syntax',
     }

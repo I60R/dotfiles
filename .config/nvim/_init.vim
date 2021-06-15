@@ -1,5 +1,6 @@
 function! s:SetUpKeyMappings()
 
+  nmap            <Space>                     <Nop>
   nmap <silent>   <Space><Space>              :Goyo<CR>
   nmap <silent>   <Space>                     <Leader>
 
@@ -8,22 +9,27 @@ function! s:SetUpKeyMappings()
     tnoremap         <Esc><Esc>       <C-\><C-n>
     map <silent>     <Esc><Esc>       <Esc>:call OnEscape()<CR>
     function! OnEscape()
-      TagbarClose
-      Goyo!
+      silent! TagbarClose
+      silent! Goyo!
       helpclose
       lclose
     endfunction
 
     map              <M-`>            :Buffers<CR>
 
-    map              f                <Plug>(easymotion-s)
-    map              F                <Plug>(easymotion-bd-jk)
+    map              f                <Cmd>lua require('hop').hint_char1()<CR>
+    map              F                <Cmd>lua require('hop').hint_lines()<CR>
 
     nmap <expr>      MM               ":setl so=" . ((&so == 0) ? 999 : 0) . "\<CR>M"
 
     nmap             <Leader>         zz
 
-    "nmap             *                :call InterestingWords('n')<CR>
+    noremap <silent> n                <Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>
+    noremap <silent> N                <Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>
+    noremap          *                *<Cmd>lua require('hlslens').start()<CR>
+    noremap          #                #<Cmd>lua require('hlslens').start()<CR>
+    noremap          g*               g*<Cmd>lua require('hlslens').start()<CR>
+    noremap          g#               g#<Cmd>lua require('hlslens').start()<CR>
   endfunction()
 
   function! s:editing()
@@ -275,7 +281,7 @@ function! s:SetUpAutoCommands()
 
   -- Use a loop to conveniently both setup defined servers
   -- and map buffer local keybindings when the language server attaches
-  local servers = { "pyright", "rust_analyzer", "tsserver" }
+  local servers = { "bashls", "clangd", "pyls", "sumneko_lua", "texlab", "rust_analyzer" }
   for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup { on_attach = on_attach }
   end
@@ -307,10 +313,21 @@ function! s:SetUpAutoCommands()
   }
 
   local lspkind = require('lspkind')
-  lspkind.init()
+  lspkind.init{}
 
   local gitsigns = require('gitsigns')
-  gitsigns.setup()
+  gitsigns.setup{}
+
+  local range_hl = require('range-highlight')
+  range_hl.setup{}
+
+  local commented = require('commented')
+  commented.setup {
+    keybindings = { n = ';', v = ';', nl = ';;' }
+  }
+
+  local hlslens = require('hlslens')
+  hlslens.setup{}
 
   local tree_sitter = require('nvim-treesitter.configs')
   tree_sitter.setup {
@@ -381,7 +398,10 @@ function! s:SetUpAppearance()
   let g:lightline#bufferline#enable_devicons = 1
   let g:lightline#bufferline#unicode_symbols = 1
 
-  colorscheme one-nvim " onedark . apprentice . tangoshady
+  let g:tokyonight_transparent = 1
+  let g:tokyonight_style = "night"
+
+  colorscheme tokyonight " onedark . apprentice . tangoshady
 
   lua << EOF
   vim.g.one_nvim_transparent_bg = true
@@ -396,7 +416,6 @@ endfunction
 function! s:SetUpPluginVariables()
   let g:no_plugin_maps = 1
   let g:textobj_lastpat_no_default_key_mappings = 1
-  let g:EasyMotion_do_mapping = 0
 
   let g:signify_realtime = 1
   let g:signify_vcs_list = [ 'git' ]
@@ -486,60 +505,6 @@ function! s:SetUpPluginVariables()
 endfunction
 
 
-function! s:SetUpVimVariables()
-  setglobal showmode
-  setglobal modeline
-  setglobal modelines=5
-  setglobal synmaxcol=9999
-
-  setglobal title
-  setglobal titlestring=%{expand(\"%:p:h\")}
-
-  setglobal ttimeoutlen=50
-  setglobal nobackup nowb noswapfile
-  setglobal encoding=utf-8 termencoding=utf-8 fileencoding=utf-8
-
-  setglobal scrollback=-1
-  setglobal clipboard=unnamedplus
-  setglobal mouse=a
-  setglobal selection=exclusive
-  setglobal virtualedit+=block
-  setglobal conceallevel=0 concealcursor=niv
-  setglobal wildignorecase
-  setglobal fillchars=""
-
-  setglobal nohlsearch
-  setglobal inccommand=split
-
-  setglobal completeopt=menuone,noselect
-
-  setglobal undofile
-  setglobal undolevels=10000
-  setglobal undoreload=100000
-
-  setglobal foldlevel=0 nofoldenable
-
-  setglobal signcolumn=yes
-  setglobal showtabline=2 laststatus=0
-  setglobal hidden
-  setglobal shortmess+=c
-  setglobal lazyredraw
-  setglobal pumblend=15
-
-  setglobal number numberwidth=1
-
-  setglobal shiftwidth=4 tabstop=4 expandtab
-  setglobal smartindent showmatch mat=2
-  setglobal smartcase ignorecase
-  setglobal linebreak
-
-  setglobal whichwrap+=<,>,h,l,[,]
-
-  setglobal splitbelow splitright
-endfunction
-
-
-call s:SetUpVimVariables()
 call s:SetUpPluginVariables()
 call s:SetUpKeyMappings()
 call s:SetUpAutoCommands()
