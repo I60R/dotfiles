@@ -6,6 +6,8 @@ packer.init {
 }
 packer.reset()
 
+vim.api.nvim_set_var('no_plugin_maps', true)
+
 return packer.startup(function()
   use 'wbthomason/packer.nvim'
 
@@ -27,12 +29,52 @@ return packer.startup(function()
   use 'junegunn/vim-slash'
   use 'kevinhwang91/nvim-hlslens'
   use 'lukas-reineke/indent-blankline.nvim'
-  use 'Yggdroot/indentLine'
+  use {
+    'Yggdroot/indentLine',
+    config = function()
+      vim.api.nvim_set_var('indent_blankline_char', '┊')
+      vim.api.nvim_set_var('indentLine_char', '┊')
+    end
+  }
 
-  use { 'inkarkat/vim-mark', requires = { 'inkarkat/vim-ingo-library' }, cmd = 'Mark' }
-  use { 'tpope/vim-characterize', keys = 'ga' }
-  use { 'junegunn/goyo.vim', keys = '<Leader><Space>', cmd = "Goyo" }
-  use { 'majutsushi/tagbar', keys = '<F10>' }
+  use {
+    'inkarkat/vim-mark',
+    requires = { 'inkarkat/vim-ingo-library' },
+    cmd = 'Mark'
+  }
+  use {
+    'tpope/vim-characterize',
+    keys = 'ga'
+  }
+  use {
+    'majutsushi/tagbar',
+    keys = '<F10>',
+    config = function()
+      vim.api.nvim_set_var('tagbar_autofocus', 1)
+      vim.api.nvim_set_var('tagbar_autoclose', 1)
+      vim.api.nvim_set_var('tagbar_sort', 0)
+      vim.api.nvim_set_var('tagbar_compact', 1)
+      vim.api.nvim_set_var('tagbar_expand', 1)
+      vim.api.nvim_set_var('tagbar_singleclick', 1)
+      vim.api.nvim_set_var('tagbar_width', 42)
+      vim.api.nvim_set_var('tagbar_map_nextfold', 'l')
+      vim.api.nvim_set_var('tagbar_map_prevfold', 'h')
+      vim.api.nvim_set_var('tagbar_map_showproto', 'p')
+      vim.api.nvim_set_var('tagbar_map_preview', '<SPACE>')
+      vim.api.nvim_set_var('tagbar_map_togglefold', ';')
+      vim.api.nvim_set_var('tagbar_map_openfold', 'L')
+      vim.api.nvim_set_var('tagbar_map_closefold', 'H')
+      vim.api.nvim_set_var('tagbar_map_togglesort', 'S')
+    end
+  }
+  use {
+    'junegunn/goyo.vim',
+    keys = '<Leader><Space>',
+    cmd = "Goyo",
+    config = function()
+      vim.api.nvim_set_var('goyo_width', 150)
+    end
+  }
 
   use 'kana/vim-repeat'
 
@@ -54,7 +96,10 @@ return packer.startup(function()
       'kana/vim-textobj-indent',
       'kana/vim-textobj-line',
       'I60R/vim-textobj-nonwhitespace'
-    }
+    },
+    config = function()
+      vim.api.nvim_set_var('textobj_lastpat_no_default_key_mappings', true)
+    end
   }
 
   use {
@@ -75,11 +120,17 @@ return packer.startup(function()
   use { 'sbdchd/neoformat', cmd = 'Neoformat' }
 
   use 'kopischke/vim-stay'
-  use 'ntpeters/vim-better-whitespace'
   use 'tpope/vim-sleuth'
   use 'tpope/vim-eunuch'
   use 'dylanaraps/root.vim'
   use 'airodactyl/neovim-ranger'
+  use {
+    'ntpeters/vim-better-whitespace',
+    config = function()
+      vim.api.nvim_set_var('better_whitespace_filetypes_blacklist', { 'diff', 'pandoc', 'markdown', 'gitcommit', 'qf', 'help' })
+    end
+  }
+
 
   use 'phaazon/hop.nvim'
   use 'bkad/CamelCaseMotion'
@@ -98,7 +149,13 @@ return packer.startup(function()
   use 'aperezdc/vim-template'
   use 'antoyo/vim-licenses'
   use 'fidian/hexmode'
-  use 'lambdalisue/suda.vim'
+  use {
+    'lambdalisue/suda.vim',
+    config = function()
+      vim.api.nvim_set_var('suda#prefix', 'sudo://')
+      vim.api.nvim_set_var('suda_smart_edit', 1)
+    end
+  }
 
   use 'f-person/git-blame.nvim'
   use { 'lewis6991/gitsigns.nvim', requires =  { 'nvim-lua/plenary.nvim' } }
@@ -106,7 +163,8 @@ return packer.startup(function()
 
 
   use {
-    'nvim-treesitter/nvim-treesitter', run = ":TSUpdate",
+    'nvim-treesitter/nvim-treesitter',
+    run = ":TSUpdate",
     {
       'nvim-treesitter/playground',
       'plasticboy/vim-markdown',
