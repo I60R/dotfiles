@@ -1,13 +1,15 @@
 function! s:SetUpKeyMappings()
 
-  nmap            <Space>                     <Nop>
-  nmap <silent>   <Space><Space>              :Goyo<CR>
-  nmap <silent>   <Space>                     <Leader>
-
   function! s:common()
+
+    nmap            <Space>                     <Nop>
+    nmap <silent>   <Space><Space>              :Goyo<CR>
+    nmap <silent>   <Space>                     <Leader>
+
     tnoremap         <Esc><Esc><Esc>  <C-\><C-n>M
     tnoremap         <Esc><Esc>       <C-\><C-n>
     map <silent>     <Esc><Esc>       <Esc>:call OnEscape()<CR>
+
     function! OnEscape()
       silent! TagbarClose
       silent! Goyo!
@@ -15,7 +17,7 @@ function! s:SetUpKeyMappings()
       lclose
     endfunction
 
-    map              <M-`>            :Buffers<CR>
+    map              <M-`>            :BufferLinePick<CR>
 
     map              f                <Cmd>lua require('hop').hint_char1()<CR>
     map              F                <Cmd>lua require('hop').hint_lines()<CR>
@@ -44,58 +46,10 @@ function! s:SetUpKeyMappings()
   endfunction
 
   function! s:complete()
-    " NOTE: Order is important. You can't lazy loading lexima.vim.
-    let g:lexima_no_default_rules = v:true
-    call lexima#set_default_rules()
     inoremap <silent><expr> <C-Space> compe#complete()
-    inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
     inoremap <silent><expr> <C-e>     compe#close('<C-e>')
     inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
     inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-
-    lua << EOF
-    local t = function(str)
-      return vim.api.nvim_replace_termcodes(str, true, true, true)
-    end
-
-    local check_back_space = function()
-        local col = vim.fn.col('.') - 1
-        if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-            return true
-        else
-            return false
-        end
-    end
-
-    -- Use (s-)tab to:
-    --- move to prev/next item in completion menuone
-    --- jump to prev/next snippet's placeholder
-    _G.tab_complete = function()
-      if vim.fn.pumvisible() == 1 then
-        return t "<C-n>"
-      elseif vim.fn.call("vsnip#available", {1}) == 1 then
-        return t "<Plug>(vsnip-expand-or-jump)"
-      elseif check_back_space() then
-        return t "<Tab>"
-      else
-        return vim.fn['compe#complete']()
-      end
-    end
-    _G.s_tab_complete = function()
-      if vim.fn.pumvisible() == 1 then
-        return t "<C-p>"
-      elseif vim.fn.call("vsnip#jumpable", {-1}) == 1 then
-        return t "<Plug>(vsnip-jump-prev)"
-      else
-        return t "<S-Tab>"
-      end
-    end
-
-    vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
-    vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
-    vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-    vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-EOF
   endfunction
 
 
@@ -196,6 +150,10 @@ endfunction
 
 
 function! s:SetUpAutoCommands()
+   " TEMPORARY
+  au VimEnter *
+    \ :silent exec "!kill -s SIGWINCH $PPID"
+
   au CursorHold  *
     \ checktime
 
@@ -228,73 +186,5 @@ endfunction
 
 
 
-function! s:SetUpAppearance()
-  setglobal termguicolors
-  setglobal guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
-
-  syntax enable
-
-  function! GitbranchFunction()
-    return winwidth(0) > 90 ? (&buftype != 'terminal' ? gitbranch#name() : '') : ''
-  endfunction
-
-  function! FiletypeFunction()
-    return winwidth(0) > 80 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
-  endfunction
-
-  function! FileformatFunction()
-    return winwidth(0) > 60 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
-  endfunction
-
-  let g:lightline = {
-    \ 'colorscheme': 'one',
-    \ 'enable': {
-    \   'statusline': 0,
-    \   'tabline': 1
-    \ },
-    \ 'tabline': {
-    \   'left': [ [ 'bufnum' ], [ 'buffers' ], ],
-    \   'right': [ [ 'fileencoding', 'fileformat' ], [ 'gitbranch', 'filetype' ] ],
-    \ },
-    \ 'component_expand': {
-    \   'buffers': 'lightline#bufferline#buffers',
-    \ },
-    \ 'component_type': {
-    \   'buffers': 'tabsel',
-    \ },
-    \ 'component_function': {
-    \   'fileformat': 'FileformatFunction',
-    \   'filetype': 'FiletypeFunction',
-    \   'gitbranch': 'GitbranchFunction'
-    \ },
-    \ 'tabline_separator': {
-    \    'left': ' ',
-    \    'right': '',
-    \ },
-    \ 'tabline_subseparator': {
-    \    'left': '',
-    \    'right': '',
-    \ }
-  \}
-  let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
-  let s:palette.tabline.middle = [ [ 'NONE', 'NONE', 'NONE', 'NONE' ] ]
-
-  let g:lightline#bufferline#number_map = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
-  let g:lightline#bufferline#show_number = 2
-  let g:lightline#bufferline#number_separator = ''
-  let g:lightline#bufferline#enable_devicons = 1
-  let g:lightline#bufferline#unicode_symbols = 1
-
-  let g:tokyonight_transparent = 1
-  let g:tokyonight_style = "night"
-
-  colorscheme tokyonight " onedark . apprentice . tangoshady
-
-  hi Normal ctermbg=NONE guibg=NONE
-
-  hi clear SignColumn
-endfunction
-
 call s:SetUpKeyMappings()
 call s:SetUpAutoCommands()
-call s:SetUpAppearance()

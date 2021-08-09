@@ -16,6 +16,9 @@ require 'plugins'
 opt.title = true
 opt.titlestring = '%{expand("%:p:h")}'
 
+opt.termguicolors = true
+opt.guicursor = 'n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor'
+
 opt.backup = false
 opt.writebackup = false
 opt.swapfile = false
@@ -38,7 +41,8 @@ opt.scrollback = -1
 
 opt.clipboard = 'unnamedplus'
 opt.mouse = 'a'
-opt.virtualedit = 'all'
+opt.virtualedit = 'block'
+opt.selection = 'inclusive'
 opt.linebreak = true
 
 opt.concealcursor = 'nv'
@@ -51,6 +55,7 @@ opt.pumblend = 15
 opt.smartindent = true
 opt.matchtime = 2
 opt.showmatch = true
+opt.timeoutlen = 500
 
 opt.hidden = true
 opt.lazyredraw = true
