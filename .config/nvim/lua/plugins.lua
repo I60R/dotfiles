@@ -13,9 +13,11 @@ return packer.startup(function()
 
   use {
     'folke/tokyonight.nvim',
-    config = function()
+    setup = function()
       vim.api.nvim_set_var('tokyonight_transparent', true)
       vim.api.nvim_set_var('tokyonight_style', 'night')
+    end,
+    config = function()
       vim.g.tokyonight_colors = { black = '#00000000' }
       vim.cmd 'colorscheme tokyonight'
       vim.cmd 'syntax enable'
@@ -34,7 +36,10 @@ return packer.startup(function()
           show_buffer_close_icons = false,
           show_close_icon = false,
           always_show_bufferline = false,
-          numbers = 'both',
+          numbers = 'ordinal_first',
+          number_style = { "none", "subscript" },
+          separator_style = { '', '' },
+          indicator_icon = '',
           show_tab_indicators = false,
           mappings = false,
           custom_areas = {
@@ -58,31 +63,64 @@ return packer.startup(function()
               end
               result[#result + 1] = { text = ' ', guifg = 'blue' }
               result[#result + 1] = { text = '  ', guibg = 'blue' }
-              result[#result + 1] = { text = git['head'] .. ' ', guibg = 'blue', gui = 'bold' }
+              result[#result + 1] = { text = git['head'] .. ' ', guibg = 'blue', guifg = 'white', gui = 'bold' }
               result[#result + 1] = { text = ' ' }
               return result
             end,
+          },
+        },
+        highlights = {
+          buffer_selected = {
+            gui = 'bold',
+            guibg = '#0000ff'
+          },
+          duplicate_selected = {
+            guibg = '#0000ff'
+          },
+          duplicate = {
+            guibg = 'NONE'
+          },
+          background = {
+            gui = 'bold',
           }
+        }
       }
-    }
-    local modes = { "n", "i", "c", "x", "s", "o", "t" }
-    for _, m in ipairs(modes) do
-      for i = 1, 9 do
-        local cmd = '<C-\\><C-n>:lua require("bufferline").go_to_buffer(' .. tostring(i) .. ')<CR>'
-        vim.api.nvim_set_keymap(m, '<M-' .. i .. '>',  cmd, { noremap = true, silent = true })
+      local modes = { "n", "i", "c", "x", "s", "o", "t" }
+      for _, m in ipairs(modes) do
+        for i = 1, 9 do
+          local cmd = '<C-\\><C-n>:lua require("bufferline").go_to_buffer(' .. tostring(i) .. ')<CR>'
+          vim.api.nvim_set_keymap(m, '<M-' .. i .. '>',  cmd, { noremap = true, silent = true })
+        end
       end
     end
-  end
   }
 
   use 'machakann/vim-highlightedyank'
   use 'itchyny/vim-highlighturl'
-  use 'norcalli/nvim-colorizer.lua'
+  use {
+    'norcalli/nvim-colorizer.lua',
+    config = function()
+    local colorizer = require('colorizer')
+    colorizer.setup {
+      '*',
+      '!noft',
+      css = { css = true },
+      html = { css = true },
+      javascript = { css = true}
+    }
+    end
+  }
   use 'DanilaMihailov/beacon.nvim'
-  use 'junegunn/vim-slash'
+  use {
+    'haya14busa/vim-asterisk',
+    event = 'VimEnter',
+    setup = function()
+      vim.api.nvim_set_var('asterisk#keeppos', 1)
+    end
+  }
   use {
     'lukas-reineke/indent-blankline.nvim',
-    config = function()
+    setup = function()
       vim.api.nvim_set_var('indent_blankline_char', '┊')
       vim.api.nvim_set_var('indent_blankline_use_treesitter', true)
       vim.api.nvim_set_var('indent_blankline_buftype_exclude', { 'terminal', 'help' })
@@ -93,7 +131,11 @@ return packer.startup(function()
     'kevinhwang91/nvim-hlslens',
     config = function()
       local hlslens = require('hlslens')
-      hlslens.setup{}
+      hlslens.setup {
+        calm_down = true,
+        nearest_float_when = 'never',
+      }
+      vim.cmd 'hi IncSearch gui=bold guifg=white'
     end
   }
   use {
@@ -138,7 +180,7 @@ return packer.startup(function()
   use {
     'majutsushi/tagbar',
     keys = '<F10>',
-    config = function()
+    setup = function()
       vim.api.nvim_set_var('tagbar_autofocus', 1)
       vim.api.nvim_set_var('tagbar_autoclose', 1)
       vim.api.nvim_set_var('tagbar_sort', 0)
@@ -160,7 +202,7 @@ return packer.startup(function()
     'junegunn/goyo.vim',
     keys = '<Leader><Space>',
     cmd = "Goyo",
-    config = function()
+    setup = function()
       vim.api.nvim_set_var('goyo_width', 150)
     end
   }
@@ -186,7 +228,7 @@ return packer.startup(function()
       'kana/vim-textobj-line',
       'I60R/vim-textobj-nonwhitespace'
     },
-    config = function()
+    setup = function()
       vim.api.nvim_set_var('textobj_lastpat_no_default_key_mappings', true)
     end
   }
@@ -242,7 +284,7 @@ return packer.startup(function()
 
         -- Set autocommands conditional on server_capabilities
         if client.resolved_capabilities.document_highlight then
-          vim.api.nvim_exec([[
+          vim.cmd([[
             hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
             hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
             hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
@@ -382,6 +424,7 @@ return packer.startup(function()
     'ntpeters/vim-better-whitespace',
     config = function()
       vim.api.nvim_set_var('better_whitespace_filetypes_blacklist', { 'diff', 'pandoc', 'markdown', 'gitcommit', 'qf', 'help' })
+      vim.cmd 'au BufEnter * if index(g:better_whitespace_filetypes_blacklist, &ft) < 0 | exec "EnableStripWhitespaceOnSave" | endif'
     end
   }
 
@@ -412,7 +455,7 @@ return packer.startup(function()
   use 'fidian/hexmode'
   use {
     'lambdalisue/suda.vim',
-    config = function()
+    setup = function()
       vim.api.nvim_set_var('suda#prefix', 'sudo://')
       vim.api.nvim_set_var('suda_smart_edit', 1)
     end

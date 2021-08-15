@@ -28,10 +28,11 @@ function! s:SetUpKeyMappings()
 
     noremap <silent> n                <Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>
     noremap <silent> N                <Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>
-    noremap          *                *<Cmd>lua require('hlslens').start()<CR>
-    noremap          #                #<Cmd>lua require('hlslens').start()<CR>
-    noremap          g*               g*<Cmd>lua require('hlslens').start()<CR>
-    noremap          g#               g#<Cmd>lua require('hlslens').start()<CR>
+
+    map              *                <Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>
+    map              #                <Plug>(asterisk-z#)<Cmd>lua require('hlslens').start()<CR>
+    map              g*               <Plug>(asterisk-gz*)<Cmd>lua require('hlslens').start()<CR>
+    map              g#               <Plug>(asterisk-gz#)<Cmd>lua require('hlslens').start()<CR>
   endfunction()
 
   function! s:editing()
@@ -158,16 +159,12 @@ function! s:SetUpAutoCommands()
     \ checktime
 
   au BufEnter *
-    \ if index(g:better_whitespace_filetypes_blacklist, &ft) < 0 | exec 'EnableStripWhitespaceOnSave' | endif |
     \ if empty(&ft) && &buftype != 'terminal' | set filetype=markdown | endif |
     \ if &buftype == 'terminal' | set filetype=noft | endif |
-    \ :ColorizerAttachToBuffer
-
-  au! CompleteDone *
-    \ if pumvisible() == 0 | pclose | endif
 
   au! User GoyoLeave
     \ hi Normal guibg=NONE ctermbg=NONE
+
 
   function! PageClose(page_alternate_bufnr)
     bd!
@@ -179,9 +176,11 @@ function! s:SetUpAutoCommands()
     \ | exe 'map <buffer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>'
     \ | exe 'tmap <bufer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>'
 
-  if &diff
-    let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
-  endif
+  aug VMlens
+      au!
+      au User visual_multi_start lua require('vmlens').start()
+      au User visual_multi_exit lua require('vmlens').exit()
+  aug END
 endfunction
 
 

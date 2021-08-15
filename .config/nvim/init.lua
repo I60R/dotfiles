@@ -8,7 +8,8 @@ if fn.empty(fn.glob(packer_path)) > 0 then
     exec('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
 end
 
-exec 'autocmd BufWritePost plugins.lua PackerCompile'
+exec 'packadd packer.nvim'
+exec 'autocmd BufWritePost plugins.lua source <afile> | PackerCompile'
 
 require 'plugins'
 
