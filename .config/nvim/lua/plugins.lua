@@ -31,8 +31,9 @@ return packer.startup(function()
         'warning', 'warning_diagnostic',
         'error', 'error_diagnostic',
         'modified', 'duplicate', 'separator', 'indicator', 'pick'
-      } do highlights[v .. '_selected'] = { guibg = '#0000FF' } end
-      local x;
+      } do
+        highlights[v .. '_selected'] = { guibg = '#0000FF' }
+      end
       bufferline.setup {
         options = {
           right_mouse_command = 'vertical sbuffer %d',
@@ -163,9 +164,9 @@ return packer.startup(function()
       }
       local map = setmetatable({}, { __newindex = function(map, key, into) rawset(map, #map + 1, { [key] = into }) end })
       -- Mapleader mappings
-      map['<Space>'] = { '<Nop>',    "Unmap space",              noremap = false }
-      map['<Space>'] = { '<Leader>', "Space is the leader key!", noremap = false }
-      map['<Space>'] = {
+      map ['<Space>'] = { '<Nop>',    "Unmap space",              noremap = false }
+      map ['<Space>'] = { '<Leader>', "Space is the leader key!", noremap = false }
+      map ['<Space>'] = {
         name = '+<Space> mappings',
         ['<Space>'] = { '<Cmd>Goyo<CR>', "Distraction-free writing" }
       }
@@ -173,38 +174,40 @@ return packer.startup(function()
       for _, mode in ipairs({ "n", "i", "c", "x", "s", "o", "t" }) do
         for n = 1, 9 do
           local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
-          map['<M-' .. n .. '>'] = { focus_nth_buffer, 'Go to (' .. n .. ') buffer', noremap = true, silent = true, mode = mode }
+          map ['<M-' .. n .. '>'] = { focus_nth_buffer, 'Go to (' .. n .. ') buffer', noremap = true, silent = true, mode = mode }
         end
-        map['<M-`>'  ] = { '<Cmd>BufferLinePick<CR>', "Pick buffer", mode = mode }
-        map['<M-q>'  ] = { '<Cmd>b # | bd #<CR>', "Buffer close", mode = mode }
-        map['<M-q>'  ] = { '<Cmd>b # | bd #<CR>', "Buffer close", mode = mode }
-        map['M-Left' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Buffer prev", mode = mode }
-        map['M-Right'] = { '<Cmd>BufferLineCycleNext<CR>', "Buffer prev", mode = mode }
+        map ['<M-`>'  ] = { '<Cmd>BufferLinePick<CR>', "Pick buffer", mode = mode }
+        map ['<M-q>'  ] = { '<Cmd>b # | bd #<CR>', "Buffer close", mode = mode }
+        map ['<M-q>'  ] = { '<Cmd>b # | bd #<CR>', "Buffer close", mode = mode }
+        map ['M-Left' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Buffer prev", mode = mode }
+        map ['M-Right'] = { '<Cmd>BufferLineCycleNext<CR>', "Buffer prev", mode = mode }
       end
       -- Escape mappings
-      local function closeall() vim.cmd 'helpclose | lclose | cclose | sil! Goyo! | sil! TagbarClose' end
-      map['<Esc>'] = {
+      local function closeall()
+        vim.cmd 'helpclose | lclose | cclose | nohlsearch | silent! Goyo! | silent! TagbarClose'
+      end
+      map ['<Esc>'] = {
           name = '+<Esc> mappings',
           ['<Esc>'     ] = { '<Cmd>stopinsert<CR>',  "Exit from terminal mode",                     mode = 't', noremap = true },
           ['<Esc><Esc>'] = { '<Cmd>stopinsert<CR>M', "Exit from terminal mode and focus on center", mode = 't', noremap = true },
           ['<Esc>'     ] = { closeall,               "Exit all non-file windows" }
       }
       -- Movement mappings
-      map['f'] = { function() require('hop').hint_char1() end, "Jump to a letter", mode = 'n' }
-      map['f'] = { function() require('hop').hint_char1() end, "Jump to a letter", mode = 'o' }
-      map['F'] = { function() require('hop').hint_lines() end, "Jump to a line",   mode = 'n' }
-      map['F'] = { function() require('hop').hint_lines() end, "Jump to a line",   mode = 'o' }
-      map['an'] = { '<Plug>(textobj-lastpat-n)', "Last pattern", mode = 'o' }
-      map['aN'] = { '<Plug>(textobj-lastpat-N)', "Prev pattern", mode = 'o' }
-      map['ai'] = { '<Plug>(textobj-indent-a)',  "Inner indent", mode = 'o' }
-      map['iI'] = { '<Plug>(textobj-indent-i)',  "Outer indent", mode = 'o' }
+      map ['f'] = { function() require('hop').hint_char1() end, "Jump to a letter", mode = 'n' }
+      map ['f'] = { function() require('hop').hint_char1() end, "Jump to a letter", mode = 'o' }
+      map ['F'] = { function() require('hop').hint_lines() end, "Jump to a line",   mode = 'n' }
+      map ['F'] = { function() require('hop').hint_lines() end, "Jump to a line",   mode = 'o' }
+      map ['an'] = { '<Plug>(textobj-lastpat-n)', "Last pattern", mode = 'o' }
+      map ['aN'] = { '<Plug>(textobj-lastpat-N)', "Prev pattern", mode = 'o' }
+      map ['ai'] = { '<Plug>(textobj-indent-a)',  "Inner indent", mode = 'o' }
+      map ['iI'] = { '<Plug>(textobj-indent-i)',  "Outer indent", mode = 'o' }
       -- Search mappings
-      map['n'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'n'); require('hlslens').start() end, "Next match", noremap = true }
-      map['n'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'N'); require('hlslens').start() end, "Prev match", noremap = true }
-      map['*'] = { '<Plug>(asterisk-z*)<Cmd>lua require("hlslens").start()<CR>',  "Search word"           }
-      map['#'] = { '<Plug>(asterisk-z#)<Cmd>lua require("hlslens").start()<CR>',  "Search word backwards" }
-      map['g*'] = { '<Plug>(asterisk-gz*)<Cmd>lua require("hlslens").start()<CR>', "Search word"           }
-      map['g#'] = { '<Plug>(asterisk-gz#)<Cmd>lua require("hlslens").start()<CR>', "Search word backwards" }
+      map ['n'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'n'); require('hlslens').start() end, "Next match", noremap = true }
+      map ['N'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'N'); require('hlslens').start() end, "Prev match", noremap = true }
+      map ['*'] = { '<Plug>(asterisk-z*)<Cmd>lua require("hlslens").start()<CR>',  "Search word"           }
+      map ['#'] = { '<Plug>(asterisk-z#)<Cmd>lua require("hlslens").start()<CR>',  "Search word backwards" }
+      map ['g*'] = { '<Plug>(asterisk-gz*)<Cmd>lua require("hlslens").start()<CR>', "Search word"           }
+      map ['g#'] = { '<Plug>(asterisk-gz#)<Cmd>lua require("hlslens").start()<CR>', "Search word backwards" }
       -- Togglers
       local function keepmiddle()
         if vim.wo.scrolloff == 999 then
@@ -221,17 +224,17 @@ return packer.startup(function()
           vim.cmd 'norm M'
         end
       end
-      map['MM'] = { keepmiddle, "Toggle scrolloff", noremap = true }
+      map ['MM'] = { keepmiddle, "Toggle scrolloff", noremap = true }
       -- Remaps
-      map['U'] = { '<C-r>',           "Undo"   }
-      map['t'] = { '<Cmd>Switch<CR>', "Toggle" }
-      map['|'] = { '<Plug>(EasyAlign)', mode = 'n' }
-      map['|'] = { '<Plug>(EasyAlign)', mode = 'x' }
+      map ['U'] = { '<C-r>',           "Undo"   }
+      map ['t'] = { '<Cmd>Switch<CR>', "Toggle" }
+      map ['|'] = { '<Plug>(EasyAlign)', mode = 'n' }
+      map ['|'] = { '<Plug>(EasyAlign)', mode = 'x' }
       -- Completion
-      map['<C-Space>'] = { '<Cmd>call compe#complete()<CR>',     "Force completion",  mode = 'i', noremap = true }
-      map['<C-e>'    ] = { '<Cmd>call compe#close("<C-e>")<CR>', "Cancel completion", mode = 'i', noremap = true }
-      map['<C-f>'    ] = { '<Cmd>call compe#scroll({ "delta": +4 })<CR>', "Scroll completion up",   mode = 'i', noremap = true }
-      map['<C-d>'    ] = { '<Cmd>call compe#scroll({ "delta": -4 })<CR>', "Scroll completion down", mode = 'i', noremap = true }
+      map ['<C-Space>'] = { '<Cmd>call compe#complete()<CR>',     "Force completion",  mode = 'i', noremap = true }
+      map ['<C-e>'    ] = { '<Cmd>call compe#close("<C-e>")<CR>', "Cancel completion", mode = 'i', noremap = true }
+      map ['<C-f>'    ] = { '<Cmd>call compe#scroll({ "delta": +4 })<CR>', "Scroll completion up",   mode = 'i', noremap = true }
+      map ['<C-d>'    ] = { '<Cmd>call compe#scroll({ "delta": -4 })<CR>', "Scroll completion down", mode = 'i', noremap = true }
 
       for _, mapping in ipairs(map) do
         which_key.register(mapping)
@@ -511,7 +514,6 @@ return packer.startup(function()
     end
   }
 
-  use 'f-person/git-blame.nvim'
   use {
     'gisphm/vim-gitignore',
     ft = 'gitignore'
@@ -521,7 +523,13 @@ return packer.startup(function()
     requires =  { 'nvim-lua/plenary.nvim' },
     config = function()
       local gitsigns = require('gitsigns')
-      gitsigns.setup{}
+      gitsigns.setup {
+        watch_index = {
+          interval = 5000
+        },
+        current_line_blame = true,
+        current_line_blame_delay = 0,
+      }
     end
   }
 

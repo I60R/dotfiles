@@ -1,79 +1,73 @@
-local exec = vim.cmd
-local fn = vim.fn
-local opt = vim.o
-
-
-local packer_path = fn.stdpath('data') .. '/site/pack/packer/site/packer.nvim'
-if fn.empty(fn.glob(packer_path)) > 0 then
-    exec('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
+local packer_path = vim.fn.stdpath('data') .. '/site/pack/packer/site/packer.nvim'
+if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
+    vim.cmd('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
 end
 
-exec 'packadd packer.nvim'
-exec 'autocmd BufWritePost plugins.lua source <afile> | PackerCompile'
+vim.cmd 'packadd packer.nvim'
+vim.cmd 'autocmd BufWritePost plugins.lua source <afile> | PackerCompile'
 
 require 'plugins'
 
+vim.o.title = true
+vim.o.titlestring = '%{expand("%:p:h")}'
 
-opt.title = true
-opt.titlestring = '%{expand("%:p:h")}'
+vim.o.termguicolors = true
+vim.o.guicursor = 'n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor'
 
-opt.termguicolors = true
-opt.guicursor = 'n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor'
+vim.o.backup = false
+vim.o.writebackup = false
+vim.o.swapfile = false
 
-opt.backup = false
-opt.writebackup = false
-opt.swapfile = false
+vim.o.undofile = true
+vim.o.undolevels = 10000
+vim.o.undoreload = 100000
 
-opt.undofile = true
-opt.undolevels = 10000
-opt.undoreload = 100000
+vim.o.encoding = 'utf-8'
+vim.o.fileencoding = 'utf-8'
 
-opt.encoding = 'utf-8'
-opt.fileencoding = 'utf-8'
+vim.o.shiftwidth = 4
+vim.o.tabstop = 4
+vim.o.expandtab = true
 
-opt.shiftwidth = 4
-opt.tabstop = 4
-opt.expandtab = true
+vim.o.number = true
+vim.o.numberwidth = 1
 
-opt.number = true
-opt.numberwidth = 1
+vim.o.scrollback = -1
 
-opt.scrollback = -1
+vim.o.clipboard = 'unnamedplus'
+vim.o.mouse = 'a'
+vim.o.virtualedit = 'block'
+vim.o.selection = 'inclusive'
+vim.o.linebreak = true
 
-opt.clipboard = 'unnamedplus'
-opt.mouse = 'a'
-opt.virtualedit = 'block'
-opt.selection = 'inclusive'
-opt.linebreak = true
+vim.o.concealcursor = 'nv'
+vim.o.foldenable = false
 
-opt.concealcursor = 'nv'
-opt.foldenable = false
+vim.o.inccommand = 'split'
+vim.o.wildignorecase = true
+vim.o.completeopt = 'menuone,noselect'
+vim.o.pumblend = 15
+vim.o.smartindent = true
+vim.o.matchtime = 2
+vim.o.showmatch = true
+vim.o.timeoutlen = 1500
 
-opt.inccommand = 'split'
-opt.wildignorecase = true
-opt.completeopt = 'menuone,noselect'
-opt.pumblend = 15
-opt.smartindent = true
-opt.matchtime = 2
-opt.showmatch = true
-opt.timeoutlen = 1500
+vim.o.hidden = true
+vim.o.lazyredraw = true
+vim.o.hlsearch = false
 
-opt.hidden = true
-opt.lazyredraw = true
-opt.hlsearch = false
+vim.o.fillchars = ''
+vim.o.signcolumn = 'yes'
+vim.o.showtabline = 2
+vim.o.laststatus = 0
+vim.o.shortmess = ''
 
-opt.fillchars = ''
-opt.signcolumn = 'yes'
-opt.showtabline = 2
-opt.laststatus = 0
-opt.shortmess = ''
+vim.o.ignorecase = true
+vim.o.smartcase = true
+vim.o.whichwrap = 'b,s,<,>,h,l,[,]'
 
-opt.ignorecase = true
-opt.smartcase = true
-opt.whichwrap = 'b,s,<,>,h,l,[,]'
-
-opt.splitbelow = true
-opt.splitright = true
+vim.o.splitbelow = true
+vim.o.splitright = true
 
 vim.cmd [[
 au! VimEnter * :silent exec "!kill -s SIGWINCH $PPID"
@@ -95,5 +89,5 @@ aug VMlens
   au!
   au User visual_multi_start lua require('vmlens').start()
   au User visual_multi_exit lua require('vmlens').exit()
-aug END]]
-
+aug END
+]]
