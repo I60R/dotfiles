@@ -56,7 +56,7 @@ opt.pumblend = 15
 opt.smartindent = true
 opt.matchtime = 2
 opt.showmatch = true
-opt.timeoutlen = 500
+opt.timeoutlen = 1500
 
 opt.hidden = true
 opt.lazyredraw = true
