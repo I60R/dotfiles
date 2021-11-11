@@ -1,9 +1,8 @@
-local packer = require('packer')
-
-return packer.startup(function()
+return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
   vim.g.no_plugin_maps = true
+  _G.map = require('map')
 
   use {
     'folke/tokyonight.nvim',
@@ -21,7 +20,6 @@ return packer.startup(function()
     'akinsho/nvim-bufferline.lua',
     requires = 'kyazdani42/nvim-web-devicons',
     config = function()
-      local bufferline = require('bufferline')
       local highlights = {
         background = { gui = 'bold', }
       }
@@ -34,6 +32,8 @@ return packer.startup(function()
       } do
         highlights[v .. '_selected'] = { guibg = '#0000FF' }
       end
+
+      local bufferline = require('bufferline')
       bufferline.setup {
         options = {
           right_mouse_command = 'vertical sbuffer %d',
@@ -42,12 +42,12 @@ return packer.startup(function()
           show_buffer_close_icons = false,
           show_close_icon = false,
           always_show_bufferline = false,
-          numbers = 'ordinal_first',
-          number_style = { "none", "subscript" },
+          numbers = function(numbers)
+            return numbers.ordinal .. '.' .. numbers.lower(numbers.id) .. ' '
+          end,
           separator_style = { '', '' },
           indicator_icon = '',
           show_tab_indicators = false,
-          mappings = false,
           custom_areas = {
             right = function()
               local git = vim.b.gitsigns_status_dict
@@ -77,6 +77,15 @@ return packer.startup(function()
         },
         highlights = highlights,
       }
+      for n = 1, 9 do
+        local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
+        map ['<M-' .. n .. '>'] = { focus_nth_buffer, "Go to (" .. n .. ") buffer", remap = false, silent = true }
+      end
+      map ['<M-`>'    ] = { '<Cmd>BufferLinePick<CR>', "Pick buffer" }
+      map ['<M-Left>' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
+      map ['<M-Right>'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
+      map ['<M-q>'    ] = { '<Cmd>b # | bd #<CR>', "Close buffer" }
+      map:register { modes = 'nicxsot' }
     end
   }
 
@@ -85,14 +94,14 @@ return packer.startup(function()
   use {
     'norcalli/nvim-colorizer.lua',
     config = function()
-    local colorizer = require('colorizer')
-    colorizer.setup {
-      '*',
-      '!noft',
-      css = { css = true },
-      html = { css = true },
-      javascript = { css = true}
-    }
+      local colorizer = require('colorizer')
+      colorizer.setup {
+        '*',
+        '!noft',
+        css = { css = true },
+        html = { css = true },
+        javascript = { css = true }
+      }
     end
   }
   use {
@@ -114,6 +123,28 @@ return packer.startup(function()
     event = 'VimEnter',
     setup = function()
       vim.g['asterisk#keeppos'] = 1
+    end,
+    config = function()
+      map ['*' ] = { '<Plug>(asterisk-z*)<Cmd>lua require("hlslens").start()<CR>', "Search word" }
+      map ['#' ] = { '<Plug>(asterisk-z#)<Cmd>lua require("hlslens").start()<CR>', "Search word backwards" }
+      map ['g*'] = { '<Plug>(asterisk-gz*)<Cmd>lua require("hlslens").start()<CR>', "Search word" }
+      map ['g#'] = { '<Plug>(asterisk-gz#)<Cmd>lua require("hlslens").start()<CR>', "Search word backwards" }
+      map:register {}
+    end
+  }
+  use {
+    'kevinhwang91/nvim-hlslens',
+    config = function()
+      local hlslens = require('hlslens')
+      hlslens.setup {
+        calm_down = true,
+        nearest_float_when = 'never',
+      }
+      vim.cmd 'hi IncSearch gui=bold guifg=white'
+
+      map ['n'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'n'); require('hlslens').start() end, "Next match" }
+      map ['N'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'N'); require('hlslens').start() end, "Prev match" }
+      map:register { remap = false }
     end
   }
   use {
@@ -126,122 +157,21 @@ return packer.startup(function()
     end
   }
   use {
-    'kevinhwang91/nvim-hlslens',
-    config = function()
-      local hlslens = require('hlslens')
-      hlslens.setup {
-        calm_down = true,
-        nearest_float_when = 'never',
-      }
-      vim.cmd 'hi IncSearch gui=bold guifg=white'
-    end
-  }
-  use {
     'winston0410/range-highlight.nvim',
     requires = 'winston0410/cmd-parser.nvim',
     config = function()
       local range_hl = require('range-highlight')
-      range_hl.setup{}
+      range_hl.setup {}
     end
   }
   use {
-    'folke/which-key.nvim',
+    'nacro90/numb.nvim',
     config = function()
-      local which_key = require('which-key')
-      which_key.setup {
-        icons = {
-          separator = ''
-        },
-        layout = {
-          align = 'center',
-          width = { min = 0, max = 200 },
-        },
-        window = {
-          position = 'top',
-          margin = { 3, 8, 3, 8 },
-          padding = { 3, 8, 3, 8 }
-        },
-      }
-      local map = setmetatable({}, { __newindex = function(map, key, into) rawset(map, #map + 1, { [key] = into }) end })
-      -- Mapleader mappings
-      map ['<Space>'] = { '<Nop>',    "Unmap space",              noremap = false }
-      map ['<Space>'] = { '<Leader>', "Space is the leader key!", noremap = false }
-      map ['<Space>'] = {
-        name = '+<Space> mappings',
-        ['<Space>'] = { '<Cmd>Goyo<CR>', "Distraction-free writing" }
-      }
-      -- Bufferline mappings
-      for _, mode in ipairs({ "n", "i", "c", "x", "s", "o", "t" }) do
-        for n = 1, 9 do
-          local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
-          map ['<M-' .. n .. '>'] = { focus_nth_buffer, 'Go to (' .. n .. ') buffer', noremap = true, silent = true, mode = mode }
-        end
-        map ['<M-`>'  ] = { '<Cmd>BufferLinePick<CR>', "Pick buffer", mode = mode }
-        map ['<M-q>'  ] = { '<Cmd>b # | bd #<CR>', "Buffer close", mode = mode }
-        map ['<M-q>'  ] = { '<Cmd>b # | bd #<CR>', "Buffer close", mode = mode }
-        map ['M-Left' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Buffer prev", mode = mode }
-        map ['M-Right'] = { '<Cmd>BufferLineCycleNext<CR>', "Buffer prev", mode = mode }
-      end
-      -- Escape mappings
-      local function closeall()
-        vim.cmd 'helpclose | lclose | cclose | nohlsearch | silent! Goyo! | silent! TagbarClose'
-      end
-      map ['<Esc>'] = {
-          name = '+<Esc> mappings',
-          ['<Esc>'     ] = { '<Cmd>stopinsert<CR>',  "Exit from terminal mode",                     mode = 't', noremap = true },
-          ['<Esc><Esc>'] = { '<Cmd>stopinsert<CR>M', "Exit from terminal mode and focus on center", mode = 't', noremap = true },
-          ['<Esc>'     ] = { closeall,               "Exit all non-file windows" }
-      }
-      -- Movement mappings
-      map ['f'] = { function() require('hop').hint_char1() end, "Jump to a letter", mode = 'n' }
-      map ['f'] = { function() require('hop').hint_char1() end, "Jump to a letter", mode = 'o' }
-      map ['F'] = { function() require('hop').hint_lines() end, "Jump to a line",   mode = 'n' }
-      map ['F'] = { function() require('hop').hint_lines() end, "Jump to a line",   mode = 'o' }
-      map ['an'] = { '<Plug>(textobj-lastpat-n)', "Last pattern", mode = 'o' }
-      map ['aN'] = { '<Plug>(textobj-lastpat-N)', "Prev pattern", mode = 'o' }
-      map ['ai'] = { '<Plug>(textobj-indent-a)',  "Inner indent", mode = 'o' }
-      map ['iI'] = { '<Plug>(textobj-indent-i)',  "Outer indent", mode = 'o' }
-      -- Search mappings
-      map ['n'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'n'); require('hlslens').start() end, "Next match", noremap = true }
-      map ['N'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'N'); require('hlslens').start() end, "Prev match", noremap = true }
-      map ['*'] = { '<Plug>(asterisk-z*)<Cmd>lua require("hlslens").start()<CR>',  "Search word"           }
-      map ['#'] = { '<Plug>(asterisk-z#)<Cmd>lua require("hlslens").start()<CR>',  "Search word backwards" }
-      map ['g*'] = { '<Plug>(asterisk-gz*)<Cmd>lua require("hlslens").start()<CR>', "Search word"           }
-      map ['g#'] = { '<Plug>(asterisk-gz#)<Cmd>lua require("hlslens").start()<CR>', "Search word backwards" }
-      -- Togglers
-      local function keepmiddle()
-        if vim.wo.scrolloff == 999 then
-          if vim.w.keepmiddle_scrolloff_backup ~= nil then
-            vim.wo.scrolloff = vim.w.scrolloff_backup
-          else
-            vim.wo.scrolloff = 0
-          end
-        else
-          if vim.wo.scrolloff ~= 0 then
-            vim.w.keepmiddle_scrolloff_backup = vim.wo.scrolloff
-          end
-          vim.wo.scrolloff = 999
-          vim.cmd 'norm M'
-        end
-      end
-      map ['MM'] = { keepmiddle, "Toggle scrolloff", noremap = true }
-      -- Remaps
-      map ['U'] = { '<C-r>',           "Undo"   }
-      map ['t'] = { '<Cmd>Switch<CR>', "Toggle" }
-      map ['|'] = { '<Plug>(EasyAlign)', mode = 'n' }
-      map ['|'] = { '<Plug>(EasyAlign)', mode = 'x' }
-      -- Completion
-      map ['<C-Space>'] = { '<Cmd>call compe#complete()<CR>',     "Force completion",  mode = 'i', noremap = true }
-      map ['<C-e>'    ] = { '<Cmd>call compe#close("<C-e>")<CR>', "Cancel completion", mode = 'i', noremap = true }
-      map ['<C-f>'    ] = { '<Cmd>call compe#scroll({ "delta": +4 })<CR>', "Scroll completion up",   mode = 'i', noremap = true }
-      map ['<C-d>'    ] = { '<Cmd>call compe#scroll({ "delta": -4 })<CR>', "Scroll completion down", mode = 'i', noremap = true }
-
-      for _, mapping in ipairs(map) do
-        which_key.register(mapping)
-      end
-  end
+      local numb = require('numb')
+      numb.setup {}
+    end
   }
-
+  use 'dstein64/nvim-scrollview'
   use {
     'inkarkat/vim-mark',
     requires = { 'inkarkat/vim-ingo-library' },
@@ -257,6 +187,8 @@ return packer.startup(function()
     cmd = "Goyo",
     setup = function()
       vim.g.goyo_width = 150
+      map ['<Space><Space>'] = { '<Cmd>Goyo<CR>', "Distraction-free writing" }
+      map:register {}
     end
   }
 
@@ -283,6 +215,13 @@ return packer.startup(function()
     },
     setup = function()
       vim.g.textobj_lastpat_no_default_key_mappings = true
+    end,
+    config = function()
+      map ['ai'] = { '<Plug>(textobj-indent-a)', "Inner indent" }
+      map ['iI'] = { '<Plug>(textobj-indent-i)', "Outer indent" }
+      map ['an'] = { '<Plug>(textobj-lastpat-n)', "Last pattern" }
+      map ['aN'] = { '<Plug>(textobj-lastpat-N)', "Prev pattern" }
+      map:register { modes = 'o' }
     end
   }
 
@@ -293,10 +232,11 @@ return packer.startup(function()
       'nvim-lua/lsp-status.nvim',
       'onsails/lspkind-nvim',
       'neovim/nvim-lspconfig',
+      'simrat39/symbols-outline.nvim',
     },
     config = function()
       local lspkind = require('lspkind')
-      lspkind.init{}
+      lspkind.init {}
 
       local lsp_status = require('lsp-status')
       lsp_status.register_progress()
@@ -305,35 +245,37 @@ return packer.startup(function()
       local on_attach = function(client, bufnr)
         lsp_status.on_attach(client, bufnr)
 
-        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-        local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-        --
-        buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-        --
+        vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
         -- Mappings.
-        local opts = { noremap = true, silent = true }
-        buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-        buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-        buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-        buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-        buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-        buf_set_keymap('n', '<Leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-        buf_set_keymap('n', '<Leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-        buf_set_keymap('n', '<Leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-        buf_set_keymap('n', '<Leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-        buf_set_keymap('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-        buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-        buf_set_keymap('n', '<Leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-        buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-        buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-        buf_set_keymap('n', '<Leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+        local function print_workspace_folders()
+          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end
+        map ['<Leader>wl'] = { print_workspace_folders, "Workspace folders" }
+        map ['<Leader>wa'] = { vim.lsp.buf.add_workspace_folder, "Add workspace folder" }
+        map ['<Leader>wr'] = { vim.lsp.buf.remove_workspace_folder, "Remove workdspace folder" }
+
+        map ['gD'] = { vim.lsp.buf.declaration, "Declaration" }
+        map ['gd'] = { vim.lsp.buf.definition, "Definition" }
+        map ['K'] = { vim.lsp.buf.hover, "Hover" }
+        map ['gi'] = { vim.lsp.buf.implementation, "Implementation" }
+        map ['<C-k>'] = { vim.lsp.buf.signature_help, "Signature" }
+        map ['<Leader>D'] = { vim.lsp.buf.type_definition, "Type" }
+        map ['<Leader>rn'] = { vim.lsp.buf.rename, "Rename" }
+        map ['gr'] = { vim.lsp.buf.references, "References" }
+        map ['<Leader>e' ] = { vim.lsp.diagnostic.show_line_diagnostics, "Diagnostics" }
+        map ['[d'] = { vim.lsp.diagnostic.goto_prev, "Previous diagnostic" }
+        map [']d'] = { vim.lsp.diagnostic.goto_next, "Next diagnostic" }
+        map ['<Leader>q'] = { vim.lsp.diagnostic.set_loclist, "Set loclist" }
 
         -- Set some keybinds conditional on server capabilities
         if client.resolved_capabilities.document_formatting then
-          buf_set_keymap("n", "<Leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+          map ['<Leader>f'] = { vim.lsp.buf.formatting, "Document formatting" }
         elseif client.resolved_capabilities.document_range_formatting then
-          buf_set_keymap("n", "<Leader>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+          map ['<Leader>f'] = { vim.lsp.buf.range_formatting, "Range formatting" }
         end
+
+        map:register { silent = true, remap = false }
 
         -- Set autocommands conditional on server_capabilities
         if client.resolved_capabilities.document_highlight then
@@ -423,10 +365,14 @@ return packer.startup(function()
           latex_symbols = true;
         };
       }
-      local t = function(str)
+
+      -- Use (s-)tab to:
+      --- move to prev/next item in completion menuone
+      --- jump to prev/next snippet's placeholder
+      local function t(str)
         return vim.api.nvim_replace_termcodes(str, true, true, true)
       end
-      local check_back_space = function()
+      local function check_back_space()
           local col = vim.fn.col('.') - 1
           if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
               return true
@@ -434,9 +380,6 @@ return packer.startup(function()
               return false
           end
       end
-      -- Use (s-)tab to:
-      --- move to prev/next item in completion menuone
-      --- jump to prev/next snippet's placeholder
       _G.tab_complete = function()
         if vim.fn.pumvisible() == 1 then
           return t "<C-n>"
@@ -448,6 +391,8 @@ return packer.startup(function()
           return vim.fn['compe#complete']()
         end
       end
+      map ['<Tab>'] = { "v:lua.tab_complete()", "Smart Tab complete" }
+
       _G.s_tab_complete = function()
         if vim.fn.pumvisible() == 1 then
           return t "<C-p>"
@@ -457,21 +402,43 @@ return packer.startup(function()
           return t "<S-Tab>"
         end
       end
-      vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", { expr = true })
-      vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", { expr = true })
-      vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", { expr = true })
-      vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", { expr = true })
+      map ["<S-Tab>"] = { "v:lua.s_tab_complete()", "Smart Shift-Tab complete" }
+
+      map:separate { modes = 'is', expr = true }
+
+      map ['<C-Space>'] = { '<Cmd>call compe#complete()<CR>', "Force completion" }
+      map ['<C-e>'] = { '<Cmd>call compe#close("<C-e>")<CR>', "Cancel completion" }
+      map ['<C-f>'] = { '<Cmd>call compe#scroll({ "delta": +4 })<CR>', "Scroll completion up" }
+      map ['<C-d>'] = { '<Cmd>call compe#scroll({ "delta": -4 })<CR>', "Scroll completion down" }
+
+      map:register { modes = 'i', remap = false }
     end
   }
 
-  use { 'lotabout/skim', run = './install', requires = { 'lotabout/skim.vim' } }
-  use { 'w0rp/ale', cmd = 'ALEEnable' }
-  use { 'sbdchd/neoformat', cmd = 'Neoformat' }
+  use {
+    'lotabout/skim',
+    requires = { 'lotabout/skim.vim' },
+    run = './install',
+  }
+  use {
+    'w0rp/ale',
+    cmd = 'ALEEnable'
+  }
+  use {
+    'sbdchd/neoformat',
+    cmd = 'Neoformat'
+  }
 
   use 'kopischke/vim-stay'
   use 'tpope/vim-sleuth'
   use 'tpope/vim-eunuch'
-  use 'dylanaraps/root.vim'
+  use {
+    "ahmedkhalf/project.nvim",
+    config = function()
+      local project = require("project_nvim")
+      project.setup {}
+    end
+  }
   use 'airodactyl/neovim-ranger'
   use {
     'ntpeters/vim-better-whitespace',
@@ -482,14 +449,39 @@ return packer.startup(function()
   }
 
 
-  use 'phaazon/hop.nvim'
+  use {
+    'phaazon/hop.nvim',
+    config = function()
+      local hop = require('hop')
+      hop.setup {}
+
+      map ['F'] = { function() vim.cmd 'norm 0<CR>'; hop.hint_lines_skip_whitespace() end, "Jump to a line" }
+      map ['f'] = { function() hop.hint_char1() end, "Jump to a letter" }
+      map:separate { modes = 'o' }
+
+      map ['F'] = { function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end, "Jump to a line and focus on it" }
+      map ['f'] = { function() hop.hint_char1() end, "Jump to a letter" }
+      map:register { modes = 'n' }
+    end
+  }
   use 'chaoren/vim-wordmotion'
   use 'mg979/vim-visual-multi'
 
-  use { 'tommcdo/vim-exchange', keys = 'cx' }
-  use { 'AndrewRadev/switch.vim', keys = 't' }
-  use { 'arthurxavierx/vim-caser', keys = 'gs' }
-  use 'junegunn/vim-easy-align'
+  use {
+    'AndrewRadev/switch.vim',
+    keys = 't',
+    config = function()
+      map ['t'] = { '<Cmd>Switch<CR>', "Toggle value" }
+      map:register {}
+    end
+  }
+  use {
+    'junegunn/vim-easy-align',
+    config = function()
+      map ['|'] = { '<Plug>(EasyAlign)', "Align" }
+      map:register { modes = 'nxv' }
+    end
+  }
   use 'matze/vim-move'
   use 'triglav/vim-visual-increment'
   use 'terryma/vim-expand-region'
@@ -501,6 +493,14 @@ return packer.startup(function()
         keybindings = { n = ';', v = ';', nl = ';;' }
       }
     end
+  }
+  use {
+    'tommcdo/vim-exchange',
+    keys = 'cx'
+  }
+  use {
+    'arthurxavierx/vim-caser',
+    keys = 'gs'
   }
 
   use 'aperezdc/vim-template'
@@ -528,7 +528,9 @@ return packer.startup(function()
           interval = 5000
         },
         current_line_blame = true,
-        current_line_blame_delay = 0,
+        current_line_blame_opts = {
+          delay = 0
+        }
       }
     end
   }
@@ -536,19 +538,93 @@ return packer.startup(function()
   use {
     'nvim-treesitter/nvim-treesitter',
     run = ":TSUpdate",
+    requires = {
+      'romgrk/nvim-treesitter-context',
+      'RRethy/nvim-treesitter-textsubjects'
+    },
     config = function()
       local tree_sitter = require('nvim-treesitter.configs')
       tree_sitter.setup {
         ensure_installed = 'maintained',
-        highlight = { enabled = true },
-        indent = { enabled = true }
+        highlight = {
+          enable = true
+        },
+        indent = {
+          enable = true
+        },
+        textsubjects = {
+          enable = true,
+          keymaps = {
+            [','] = 'textsubjects-smart'
+          }
+        }
       }
     end,
-    {
-      'nvim-treesitter/playground',
-      'plasticboy/vim-markdown',
-      'dzeban/vim-log-syntax',
-      'romgrk/nvim-treesitter-context',
-    }
+  }
+
+  use 'plasticboy/vim-markdown'
+  use {
+    'iamcco/markdown-preview.nvim',
+    run = 'cd app && yarn install',
+    setup = function()
+      vim.g.mkdp_auto_start = true
+      vim.g.mkdp_browser = 'chromium'
+      vim.g.mkdp_page_title = 'Markdown Preview'
+    end
+  }
+
+  use 'nvim-treesitter/playground'
+  use 'dzeban/vim-log-syntax'
+
+  use {
+    'folke/which-key.nvim',
+    config = function()
+      local which_key = which_key or require('which-key')
+      which_key.setup {
+        icons = {
+          separator = ''
+        },
+        layout = {
+          align = 'center',
+          width = { min = 0, max = 200 },
+        },
+        window = {
+          position = 'top',
+          margin = { 3, 8, 3, 8 },
+          padding = { 3, 8, 3, 8 },
+          winblend = 23
+        },
+      }
+      map ['<Space>'] = { '<Nop>', "Unmap space" }
+      map ['<Space>'] = { '<Leader>', "Space is the leader key!" }
+      map:separate { remap = true }
+
+      map ['<Esc><Esc>'] = { '<Cmd>stopinsert<CR>',  "Exit from terminal mode" }
+      map ['<Esc><Esc><Esc>'] = { '<Cmd>stopinsert<CR>M', "Exit from terminal mode and focus on center" }
+      map:separate { modes = 't', remap = false }
+
+      map ['<Esc><Esc>'] = { function() vim.cmd 'helpcl | lcl | ccl | nohls | silent! Goyo!' end, "Exit all non-file windows" }
+
+      local function keepmiddle()
+        if vim.wo.scrolloff == 999 then
+          if vim.w.keepmiddle_scrolloff_backup ~= nil then
+            vim.wo.scrolloff = vim.w.scrolloff_backup
+          else
+            vim.wo.scrolloff = 0
+          end
+        else
+          if vim.wo.scrolloff ~= 0 then
+            vim.w.keepmiddle_scrolloff_backup = vim.wo.scrolloff
+          end
+          vim.wo.scrolloff = 999
+          vim.cmd 'norm M'
+        end
+      end
+      map ['MM'] = { keepmiddle, "Toggle scrolloff", remap = false }
+
+      map ['U'] = { '<C-r>', "Undo" }
+
+      map:register { modes = 'n' }
+    end
   }
 end)

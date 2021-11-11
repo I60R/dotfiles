@@ -50,7 +50,9 @@ vim.o.pumblend = 15
 vim.o.smartindent = true
 vim.o.matchtime = 2
 vim.o.showmatch = true
+
 vim.o.timeoutlen = 1500
+vim.o.updatetime = 200
 
 vim.o.hidden = true
 vim.o.lazyredraw = true
@@ -73,7 +75,7 @@ vim.cmd [[
 au! VimEnter * :silent exec "!kill -s SIGWINCH $PPID"
 au! CursorHold * checktime
 
-au BufEnter * if empty(&ft) && &buftype != 'terminal' | set filetype=markdown | endif
+au! BufEnter * if empty(&ft) && &buftype != 'terminal' | set filetype=markdown | endif
 
 function! PageClose(page_alternate_bufnr)
 bd!
@@ -83,7 +85,8 @@ endif
 endfunction
 au! User PageOpen exe 'map <buffer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>' | exe 'tmap <bufer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>'
 
-au! User GoyoLeave hi Normal guibg=NONE ctermbg=NONE
+au! User GoyoEnter Gitsigns toggle_signs | ScrollViewDisable
+au! User GoyoLeave hi Normal guibg=NONE ctermbg=NONE | Gitsigns toggle_signs | ScrollViewEnable
 
 aug VMlens
   au!
