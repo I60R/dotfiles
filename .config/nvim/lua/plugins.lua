@@ -2,7 +2,7 @@ return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
   vim.g.no_plugin_maps = true
-  _G.map = require('map')
+  require('keymap')
 
   use {
     'folke/tokyonight.nvim',
@@ -328,7 +328,10 @@ return require('packer').startup(function()
     'windwp/nvim-autopairs',
     config = function()
       local autopairs = require('nvim-autopairs')
-      autopairs.setup {}
+      autopairs.setup {
+        check_ts = true,
+        enable_check_bracket_line = true,
+      }
       local autopairs_compe = require("nvim-autopairs.completion.compe")
       autopairs_compe.setup {
         map_cr = true, --  map <CR> on insert mode
@@ -404,7 +407,7 @@ return require('packer').startup(function()
       end
       map ["<S-Tab>"] = { "v:lua.s_tab_complete()", "Smart Shift-Tab complete" }
 
-      map:separate { modes = 'is', expr = true }
+      map:split { modes = 'is', expr = true }
 
       map ['<C-Space>'] = { '<Cmd>call compe#complete()<CR>', "Force completion" }
       map ['<C-e>'] = { '<Cmd>call compe#close("<C-e>")<CR>', "Cancel completion" }
@@ -453,11 +456,14 @@ return require('packer').startup(function()
     'phaazon/hop.nvim',
     config = function()
       local hop = require('hop')
-      hop.setup {}
+      hop.setup {
+        inclusive_jump = true,
+        uppercase_labels = true,
+      }
 
       map ['F'] = { function() vim.cmd 'norm 0<CR>'; hop.hint_lines_skip_whitespace() end, "Jump to a line" }
       map ['f'] = { function() hop.hint_char1() end, "Jump to a letter" }
-      map:separate { modes = 'o' }
+      map:split { modes = 'o' }
 
       map ['F'] = { function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end, "Jump to a line and focus on it" }
       map ['f'] = { function() hop.hint_char1() end, "Jump to a letter" }
@@ -540,7 +546,8 @@ return require('packer').startup(function()
     run = ":TSUpdate",
     requires = {
       'romgrk/nvim-treesitter-context',
-      'RRethy/nvim-treesitter-textsubjects'
+      'RRethy/nvim-treesitter-textsubjects',
+      'windwp/nvim-ts-autotag',
     },
     config = function()
       local tree_sitter = require('nvim-treesitter.configs')
@@ -552,6 +559,12 @@ return require('packer').startup(function()
         indent = {
           enable = true
         },
+        autotag = {
+          enable = true,
+          filetypes = {
+            'html', 'javascript', 'javascriptreact', 'typescriptreact', 'svelte', 'vue', 'markdown'
+          }
+        },
         textsubjects = {
           enable = true,
           keymaps = {
@@ -559,17 +572,32 @@ return require('packer').startup(function()
           }
         }
       }
+
+      local tree_sitter_parsers = require("nvim-treesitter.parsers").get_parser_configs()
+      tree_sitter_parsers.markdown = {
+        install_info = {
+          url = "https://github.com/ikatyang/tree-sitter-markdown",
+          files = { "src/parser.c", "src/scanner.cc" },
+        },
+        filetype = "markdown",
+      }
     end,
   }
 
-  use 'plasticboy/vim-markdown'
   use {
-    'iamcco/markdown-preview.nvim',
-    run = 'cd app && yarn install',
-    setup = function()
-      vim.g.mkdp_auto_start = true
-      vim.g.mkdp_browser = 'chromium'
-      vim.g.mkdp_page_title = 'Markdown Preview'
+    'plasticboy/vim-markdown',
+    requires = {
+      'godlygeek/tabular'
+    }
+  }
+  use {
+    'kat0h/bufpreview.vim',
+    requires = {
+      'vim-denops/denops.vim'
+    },
+    config = function()
+      vim.g.bufpreview_browser = 'chromium'
+      vim.cmd 'autocmd Filetype markdown :PreviewMarkdown'
     end
   }
 
@@ -597,18 +625,18 @@ return require('packer').startup(function()
       }
       map ['<Space>'] = { '<Nop>', "Unmap space" }
       map ['<Space>'] = { '<Leader>', "Space is the leader key!" }
-      map:separate { remap = true }
+      map:split { remap = true }
 
       map ['<Esc><Esc>'] = { '<Cmd>stopinsert<CR>',  "Exit from terminal mode" }
       map ['<Esc><Esc><Esc>'] = { '<Cmd>stopinsert<CR>M', "Exit from terminal mode and focus on center" }
-      map:separate { modes = 't', remap = false }
+      map:split { modes = 't', remap = false }
 
       map ['<Esc><Esc>'] = { function() vim.cmd 'helpcl | lcl | ccl | nohls | silent! Goyo!' end, "Exit all non-file windows" }
 
-      local function keepmiddle()
+      local function keepmiddle_toggle()
         if vim.wo.scrolloff == 999 then
-          if vim.w.keepmiddle_scrolloff_backup ~= nil then
-            vim.wo.scrolloff = vim.w.scrolloff_backup
+          if vim.w.keepmiddle_toggle_scrolloff_backup ~= nil then
+            vim.wo.scrolloff = vim.w.keepmiddle_toggle_scrolloff_backup
           else
             vim.wo.scrolloff = 0
           end
@@ -620,7 +648,12 @@ return require('packer').startup(function()
           vim.cmd 'norm M'
         end
       end
-      map ['MM'] = { keepmiddle, "Toggle scrolloff", remap = false }
+      map ['MM'] = { keepmiddle_toggle, "Toggle scrolloff", remap = false }
+
+      local function cursorcolumn_toggle()
+        vim.wo.cursorcolumn = not vim.wo.cursorcolumn
+      end
+      map ['MC'] = { cursorcolumn_toggle, "Toggle cursorcolumn", remap = false }
 
       map ['U'] = { '<C-r>', "Undo" }
 
