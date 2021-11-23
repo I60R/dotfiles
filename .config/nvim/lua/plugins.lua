@@ -81,10 +81,10 @@ return require('packer').startup(function()
         local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
         map ['<M-' .. n .. '>'] = { focus_nth_buffer, "Go to (" .. n .. ") buffer", remap = false, silent = true }
       end
-      map ['<M-`>'    ] = { '<Cmd>BufferLinePick<CR>', "Pick buffer" }
+      map ['<M-`>'] = { '<Cmd>BufferLinePick<CR>', "Pick buffer" }
       map ['<M-Left>' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
       map ['<M-Right>'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
-      map ['<M-q>'    ] = { '<Cmd>b # | bd #<CR>', "Close buffer" }
+      map ['<M-q>'] = { '<Cmd>b # | bd #<CR>', "Close buffer" }
       map:register { modes = 'nicxsot' }
     end
   }

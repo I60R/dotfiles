@@ -29,6 +29,10 @@ _G.map = setmetatable({}, {
     -- allows to batch-modify them. This could be used to avoid
     -- repeating the same arguments before each mapping e.g. `mode`.
     split = function(self, override_arguments)
+      -- retain the function that would be called with each
+      -- keymap and allows to modify them in this way
+      local for_each_hook = override_arguments.each;
+      override_arguments.each = nil
       -- iterate from the end
       for rev_id = #self, 1, -1 do
         local prev_key_arguments_tuple = self[rev_id]
@@ -47,6 +51,10 @@ _G.map = setmetatable({}, {
           -- override arguments otherwise
           mapping_arguments[arg] = value
         until true end
+        -- call hook that allows to modify the key
+        if for_each_hook ~= nil then
+          for_each_hook(key, mode_mapping_arguments)
+        end
       end
       -- set delimiter so anoter `map:split {}` call wouldn't
       -- iterate over these options
@@ -59,6 +67,10 @@ _G.map = setmetatable({}, {
     -- that currently are in the table but not belongs to any
     -- group, thus, allows to avoid extra `map:split {}` call.
     register = function(self, extra_arguments)
+      -- retain the function that would be called with each
+      -- keymap and allows to modify them in this way
+      local for_each_hook = extra_arguments.each;
+      extra_arguments.each = nil
       -- try append extra arguments to mapping if the list of
       -- them was provided and it isn't empty
       if extra_arguments and next(extra_arguments) ~= nil then
@@ -101,10 +113,18 @@ _G.map = setmetatable({}, {
             end
             -- swap modes with the current mode letter
             mode_mapping_arguments.mode = mode_letter
+            -- call hook that allows to modify the key
+            if for_each_hook ~= nil then
+              for_each_hook(key, mode_mapping_arguments)
+            end
             -- map key in the current mode
             require('which-key').register(mode_key_arguments_tuple)
           end
           break
+        end
+        -- call hook that allows to modify the key
+        if for_each_hook ~= nil then
+          for_each_hook(key, mapping_arguments)
         end
         -- otherwise map in default mode
         require('which-key').register(next_key_arguments_tuple)
