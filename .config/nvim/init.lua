@@ -71,11 +71,11 @@ vim.o.whichwrap = 'b,s,<,>,h,l,[,]'
 vim.o.splitbelow = true
 vim.o.splitright = true
 
+-- au! BufEnter * if empty(&ft) && &buftype != 'terminal' | set filetype=markdown | endif
+
 vim.cmd [[
 au! VimEnter * :silent exec "!kill -s SIGWINCH $PPID"
 au! CursorHold * checktime
-
-au! BufEnter * if empty(&ft) && &buftype != 'terminal' | set filetype=markdown | endif
 
 function! PageClose(page_alternate_bufnr)
 bd!
@@ -84,13 +84,4 @@ if bufnr('%') == a:page_alternate_bufnr && mode('%') == 'n'
 endif
 endfunction
 au! User PageOpen exe 'map <buffer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>' | exe 'tmap <bufer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>'
-
-au! User GoyoEnter Gitsigns toggle_signs | ScrollViewDisable
-au! User GoyoLeave hi Normal guibg=NONE ctermbg=NONE | Gitsigns toggle_signs | ScrollViewEnable
-
-aug VMlens
-  au!
-  au User visual_multi_start lua require('vmlens').start()
-  au User visual_multi_exit lua require('vmlens').exit()
-aug END
 ]]

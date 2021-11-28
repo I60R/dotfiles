@@ -84,6 +84,8 @@ return require('packer').startup(function()
       map ['<M-`>'] = { '<Cmd>BufferLinePick<CR>', "Pick buffer" }
       map ['<M-Left>' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
       map ['<M-Right>'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
+      map ['<F13>'] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
+      map ['<F14>'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
       map ['<M-q>'] = { '<Cmd>b # | bd #<CR>', "Close buffer" }
       map:register { modes = 'nicxsot' }
     end
@@ -125,6 +127,13 @@ return require('packer').startup(function()
       vim.g['asterisk#keeppos'] = 1
     end,
     config = function()
+      vim.cmd [[
+        aug VMlens
+          au!
+          au User visual_multi_start lua require('vmlens').start()
+          au User visual_multi_exit lua require('vmlens').exit()
+        aug END
+      ]]
       map ['*' ] = { '<Plug>(asterisk-z*)<Cmd>lua require("hlslens").start()<CR>', "Search word" }
       map ['#' ] = { '<Plug>(asterisk-z#)<Cmd>lua require("hlslens").start()<CR>', "Search word backwards" }
       map ['g*'] = { '<Plug>(asterisk-gz*)<Cmd>lua require("hlslens").start()<CR>', "Search word" }
@@ -187,6 +196,10 @@ return require('packer').startup(function()
     cmd = "Goyo",
     setup = function()
       vim.g.goyo_width = 150
+      vim.cmd [[
+        au! User GoyoLeave hi Normal guibg=NONE ctermbg=NONE | Gitsigns toggle_signs | ScrollViewEnable
+        au! User GoyoEnter Gitsigns toggle_signs | ScrollViewDisable
+      ]]
       map ['<Space><Space>'] = { '<Cmd>Goyo<CR>', "Distraction-free writing" }
       map:register {}
     end
@@ -304,18 +317,24 @@ return require('packer').startup(function()
 
       -- Use a loop to conveniently both setup defined servers
       -- and map buffer local keybindings when the language server attaches
-      local servers = { "bashls", "rust_analyzer", "clangd" }
+      local servers = { "pyright", "bashls", "rust_analyzer", "clangd" }
       for _, lsp in ipairs(servers) do
         nvim_lsp[lsp].setup {
           on_attach = on_attach,
-          capabilities = lsp_status.capabilities
+          capabilities = lsp_status.capabilities,
+          flags = {
+            debounce_text_changes = 150,
+          }
         }
       end
 
       nvim_lsp.sumneko_lua.setup {
         cmd = { 'lua-language-server', '-E', '/usr/share/lua-language-server', "/main.lua" },
         on_attach = on_attach,
-        capabilities = lsp_status.capabilities
+        capabilities = lsp_status.capabilities,
+        flags = {
+          debounce_text_changes = 150,
+        }
       }
     end
   }
@@ -470,6 +489,14 @@ return require('packer').startup(function()
       map:register { modes = 'n' }
     end
   }
+  use {
+    'mfussenegger/nvim-treehopper',
+    config = function()
+      map ['m'] = { function() require('tsht').nodes() end, "Jomp to a tree node", modes = 'o' }
+      map ['m'] = { function() require('tsht').nodes() end, "Jomp to a tree node", modes = 'v', remap = false }
+      map:register {}
+    end
+  }
   use 'chaoren/vim-wordmotion'
   use 'mg979/vim-visual-multi'
 
@@ -568,9 +595,18 @@ return require('packer').startup(function()
         textsubjects = {
           enable = true,
           keymaps = {
-            [','] = 'textsubjects-smart'
+            ['<Space>'] = 'textsubjects-smart'
           }
-        }
+        },
+        incremental_selection = {
+          enable = true,
+          keymaps = {
+            init_selection = '<CR>',
+            scope_incremental = '<CR>',
+            node_incremental = '<Tab>',
+            node_decremental = '<S-Tab>',
+          },
+        },
       }
 
       local tree_sitter_parsers = require("nvim-treesitter.parsers").get_parser_configs()
@@ -588,16 +624,17 @@ return require('packer').startup(function()
     'plasticboy/vim-markdown',
     requires = {
       'godlygeek/tabular'
-    }
+    },
+    ft = 'markdown'
   }
   use {
     'kat0h/bufpreview.vim',
     requires = {
       'vim-denops/denops.vim'
     },
+    ft = 'markdown',
     config = function()
       vim.g.bufpreview_browser = 'chromium'
-      vim.cmd 'autocmd Filetype markdown :PreviewMarkdown'
     end
   }
 
