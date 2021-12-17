@@ -180,7 +180,16 @@ return require('packer').startup(function()
       numb.setup {}
     end
   }
-  use 'dstein64/nvim-scrollview'
+  use {
+    'dstein64/nvim-scrollview',
+    config = function()
+      vim.g.scrollview_collumn = 1
+      vim.g.scrollview_excluded_filetypes = {
+        'aerial', 'packer', 'help'
+      }
+    end
+
+  }
   use {
     'inkarkat/vim-mark',
     requires = { 'inkarkat/vim-ingo-library' },
@@ -192,7 +201,7 @@ return require('packer').startup(function()
   }
   use {
     'junegunn/goyo.vim',
-    keys = '<Leader><Space>',
+    keys = '<Leader>f',
     cmd = "Goyo",
     setup = function()
       vim.g.goyo_width = 150
@@ -200,7 +209,7 @@ return require('packer').startup(function()
         au! User GoyoLeave hi Normal guibg=NONE ctermbg=NONE | Gitsigns toggle_signs | ScrollViewEnable
         au! User GoyoEnter Gitsigns toggle_signs | ScrollViewDisable
       ]]
-      map ['<Space><Space>'] = { '<Cmd>Goyo<CR>', "Distraction-free writing" }
+      map ['<Space>f'] = { '<Cmd>Goyo<CR>', "Distraction-free writing" }
       map:register {}
     end
   }
@@ -245,7 +254,7 @@ return require('packer').startup(function()
       'nvim-lua/lsp-status.nvim',
       'onsails/lspkind-nvim',
       'neovim/nvim-lspconfig',
-      'simrat39/symbols-outline.nvim',
+      'stevearc/aerial.nvim',
     },
     config = function()
       local lspkind = require('lspkind')
@@ -254,9 +263,23 @@ return require('packer').startup(function()
       local lsp_status = require('lsp-status')
       lsp_status.register_progress()
 
+      vim.g.aerial = {
+        backends = { 'lsp', 'markdown', 'treesitter' },
+        default_direction = "prefer_left",
+        open_automatic = true,
+        open_automatic_min_lines = 1,
+        open_automatic_min_symbols = 1,
+        markdown = { update_delay = 1000 },
+        lsp = { update_delay = 1000 },
+        treesitter = { update_delay = 1000 },
+      }
+      local aerial = require('aerial')
+
+
       local nvim_lsp = require('lspconfig')
       local on_attach = function(client, bufnr)
         lsp_status.on_attach(client, bufnr)
+        aerial.on_attach(client, bufnr)
 
         vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -397,9 +420,9 @@ return require('packer').startup(function()
       local function check_back_space()
           local col = vim.fn.col('.') - 1
           if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-              return true
+            return true
           else
-              return false
+            return false
           end
       end
       _G.tab_complete = function()
@@ -528,6 +551,16 @@ return require('packer').startup(function()
     end
   }
   use {
+    'saifulapm/chartoggle.nvim',
+    config = function()
+      local chartoggle = require('chartoggle')
+      chartoggle.setup {
+        leader = '<Leader>',
+        keys = { ',', ';', "'", '"', ' ' }
+      }
+    end
+  }
+  use {
     'tommcdo/vim-exchange',
     keys = 'cx'
   }
@@ -535,6 +568,7 @@ return require('packer').startup(function()
     'arthurxavierx/vim-caser',
     keys = 'gs'
   }
+
 
   use 'aperezdc/vim-template'
   use 'antoyo/vim-licenses'
@@ -632,9 +666,9 @@ return require('packer').startup(function()
     requires = {
       'vim-denops/denops.vim'
     },
-    ft = 'markdown',
     config = function()
       vim.g.bufpreview_browser = 'chromium'
+      vim.cmd 'autocmd Filetype markdown :PreviewMarkdown'
     end
   }
 
@@ -693,6 +727,7 @@ return require('packer').startup(function()
       map ['MC'] = { cursorcolumn_toggle, "Toggle cursorcolumn", remap = false }
 
       map ['U'] = { '<C-r>', "Undo" }
+      map ['<C-t>'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', "Create new file", remap = true, modes = 'vto' }
 
       map:register { modes = 'n' }
     end

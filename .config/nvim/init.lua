@@ -71,17 +71,15 @@ vim.o.whichwrap = 'b,s,<,>,h,l,[,]'
 vim.o.splitbelow = true
 vim.o.splitright = true
 
--- au! BufEnter * if empty(&ft) && &buftype != 'terminal' | set filetype=markdown | endif
-
 vim.cmd [[
 au! VimEnter * :silent exec "!kill -s SIGWINCH $PPID"
 au! CursorHold * checktime
 
 function! PageClose(page_alternate_bufnr)
-bd!
-if bufnr('%') == a:page_alternate_bufnr && mode('%') == 'n'
-  norm a
-endif
+  silent! bd!
+  if bufnr('%') == a:page_alternate_bufnr && mode('%') == 'n'
+    norm a
+  endif
 endfunction
 au! User PageOpen exe 'map <buffer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>' | exe 'tmap <bufer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>'
 ]]
