@@ -1,4 +1,20 @@
----
+-- Helper to map ctrl, atl, shift and permutations
+local function map_with_mod(modifiers, extensions)
+  return setmetatable({}, {
+    __newindex = function(self, key, mapping_arguments)
+      if mapping_arguments.mod ~= nil then
+        for i, v in ipairs(modifiers) do
+          mapping_arguments.mod[#mapping_arguments.mod + i] = v
+        end
+      else
+        mapping_arguments.mod = modifiers
+      end
+      _G.map[key] = mapping_arguments
+    end,
+    __index = extensions,
+  })
+end
+
 --- Provides a nice DSL over which-key.nvim plugin, for example:
 ---
 --- ```lua
@@ -15,14 +31,38 @@ _G.map = setmetatable({}, {
   -- Mappings aren't registered yet but only temporarily stored
   -- in the table until `map:register {}` is called
   __newindex = function(self, key, mapping_arguments)
-    local key_arguments_tuple = { [key] = mapping_arguments }
+    local key_arguments_tuple = { [tostring(key)] = mapping_arguments }
     local unique_id = #self + 1
     rawset(self, unique_id, key_arguments_tuple)
   end,
 
   -- Next enables `split` and `register` methods on keymaps
   -- table that allows to batch-operate on its contents.
+  -- Also provides Ctrl, Alt, Shift modifier keymaps that could
+  -- be used instead of <C-..>, <M-..>, <S-..>
   __index = {
+    -- Enables `map.ctrl` modifier which could be extended
+    -- as `map.ctrl.alt`, `map.ctrl.shift` and `map.ctrl.alt.shift`
+    ctrl = map_with_mod({ "ctrl" }, {
+      -- `map.ctrl.alt` extension
+      alt = map_with_mod({ "ctrl", "alt" }, {
+        -- `map.ctrl.alt.shift` extension
+        shift = map_with_mod { "ctrl", "alt", "shift" },
+      }),
+      -- `map.ctrl.shift` extension
+      shift = map_with_mod { "ctrl", "shift" },
+    }),
+
+    -- Enables `map.alt` modifier which could be extended
+    -- as `map.alt.shift` only
+    alt = map_with_mod({ "alt" }, {
+      -- `map.alt.shift` extension
+      shift = map_with_mod { "alt", "shift" },
+    }),
+
+    -- Enables `map.shift` modifier which cannot be extended,
+    -- use `map.ctrl` and `map.alt` instead
+    shift = map_with_mod { "shift" },
 
     -- This method thematically groups keymappings that currently
     -- are in the table but not belongs to another group yet, and
@@ -96,6 +136,31 @@ _G.map = setmetatable({}, {
         -- which-key doesn't understand it
         mapping_arguments.mode = mapping_arguments.modes
         mapping_arguments.modes = nil
+        -- process modifier keys if they're present
+        -- and remove `mod` because
+        -- which-key doesn't understand it
+        if mapping_arguments.mod ~= nil then
+          local modifiers = {}
+          for _, modifier in pairs(mapping_arguments.mod) do
+            modifiers[modifier] = true
+          end
+          if modifiers.ctrl and modifiers.alt and modifiers.shift then
+            key = '<C-M-S-' .. key .. '>'
+          elseif modifiers.ctrl and modifiers.alt then
+            key = '<C-M-' .. key .. '>'
+          elseif modifiers.ctrl and modifiers.shift then
+            key = '<C-S-' .. key .. '>'
+          elseif modifiers.alt and modifiers.shift then
+            key = '<M-S-' .. key .. '>'
+          elseif modifiers.ctrl then
+            key = '<C-' .. key .. '>'
+          elseif modifiers.alt then
+            key = '<M-' .. key .. '>'
+          elseif modifiers.shift then
+            key = '<S-' .. key .. '>'
+          end
+          mapping_arguments.mod = nil
+        end
         -- map key in multiple modes if more than one are specified
         if mapping_arguments.mode and #mapping_arguments.mode > 1 then
           for mode_letter in mapping_arguments.mode:gmatch '.' do

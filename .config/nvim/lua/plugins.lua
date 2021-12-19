@@ -79,14 +79,14 @@ return require('packer').startup(function()
       }
       for n = 1, 9 do
         local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
-        map ['<M-' .. n .. '>'] = { focus_nth_buffer, "Go to (" .. n .. ") buffer", remap = false, silent = true }
+        map.alt [n] = { focus_nth_buffer, "Go to (" .. n .. ") buffer", remap = false, silent = true }
       end
-      map ['<M-`>'] = { '<Cmd>BufferLinePick<CR>', "Pick buffer" }
-      map ['<M-Left>' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
-      map ['<M-Right>'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
+      map.alt ['`'] = { '<Cmd>BufferLinePick<CR>', "Pick buffer" }
+      map.alt ['Left' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
+      map.alt ['Right'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
+      map.alt ['q'] = { '<Cmd>b # | bd #<CR>', "Close buffer" }
       map ['<F13>'] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
       map ['<F14>'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
-      map ['<M-q>'] = { '<Cmd>b # | bd #<CR>', "Close buffer" }
       map:register { modes = 'nicxsot' }
     end
   }
@@ -295,7 +295,7 @@ return require('packer').startup(function()
         map ['gd'] = { vim.lsp.buf.definition, "Definition" }
         map ['K'] = { vim.lsp.buf.hover, "Hover" }
         map ['gi'] = { vim.lsp.buf.implementation, "Implementation" }
-        map ['<C-k>'] = { vim.lsp.buf.signature_help, "Signature" }
+        map.ctrl ['k'] = { vim.lsp.buf.signature_help, "Signature" }
         map ['<Leader>D'] = { vim.lsp.buf.type_definition, "Type" }
         map ['<Leader>rn'] = { vim.lsp.buf.rename, "Rename" }
         map ['gr'] = { vim.lsp.buf.references, "References" }
@@ -447,14 +447,14 @@ return require('packer').startup(function()
           return t "<S-Tab>"
         end
       end
-      map ["<S-Tab>"] = { "v:lua.s_tab_complete()", "Smart Shift-Tab complete" }
+      map.shift ["Tab"] = { "v:lua.s_tab_complete()", "Smart Shift-Tab complete" }
 
       map:split { modes = 'is', expr = true }
 
-      map ['<C-Space>'] = { '<Cmd>call compe#complete()<CR>', "Force completion" }
-      map ['<C-e>'] = { '<Cmd>call compe#close("<C-e>")<CR>', "Cancel completion" }
-      map ['<C-f>'] = { '<Cmd>call compe#scroll({ "delta": +4 })<CR>', "Scroll completion up" }
-      map ['<C-d>'] = { '<Cmd>call compe#scroll({ "delta": -4 })<CR>', "Scroll completion down" }
+      map.ctrl ['Space'] = { '<Cmd>call compe#complete()<CR>', "Force completion" }
+      map.ctrl ['e'] = { '<Cmd>call compe#close("<C-e>")<CR>', "Cancel completion" }
+      map.ctrl ['f'] = { '<Cmd>call compe#scroll({ "delta": +4 })<CR>', "Scroll completion up" }
+      map.ctrl ['d'] = { '<Cmd>call compe#scroll({ "delta": -4 })<CR>', "Scroll completion down" }
 
       map:register { modes = 'i', remap = false }
     end
@@ -727,7 +727,7 @@ return require('packer').startup(function()
       map ['MC'] = { cursorcolumn_toggle, "Toggle cursorcolumn", remap = false }
 
       map ['U'] = { '<C-r>', "Undo" }
-      map ['<C-t>'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', "Create new file", remap = true, modes = 'vto' }
+      map.ctrl ['t'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', "Create new file", remap = true, modes = 'vto' }
 
       map:register { modes = 'n' }
     end
