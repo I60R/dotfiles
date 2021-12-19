@@ -163,8 +163,6 @@ _G.map = setmetatable({}, {
         end
         -- common functionality
         local function register_key(mapping_arguments)
-          -- replace termcoes so < will work as expecteD
-          key = vim.api.nvim_replace_termcodes(key, true, false, true)
           -- call hook that allows to modify the key
           if for_each_hook ~= nil then
             for_each_hook(key, mapping_arguments)
