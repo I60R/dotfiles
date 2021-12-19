@@ -79,14 +79,21 @@ return require('packer').startup(function()
       }
       for n = 1, 9 do
         local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
-        map.alt [n] = { focus_nth_buffer, "Go to (" .. n .. ") buffer", remap = false, silent = true }
+        (map "Go to (" .. n .. ") buffer")
+          .alt [n] = { focus_nth_buffer, remap = false, silent = true }
       end
-      map.alt ['`'] = { 'BufferLinePick', "Pick buffer" }
-      map.alt ['Left' ] = { 'BufferLineCyclePrev', "Previous buffer" }
-      map.alt ['Right'] = { 'BufferLineCycleNext', "Next buffer" }
-      map.alt ['q'] = { 'b # | bd #', "Close buffer" }
-      map ['<F13>'] = { 'BufferLineCyclePrev', "Previous buffer" }
-      map ['<F14>'] = { 'BufferLineCycleNext', "Next buffer" }
+      (map "Pick a buffer")
+        .alt ['`'] = 'BufferLinePick'
+      (map "Previous buffer")
+        .alt ['Left'] = 'BufferLineCyclePrev'
+      (map "Next buffer")
+        .alt ['Right'] = 'BufferLineCycleNext'
+      (map "Close buffer")
+        .alt ['q'] = 'b # | bd #'
+      (map "Previous buffer")
+        ['<F13>'] = 'BufferLineCyclePrev'
+      (map "Next buffer")
+        ['<F14>'] = 'BufferLineCycleNext'
       map:register { as = 'cmd', modes = 'nicxsot' }
     end
   }
@@ -100,8 +107,8 @@ return require('packer').startup(function()
       colorizer.setup {
         '*',
         '!noft',
-        css = { css = true },
         html = { css = true },
+        css = { css = true },
         javascript = { css = true }
       }
     end
@@ -133,11 +140,15 @@ return require('packer').startup(function()
           au User visual_multi_start lua require('vmlens').start()
           au User visual_multi_exit lua require('vmlens').exit()
         aug END
-      ]]
-      map ['*' ] = { plug = 'asterisk-z*', 'require("hlslens").start()', "Search word" }
-      map ['#' ] = { plug = 'asterisk-z#', 'require("hlslens").start()', "Search word backwards" }
-      map ['g*'] = { plug = 'asterisk-gz*', 'require("hlslens").start()', "Search word" }
-      map ['g#'] = { plug = 'asterisk-gz#', 'require("hlslens").start()', "Search word backwards" }
+      ]];
+      (map "Search word")
+        ['*'] = { plug = 'asterisk-z*', 'require("hlslens").start()' }
+      (map "Search word backwards")
+        ['#' ] = { plug = 'asterisk-z#', 'require("hlslens").start()' }
+      (map "Go to search word")
+        ['g*'] = { plug = 'asterisk-gz*', 'require("hlslens").start()' }
+      (map "Go to search word backwards")
+        ['g#'] = { plug = 'asterisk-gz#', 'require("hlslens").start()' }
       map:register { as = 'lua' }
     end
   }
@@ -149,10 +160,12 @@ return require('packer').startup(function()
         calm_down = true,
         nearest_float_when = 'never',
       }
-      vim.cmd 'hi IncSearch gui=bold guifg=white'
+      vim.cmd 'hi IncSearch gui=bold guifg=white';
 
-      map ['n'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'n'); require('hlslens').start() end, "Next match" }
-      map ['N'] = { function() vim.cmd('normal! ' .. vim.v.count1 .. 'N'); require('hlslens').start() end, "Prev match" }
+      (map "Next match")
+        ['n'] = function() vim.cmd('normal! ' .. vim.v.count1 .. 'n'); require('hlslens').start() end
+      (map "Prev match")
+        ['N'] = function() vim.cmd('normal! ' .. vim.v.count1 .. 'N'); require('hlslens').start() end
       map:register { remap = false }
     end
   }
@@ -207,8 +220,9 @@ return require('packer').startup(function()
       vim.cmd [[
         au! User GoyoLeave hi Normal guibg=NONE ctermbg=NONE | Gitsigns toggle_signs | ScrollViewEnable
         au! User GoyoEnter Gitsigns toggle_signs | ScrollViewDisable
-      ]]
-      map ['<Space>f'] = { 'Goyo', "Distraction-free writing" }
+      ]];
+      (map "Distraction-free writing")
+        ['<Space>f'] = 'Goyo'
       map:register { as = 'cmd' }
     end
   }
@@ -238,10 +252,14 @@ return require('packer').startup(function()
       vim.g.textobj_lastpat_no_default_key_mappings = true
     end,
     config = function()
-      map ['ai'] = { plug = 'textobj-indent-a', "Inner indent" }
-      map ['iI'] = { plug = 'textobj-indent-i', "Outer indent" }
-      map ['an'] = { plug = 'textobj-lastpat-n', "Last pattern" }
-      map ['aN'] = { plug = 'textobj-lastpat-N', "Prev pattern" }
+      (map "Inner indent")
+        ['ai'] = { plug = 'textobj-indent-a' }
+      (map "Outer indent")
+        ['iI'] = { plug = 'textobj-indent-i' }
+      (map "Last pattern")
+        ['an'] = { plug = 'textobj-lastpat-n' }
+      (map "Previous pattern")
+        ['aN'] = { plug = 'textobj-lastpat-N' }
       map:register { modes = 'o' }
     end
   }
@@ -286,28 +304,45 @@ return require('packer').startup(function()
         local function print_workspace_folders()
           print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end
-        map ['<Leader>wl'] = { print_workspace_folders, "Workspace folders" }
-        map ['<Leader>wa'] = { vim.lsp.buf.add_workspace_folder, "Add workspace folder" }
-        map ['<Leader>wr'] = { vim.lsp.buf.remove_workspace_folder, "Remove workdspace folder" }
+        (map "Workspace folders")
+          ['<Leader>wl'] = print_workspace_folders;
+        (map "Add workspace folder")
+          ['<Leader>wa'] = vim.lsp.buf.add_workspace_folder;
+        (map "Remove workdspace folder")
+          ['<Leader>wr'] = vim.lsp.buf.remove_workspace_folder;
 
-        map ['gD'] = { vim.lsp.buf.declaration, "Declaration" }
-        map ['gd'] = { vim.lsp.buf.definition, "Definition" }
-        map ['K'] = { vim.lsp.buf.hover, "Hover" }
-        map ['gi'] = { vim.lsp.buf.implementation, "Implementation" }
-        map.ctrl ['k'] = { vim.lsp.buf.signature_help, "Signature" }
-        map ['<Leader>D'] = { vim.lsp.buf.type_definition, "Type" }
-        map ['<Leader>rn'] = { vim.lsp.buf.rename, "Rename" }
-        map ['gr'] = { vim.lsp.buf.references, "References" }
-        map ['<Leader>e' ] = { vim.lsp.diagnostic.show_line_diagnostics, "Diagnostics" }
-        map ['[d'] = { vim.lsp.diagnostic.goto_prev, "Previous diagnostic" }
-        map [']d'] = { vim.lsp.diagnostic.goto_next, "Next diagnostic" }
-        map ['<Leader>q'] = { vim.lsp.diagnostic.set_loclist, "Set loclist" }
+        (map "Declaration")
+          ['gD'] = vim.lsp.buf.declaration;
+        (map "Definition")
+          ['gd'] = vim.lsp.buf.definition;
+        (map "Hover")
+          ['K'] = vim.lsp.buf.hover;
+        (map "Implementation")
+          ['gi'] = vim.lsp.buf.implementation;
+        (map "Signature")
+          .ctrl ['k'] = vim.lsp.buf.signature_help;
+        (map "Type")
+          ['<Leader>D'] = vim.lsp.buf.type_definition;
+        (map "Rename")
+          ['<Leader>rn'] = vim.lsp.buf.rename;
+        (map "References")
+          ['gr'] = vim.lsp.buf.references;
+        (map "Diagnostics")
+          ['<Leader>e' ] = vim.lsp.diagnostic.show_line_diagnostics;
+        (map "Previous diagnostic")
+          ['[d'] = vim.lsp.diagnostic.goto_prev;
+        (map "Next diagnostic")
+          [']d'] = vim.lsp.diagnostic.goto_next;
+        (map "Set loclist")
+          ['<Leader>q'] = vim.lsp.diagnostic.set_loclist;
 
         -- Set some keybinds conditional on server capabilities
         if client.resolved_capabilities.document_formatting then
-          map ['<Leader>f'] = { vim.lsp.buf.formatting, "Document formatting" }
+          (map "Document formatting")
+            ['<Leader>f'] = vim.lsp.buf.formatting;
         elseif client.resolved_capabilities.document_range_formatting then
-          map ['<Leader>f'] = { vim.lsp.buf.range_formatting, "Range formatting" }
+          (map "Range formatting")
+            ['<Leader>f'] = vim.lsp.buf.range_formatting;
         end
 
         map:register { silent = true, remap = false }
@@ -417,12 +452,12 @@ return require('packer').startup(function()
         return vim.api.nvim_replace_termcodes(str, true, true, true)
       end
       local function check_back_space()
-          local col = vim.fn.col('.') - 1
-          if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-            return true
-          else
-            return false
-          end
+        local col = vim.fn.col('.') - 1
+        if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+          return true
+        else
+          return false
+        end
       end
       _G.tab_complete = function()
         if vim.fn.pumvisible() == 1 then
@@ -435,7 +470,8 @@ return require('packer').startup(function()
           return vim.fn['compe#complete']()
         end
       end
-      map ['<Tab>'] = { "v:lua.tab_complete()", "Smart Tab complete" }
+      (map "Smart Tab complete")
+        ['<Tab>'] = "v:lua.tab_complete()"
 
       _G.s_tab_complete = function()
         if vim.fn.pumvisible() == 1 then
@@ -446,14 +482,19 @@ return require('packer').startup(function()
           return t "<S-Tab>"
         end
       end
-      map.shift ["Tab"] = { "v:lua.s_tab_complete()", "Smart Shift-Tab complete" }
+      (map "Smart Shift-Tab complete")
+        .shift ["Tab"] = "v:lua.s_tab_complete()"
 
-      map:split { modes = 'is', expr = true }
+      map:split { modes = 'is', expr = true };
 
-      map.ctrl ['Space'] = { 'compe#complete()', "Force completion" }
-      map.ctrl ['e'] = { 'compe#close("<C-e>")', "Cancel completion" }
-      map.ctrl ['f'] = { 'compe#scroll({ "delta": +4 })', "Scroll completion up" }
-      map.ctrl ['d'] = { 'compe#scroll({ "delta": -4 })', "Scroll completion down" }
+      (map "Force completion")
+        .ctrl ['Space'] = 'compe#complete()'
+      (map "Cancel completion")
+        .ctrl ['e'] = 'compe#close("<C-e>")'
+      (map "Scroll completion up")
+        .ctrl ['f'] = 'compe#scroll({"delta": +4 })'
+      (map "Scroll completion down")
+        .ctrl ['d'] = 'compe#scroll({"delta": -4 })'
 
       map:register { as = 'call', modes = 'i', remap = false }
     end
@@ -500,23 +541,28 @@ return require('packer').startup(function()
       hop.setup {
         inclusive_jump = true,
         uppercase_labels = true,
-      }
+      };
+      (map "Jump to a line")
+        ['F'] = function() vim.cmd 'norm 0<CR>'; hop.hint_lines_skip_whitespace() end
+      (map "Jump to a letter")
+        ['f'] = function() hop.hint_char1() end
+      map:split { modes = 'o' };
 
-      map ['F'] = { function() vim.cmd 'norm 0<CR>'; hop.hint_lines_skip_whitespace() end, "Jump to a line" }
-      map ['f'] = { function() hop.hint_char1() end, "Jump to a letter" }
-      map:split { modes = 'o' }
-
-      map ['F'] = { function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end, "Jump to a line and focus on it" }
-      map ['f'] = { function() hop.hint_char1() end, "Jump to a letter" }
+      (map "Jump to a line and focus on it")
+        ['F'] = function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end
+      (map "Jump to a letter")
+        ['f'] = function() hop.hint_char1() end
       map:register { modes = 'n' }
     end
   }
   use {
     'mfussenegger/nvim-treehopper',
     config = function()
-      map ['m'] = { function() require('tsht').nodes() end, "Jomp to a tree node", modes = 'o' }
-      map ['m'] = { function() require('tsht').nodes() end, "Jomp to a tree node", modes = 'v', remap = false }
-      map:register {}
+      (map "Jump to a tree node")
+        ['m'] = function() require('tsht').nodes() end
+      (map "Jump to a tree node")
+        ['m'] = { function() require('tsht').nodes() end, remap = false }
+      map:register { modes = 'ov' }
     end
   }
   use 'chaoren/vim-wordmotion'
@@ -526,14 +572,16 @@ return require('packer').startup(function()
     'AndrewRadev/switch.vim',
     keys = 't',
     config = function()
-      map ['t'] = { 'Switch', "Toggle value" }
+      (map "Toggle value")
+        ['t'] = 'Switch'
       map:register { as = 'cmd' }
     end
   }
   use {
     'junegunn/vim-easy-align',
     config = function()
-      map ['|'] = { plug = 'EasyAlign', "Align" }
+      (map "Align by symbol")
+        ['|'] = { plug = 'EasyAlign' }
       map:register { modes = 'nxv' }
     end
   }
@@ -692,16 +740,21 @@ return require('packer').startup(function()
           padding = { 3, 8, 3, 8 },
           winblend = 23
         },
-      }
-      map ['<Space>'] = { '<Nop>', "Unmap space" }
-      map ['<Space>'] = { '<Leader>', "Space is the leader key!" }
-      map:split { remap = true }
+      };
+      (map "Unmap space")
+        ['<Space>'] = '<Nop>'
+      (map "Space is the leader key!")
+        ['<Space>'] = '<Leader>'
+      map:split { remap = true };
 
-      map ['<Esc><Esc>'] = { 'stopinsert',  "Exit from terminal mode" }
-      map ['<Esc><Esc><Esc>'] = { 'stopinsert | norm M', "Exit from terminal mode and focus on center" }
-      map:split { as = 'cmd', modes = 't', remap = false }
+      (map "Exit from terminal mode")
+        ['<Esc><Esc>'] = 'stopinsert'
+      (map "Exit from terminal mode and focus on center")
+        ['<Esc><Esc><Esc>'] = 'stopinsert | call timer_start(100, { -> execute("norm M") }, {})'
+      map:split { as = 'cmd', modes = 't', remap = false };
 
-      map ['<Esc><Esc>'] = { function() vim.cmd 'helpcl | lcl | ccl | nohls | silent! Goyo!' end, "Exit all non-file windows" }
+      (map "Close all non-file windows")
+        ['<Esc><Esc>'] = { 'helpcl | lcl | ccl | nohls | silent! Goyo!', as = 'cmd' }
 
       local function keepmiddle_toggle()
         if vim.wo.scrolloff == 999 then
@@ -718,15 +771,20 @@ return require('packer').startup(function()
           vim.cmd 'norm M'
         end
       end
-      map ['MM'] = { keepmiddle_toggle, "Toggle scrolloff", remap = false }
+      (map "Toggle scrolloff")
+        ['MM'] = { keepmiddle_toggle, remap = false }
 
       local function cursorcolumn_toggle()
         vim.wo.cursorcolumn = not vim.wo.cursorcolumn
       end
-      map ['MC'] = { cursorcolumn_toggle, "Toggle cursorcolumn", remap = false }
+      (map "Toggle cursorcolumn")
+        ['MC'] = { cursorcolumn_toggle, remap = false }
 
-      map ['U'] = { '<C-r>', "Undo" }
-      map.ctrl ['t'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', "Create new file", remap = true, modes = 'vto' }
+      (map "Undo")
+        ['U'] = '<C-r>'
+
+      (map "Create new file")
+        .ctrl ['t'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', remap = true, modes = 'vto' }
 
       map:register { modes = 'n' }
     end

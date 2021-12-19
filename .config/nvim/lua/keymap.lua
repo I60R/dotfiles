@@ -1,7 +1,10 @@
--- Helper to map ctrl, atl, shift and permutations
+--- Helper to map ctrl, atl, shift and their permutations
 local function map_with_mod(modifiers, extensions)
   return setmetatable({}, {
     __newindex = function(self, key, mapping_arguments)
+      if type(mapping_arguments) ~= 'table' then
+        mapping_arguments = { mapping_arguments }
+      end
       if mapping_arguments.mod ~= nil then
         for i, v in ipairs(modifiers) do
           mapping_arguments.mod[#mapping_arguments.mod + i] = v
@@ -18,10 +21,10 @@ end
 --- Provides a nice DSL over which-key.nvim plugin, for example:
 ---
 --- ```lua
---- map [','] = { '<Leader>', "Comma is leader!", remap = false }
+--- (map "Comma is leader!")
+---   [','] = { '<Leader>', remap = false }
 --- map:register { modes = 'nvo' }
 --- ```
----
 _G.map = setmetatable({}, {
 
   -- Next enables `map ['key'] = { .. }` syntax that could be
@@ -31,9 +34,33 @@ _G.map = setmetatable({}, {
   -- Mappings aren't registered yet but only temporarily stored
   -- in the table until `map:register {}` is called
   __newindex = function(self, key, mapping_arguments)
-    local key_arguments_tuple = { [tostring(key)] = mapping_arguments }
+    if type(mapping_arguments) ~= 'table' then
+      mapping_arguments = { mapping_arguments }
+    end
+    if self.description ~= nil then
+      mapping_arguments[2] = self.description
+      self.description = nil
+    end
+    local key_arguments_tuple = {
+      [tostring(key)] = mapping_arguments
+    }
     local unique_id = #self + 1
     rawset(self, unique_id, key_arguments_tuple)
+  end,
+
+  -- Next enables moving mapping description out of arguments
+  -- table e.g. `(map "x to y').x = { "y", remap = false }`
+  __call = function(self, description)
+    rawset(self, 'description', tostring(description))
+    return _G.map
+  end,
+
+  -- Next enables concatenation of mapping description without
+  -- any disambiguation e.g. `(map '[' .. x .. ']') [x] = ...`
+  __concat = function(self, more_description)
+    local pre = self.description or ''
+    rawset(self, 'description', pre .. tostring(more_description))
+    return _G.map
   end,
 
   -- Next enables `split` and `register` methods on keymaps
