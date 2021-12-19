@@ -71,7 +71,7 @@ _G.map = setmetatable({}, {
     split = function(self, override_arguments)
       -- retain the function that would be called with each
       -- keymap and allows to modify them in this way
-      local for_each_hook = override_arguments.each;
+      local for_each_hook = override_arguments.each
       override_arguments.each = nil
       -- iterate from the end
       for rev_id = #self, 1, -1 do
@@ -170,7 +170,7 @@ _G.map = setmetatable({}, {
             for_each_hook(key, mapping_arguments)
           end
           -- map key in the current mode
-          require('which-key').register{ [key] = mapping_arguments }
+          require('which-key').register { [key] = mapping_arguments }
         end
         -- map key in multiple modes if more than one are specified
         if mapping_arguments.mode and #mapping_arguments.mode > 1 then
@@ -189,8 +189,8 @@ _G.map = setmetatable({}, {
             end
             -- swap modes with the current mode letter
             mode_mapping_arguments.mode = mode_letter
+            register_key(mode_mapping_arguments)
           end
-          register_key(mode_mapping_arguments)
           break
         end
         register_key(mapping_arguments)
