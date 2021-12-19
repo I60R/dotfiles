@@ -161,6 +161,17 @@ _G.map = setmetatable({}, {
           end
           mapping_arguments.mod = nil
         end
+        -- common functionality
+        local function register_key(mapping_arguments)
+          -- replace termcoes so < will work as expecteD
+          key = vim.api.nvim_replace_termcodes(key, true, false, true)
+          -- call hook that allows to modify the key
+          if for_each_hook ~= nil then
+            for_each_hook(key, mapping_arguments)
+          end
+          -- map key in the current mode
+          require('which-key').register{ [key] = mapping_arguments }
+        end
         -- map key in multiple modes if more than one are specified
         if mapping_arguments.mode and #mapping_arguments.mode > 1 then
           for mode_letter in mapping_arguments.mode:gmatch '.' do
@@ -178,21 +189,11 @@ _G.map = setmetatable({}, {
             end
             -- swap modes with the current mode letter
             mode_mapping_arguments.mode = mode_letter
-            -- call hook that allows to modify the key
-            if for_each_hook ~= nil then
-              for_each_hook(key, mode_mapping_arguments)
-            end
-            -- map key in the current mode
-            require('which-key').register(mode_key_arguments_tuple)
           end
+          register_key(mode_mapping_arguments)
           break
         end
-        -- call hook that allows to modify the key
-        if for_each_hook ~= nil then
-          for_each_hook(key, mapping_arguments)
-        end
-        -- otherwise map in default mode
-        require('which-key').register(next_key_arguments_tuple)
+        register_key(mapping_arguments)
       until true end
     end,
   }
