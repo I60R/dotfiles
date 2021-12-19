@@ -81,13 +81,13 @@ return require('packer').startup(function()
         local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
         map.alt [n] = { focus_nth_buffer, "Go to (" .. n .. ") buffer", remap = false, silent = true }
       end
-      map.alt ['`'] = { '<Cmd>BufferLinePick<CR>', "Pick buffer" }
-      map.alt ['Left' ] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
-      map.alt ['Right'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
-      map.alt ['q'] = { '<Cmd>b # | bd #<CR>', "Close buffer" }
-      map ['<F13>'] = { '<Cmd>BufferLineCyclePrev<CR>', "Previous buffer" }
-      map ['<F14>'] = { '<Cmd>BufferLineCycleNext<CR>', "Next buffer" }
-      map:register { modes = 'nicxsot' }
+      map.alt ['`'] = { 'BufferLinePick', "Pick buffer" }
+      map.alt ['Left' ] = { 'BufferLineCyclePrev', "Previous buffer" }
+      map.alt ['Right'] = { 'BufferLineCycleNext', "Next buffer" }
+      map.alt ['q'] = { 'b # | bd #', "Close buffer" }
+      map ['<F13>'] = { 'BufferLineCyclePrev', "Previous buffer" }
+      map ['<F14>'] = { 'BufferLineCycleNext', "Next buffer" }
+      map:register { as = 'cmd', modes = 'nicxsot' }
     end
   }
 
@@ -134,11 +134,11 @@ return require('packer').startup(function()
           au User visual_multi_exit lua require('vmlens').exit()
         aug END
       ]]
-      map ['*' ] = { '<Plug>(asterisk-z*)<Cmd>lua require("hlslens").start()<CR>', "Search word" }
-      map ['#' ] = { '<Plug>(asterisk-z#)<Cmd>lua require("hlslens").start()<CR>', "Search word backwards" }
-      map ['g*'] = { '<Plug>(asterisk-gz*)<Cmd>lua require("hlslens").start()<CR>', "Search word" }
-      map ['g#'] = { '<Plug>(asterisk-gz#)<Cmd>lua require("hlslens").start()<CR>', "Search word backwards" }
-      map:register {}
+      map ['*' ] = { plug = 'asterisk-z*', 'require("hlslens").start()', "Search word" }
+      map ['#' ] = { plug = 'asterisk-z#', 'require("hlslens").start()', "Search word backwards" }
+      map ['g*'] = { plug = 'asterisk-gz*', 'require("hlslens").start()', "Search word" }
+      map ['g#'] = { plug = 'asterisk-gz#', 'require("hlslens").start()', "Search word backwards" }
+      map:register { as = 'lua' }
     end
   }
   use {
@@ -188,7 +188,6 @@ return require('packer').startup(function()
         'aerial', 'packer', 'help'
       }
     end
-
   }
   use {
     'inkarkat/vim-mark',
@@ -209,8 +208,8 @@ return require('packer').startup(function()
         au! User GoyoLeave hi Normal guibg=NONE ctermbg=NONE | Gitsigns toggle_signs | ScrollViewEnable
         au! User GoyoEnter Gitsigns toggle_signs | ScrollViewDisable
       ]]
-      map ['<Space>f'] = { '<Cmd>Goyo<CR>', "Distraction-free writing" }
-      map:register {}
+      map ['<Space>f'] = { 'Goyo', "Distraction-free writing" }
+      map:register { as = 'cmd' }
     end
   }
 
@@ -239,10 +238,10 @@ return require('packer').startup(function()
       vim.g.textobj_lastpat_no_default_key_mappings = true
     end,
     config = function()
-      map ['ai'] = { '<Plug>(textobj-indent-a)', "Inner indent" }
-      map ['iI'] = { '<Plug>(textobj-indent-i)', "Outer indent" }
-      map ['an'] = { '<Plug>(textobj-lastpat-n)', "Last pattern" }
-      map ['aN'] = { '<Plug>(textobj-lastpat-N)', "Prev pattern" }
+      map ['ai'] = { plug = 'textobj-indent-a', "Inner indent" }
+      map ['iI'] = { plug = 'textobj-indent-i', "Outer indent" }
+      map ['an'] = { plug = 'textobj-lastpat-n', "Last pattern" }
+      map ['aN'] = { plug = 'textobj-lastpat-N', "Prev pattern" }
       map:register { modes = 'o' }
     end
   }
@@ -451,12 +450,12 @@ return require('packer').startup(function()
 
       map:split { modes = 'is', expr = true }
 
-      map.ctrl ['Space'] = { '<Cmd>call compe#complete()<CR>', "Force completion" }
-      map.ctrl ['e'] = { '<Cmd>call compe#close("<C-e>")<CR>', "Cancel completion" }
-      map.ctrl ['f'] = { '<Cmd>call compe#scroll({ "delta": +4 })<CR>', "Scroll completion up" }
-      map.ctrl ['d'] = { '<Cmd>call compe#scroll({ "delta": -4 })<CR>', "Scroll completion down" }
+      map.ctrl ['Space'] = { 'compe#complete()', "Force completion" }
+      map.ctrl ['e'] = { 'compe#close("<C-e>")', "Cancel completion" }
+      map.ctrl ['f'] = { 'compe#scroll({ "delta": +4 })', "Scroll completion up" }
+      map.ctrl ['d'] = { 'compe#scroll({ "delta": -4 })', "Scroll completion down" }
 
-      map:register { modes = 'i', remap = false }
+      map:register { as = 'call', modes = 'i', remap = false }
     end
   }
 
@@ -527,14 +526,14 @@ return require('packer').startup(function()
     'AndrewRadev/switch.vim',
     keys = 't',
     config = function()
-      map ['t'] = { '<Cmd>Switch<CR>', "Toggle value" }
-      map:register {}
+      map ['t'] = { 'Switch', "Toggle value" }
+      map:register { as = 'cmd' }
     end
   }
   use {
     'junegunn/vim-easy-align',
     config = function()
-      map ['|'] = { '<Plug>(EasyAlign)', "Align" }
+      map ['|'] = { plug = 'EasyAlign', "Align" }
       map:register { modes = 'nxv' }
     end
   }
@@ -698,9 +697,9 @@ return require('packer').startup(function()
       map ['<Space>'] = { '<Leader>', "Space is the leader key!" }
       map:split { remap = true }
 
-      map ['<Esc><Esc>'] = { '<Cmd>stopinsert<CR>',  "Exit from terminal mode" }
-      map ['<Esc><Esc><Esc>'] = { '<Cmd>stopinsert<CR>M', "Exit from terminal mode and focus on center" }
-      map:split { modes = 't', remap = false }
+      map ['<Esc><Esc>'] = { 'stopinsert',  "Exit from terminal mode" }
+      map ['<Esc><Esc><Esc>'] = { 'stopinsert | norm M', "Exit from terminal mode and focus on center" }
+      map:split { as = 'cmd', modes = 't', remap = false }
 
       map ['<Esc><Esc>'] = { function() vim.cmd 'helpcl | lcl | ccl | nohls | silent! Goyo!' end, "Exit all non-file windows" }
 

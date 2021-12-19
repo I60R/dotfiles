@@ -126,19 +126,35 @@ _G.map = setmetatable({}, {
         end
         -- proceed to registering the mapping
         local key, mapping_arguments = next(next_key_arguments_tuple)
-        -- replace `remap` with `noremap` because
-        -- which-key doesn't understand it
+        -- update rhs if `type` and/or `plug` are provided
+        local rhs = mapping_arguments[1]
+        -- process `as = 'cmd'` and `as = 'lua'`
+        if type(rhs) == "string" then
+          if mapping_arguments[2] ~= nil then
+            if mapping_arguments.as == 'cmd'  then
+              rhs = '<Cmd>' .. rhs .. '<CR>'
+            elseif mapping_arguments.as == 'lua' then
+              rhs = '<Cmd>lua ' .. rhs .. '<CR>'
+            elseif mapping_arguments.as == 'call' then
+              rhs = '<Cmd>call ' .. rhs .. '<CR>'
+            end
+          else
+            mapping_arguments[2] = rhs
+            rhs = ''
+          end
+          -- process 'plug' flag
+          if mapping_arguments.plug ~= nil then
+            rhs = '<Plug>(' .. mapping_arguments.plug .. ')' .. rhs
+          end
+          mapping_arguments[1] = rhs
+        end
+        -- replace `remap` with `noremap`
         if mapping_arguments.remap ~= nil then
           mapping_arguments.noremap = not mapping_arguments.remap
-          mapping_arguments.remap = nil
         end
-        -- replace `modes` with `mode` because
-        -- which-key doesn't understand it
+        -- replace `modes` with `mode`
         mapping_arguments.mode = mapping_arguments.modes
-        mapping_arguments.modes = nil
         -- process modifier keys if they're present
-        -- and remove `mod` because
-        -- which-key doesn't understand it
         if mapping_arguments.mod ~= nil then
           local modifiers = {}
           for _, modifier in pairs(mapping_arguments.mod) do
@@ -159,8 +175,13 @@ _G.map = setmetatable({}, {
           elseif modifiers.shift then
             key = '<S-' .. key .. '>'
           end
-          mapping_arguments.mod = nil
         end
+        -- remove entries which which-key doesn't understand
+        mapping_arguments.modes = nil
+        mapping_arguments.mod = nil
+        mapping_arguments.remap = nil
+        mapping_arguments.plug = nil
+        mapping_arguments.as = nil
         -- common functionality
         local function register_key(mapping_arguments)
           -- call hook that allows to modify the key
