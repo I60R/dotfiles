@@ -45,7 +45,7 @@ vim.o.foldenable = false
 
 vim.o.inccommand = 'split'
 vim.o.wildignorecase = true
-vim.o.completeopt = 'menuone,noselect'
+vim.o.completeopt = 'menu,menuone,noselect'
 vim.o.pumblend = 15
 vim.o.smartindent = true
 vim.o.matchtime = 2
@@ -71,15 +71,25 @@ vim.o.whichwrap = 'b,s,<,>,h,l,[,]'
 vim.o.splitbelow = true
 vim.o.splitright = true
 
-vim.cmd [[
-au! VimEnter * :silent exec "!kill -s SIGWINCH $PPID"
-au! CursorHold * checktime
+vim.api.nvim_create_autocmd('VimEnter', {
+  command = 'silent exec "!kill -s SIGWINCH $PPID"'
+})
+vim.api.nvim_create_autocmd('CursorHold', {
+  command = 'checktime'
+})
 
-function! PageClose(page_alternate_bufnr)
-  silent! bd!
-  if bufnr('%') == a:page_alternate_bufnr && mode('%') == 'n'
-    norm a
-  endif
-endfunction
-au! User PageOpen exe 'map <buffer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>' | exe 'tmap <bufer> <C-c> :call PageClose(b:page_alternate_bufnr)<CR>'
-]]
+_G.page_close = function(page_alternate_bufnr)
+  local current_buffer_num = vim.api.nvim_get_current_buf()
+  vim.api.nvim_buf_delete(current_buffer_num, { force = true })
+  if current_buffer_num == page_alternate_bufnr and vim.api.nvim_get_mode() == 'n' then
+    vim.cmd 'norm a'
+  end
+end
+
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'PageOpen',
+  command = [[
+    map <buffer> <C-c> :lua page_close(vim.b.page_alternate_bufnr)<CR>
+    tmap <buffer> <C-c> :lua page_close(vim.b.page_alternate_bufnr)<CR>
+  ]]
+})

@@ -13,7 +13,7 @@ return require('packer').startup(function()
     config = function()
       vim.cmd 'colorscheme tokyonight'
       vim.cmd 'syntax enable'
-      vim.cmd 'hi NormalFloat guibg=none gui=bold'
+      vim.cmd 'hi NormalFloat guibg=#000000 gui=bold'
     end
   }
   use {
@@ -49,28 +49,25 @@ return require('packer').startup(function()
           indicator_icon = '',
           show_tab_indicators = false,
           custom_areas = {
-            right = function()
-              local git = vim.b.gitsigns_status_dict
+            left = function()
               local result = {}
-              local removed = git['removed']
-              if removed > 0 then
-                result[#result + 1] = { text = '  ', guifg = 'DarkRed' }
-                result[#result + 1] = { text = tostring(removed) }
-              end
+              local git = vim.b.gitsigns_status_dict
               local added = git['added']
               if added > 0 then
-                result[#result + 1] = { text = ' 樂', guifg = 'DarkGreen' }
-                result[#result + 1] = { text = tostring(added) }
+                result[#result + 1] = { text = tostring(added), guifg = 'grey'  }
+                result[#result + 1] = { text = '樂', guifg = 'DarkGreen' }
+              end
+              local removed = git['removed']
+              if removed > 0 then
+                result[#result + 1] = { text = tostring(removed), guifg = 'grey' }
+                result[#result + 1] = { text = ' ', guifg = 'DarkRed' }
               end
               local changed = git['changed']
               if changed > 0 then
-                result[#result + 1] = { text = ' ﰣ ', guifg = 'DarkYellow' }
-                result[#result + 1] = { text = tostring(changed) }
+                result[#result + 1] = { text = tostring(changed), guifg = 'grey'  }
+                result[#result + 1] = { text = 'ﰣ ', guifg = 'DarkYellow' }
               end
-              result[#result + 1] = { text = ' ', guifg = 'blue' }
-              result[#result + 1] = { text = '  ', guibg = 'blue' }
-              result[#result + 1] = { text = git['head'] .. ' ', guibg = 'blue', guifg = 'white', gui = 'bold' }
-              result[#result + 1] = { text = ' ' }
+              result[#result + 1] = { text = ' ' .. git.head, guifg = 'white', gui = 'bold' }
               return result
             end,
           },
@@ -134,13 +131,17 @@ return require('packer').startup(function()
       vim.g['asterisk#keeppos'] = 1
     end,
     config = function()
-      vim.cmd [[
-        aug VMlens
-          au!
-          au User visual_multi_start lua require('vmlens').start()
-          au User visual_multi_exit lua require('vmlens').exit()
-        aug END
-      ]];
+      local g = vim.api.nvim_create_augroup('VMlens', { clear = true })
+      vim.api.nvim_create_autocmd('User', {
+        group = g,
+        pattern = "visual_multi_start",
+        callback = function() require('vmlens').start() end
+      })
+      vim.api.nvim_create_autocmd('User', {
+        group = g,
+        pattern = "visual_multi_exit",
+        callback = function() require('vmlens').exit() end
+      });
       (map "Search word")
         ['*'] = { plug = 'asterisk-z*', 'require("hlslens").start()' }
       (map "Search word backwards")
@@ -217,10 +218,14 @@ return require('packer').startup(function()
     cmd = "Goyo",
     setup = function()
       vim.g.goyo_width = 150
-      vim.cmd [[
-        au! User GoyoLeave hi Normal guibg=NONE ctermbg=NONE | Gitsigns toggle_signs | ScrollViewEnable
-        au! User GoyoEnter Gitsigns toggle_signs | ScrollViewDisable
-      ]];
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'GoyoEnter',
+        command = "Gitsigns toggle_signs | ScrollViewDisable"
+      })
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'GoyoLeave',
+        command = "hi Normal guibg=none ctermbg=none | Gitsigns toggle_signs | ScrollViewEnable"
+      });
       (map "Distraction-free writing")
         ['<Space>f'] = 'Goyo'
       map:register { as = 'cmd' }
@@ -268,44 +273,45 @@ return require('packer').startup(function()
   use {
     'neovim/nvim-lsp',
     requires = {
-      'nvim-lua/lsp-status.nvim',
       'onsails/lspkind-nvim',
       'neovim/nvim-lspconfig',
       'stevearc/aerial.nvim',
+      'j-hui/fidget.nvim',
     },
     config = function()
       local lspkind = require('lspkind')
       lspkind.init {}
 
-      local lsp_status = require('lsp-status')
-      lsp_status.register_progress()
+      local fidget = require('fidget')
+      fidget.setup {
+        window = {
+          blend = 0,
+        },
+        fmt = {
+          upwards = false,
+        }
+      }
 
-      vim.g.aerial = {
-        backends = { 'lsp', 'markdown', 'treesitter' },
+      local aerial = require('aerial')
+      aerial.setup {
+        backends = { 'lsp', 'treesitter', 'markdown' },
         default_direction = "prefer_left",
-        open_automatic = true,
-        open_automatic_min_lines = 1,
-        open_automatic_min_symbols = 1,
+        open_automatic = function(bufnr) return true end,
         markdown = { update_delay = 1000 },
         lsp = { update_delay = 1000 },
         treesitter = { update_delay = 1000 },
       }
-      local aerial = require('aerial')
 
-
+      local cmp_nvim_lsp = require('cmp_nvim_lsp');
       local nvim_lsp = require('lspconfig')
-      local on_attach = function(client, bufnr)
-        lsp_status.on_attach(client, bufnr)
-        aerial.on_attach(client, bufnr)
+      local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-        vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+      local function on_attach(client, bufnr)
+        aerial.on_attach(client, bufnr);
 
         -- Mappings.
-        local function print_workspace_folders()
-          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-        end
         (map "Workspace folders")
-          ['<Leader>wl'] = print_workspace_folders;
+          ['<Leader>wl'] = function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end
         (map "Add workspace folder")
           ['<Leader>wa'] = vim.lsp.buf.add_workspace_folder;
         (map "Remove workdspace folder")
@@ -345,26 +351,24 @@ return require('packer').startup(function()
             ['<Leader>f'] = vim.lsp.buf.range_formatting;
         end
 
-        map:register { silent = true, remap = false }
+        map:register { silent = true, remap = false, buffer = bufnr }
 
         -- Set autocommands conditional on server_capabilities
         if client.resolved_capabilities.document_highlight then
-          vim.cmd([[
-            hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-            hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-            hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
-            augroup lsp_document_highlight
-              autocmd! * <buffer>
-              autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-              autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-            augroup END
-          ]], false)
+          vim.cmd [[
+            hi LspReferenceRead gui=underlineline
+            hi LspReferenceText gui=underlineline
+            hi LspReferenceWrite gui=underlineline
+          ]]
+          local g = vim.api.nvim_create_augroup('lsp_document_highlight', { clear = true })
+          vim.api.nvim_create_autocmd('CursorHold', { callback = function() vim.lsp.buf.document_highlight() end, group = g, buffer = 0 })
+          vim.api.nvim_create_autocmd('CursorMoved', { callback = function() vim.lsp.buf.clear_references() end, group = g, buffer = 0 })
         end
       end
 
       -- Enable snippet support
-      lsp_status.capabilities.textDocument.completion.completionItem.snippetSupport = true
-      lsp_status.capabilities.textDocument.completion.completionItem.resolveSupport = {
+      capabilities.textDocument.completion.completionItem.snippetSupport = true
+      capabilities.textDocument.completion.completionItem.resolveSupport = {
         properties = {
           'documentation',
           'detail',
@@ -375,10 +379,10 @@ return require('packer').startup(function()
       -- Use a loop to conveniently both setup defined servers
       -- and map buffer local keybindings when the language server attaches
       local servers = { "pyright", "bashls", "rust_analyzer", "clangd" }
-      for _, lsp in ipairs(servers) do
-        nvim_lsp[lsp].setup {
+      for _, server in ipairs(servers) do
+        nvim_lsp[server].setup {
           on_attach = on_attach,
-          capabilities = lsp_status.capabilities,
+          capabilities = capabilities,
           flags = {
             debounce_text_changes = 150,
           }
@@ -388,18 +392,27 @@ return require('packer').startup(function()
       nvim_lsp.sumneko_lua.setup {
         cmd = { 'lua-language-server', '-E', '/usr/share/lua-language-server', "/main.lua" },
         on_attach = on_attach,
-        capabilities = lsp_status.capabilities,
+        capabilities = capabilities,
         flags = {
           debounce_text_changes = 150,
+        },
+        settings = {
+          Lua = {
+            runtime = {
+              version = 'LuaJIT',
+            }
+          },
+          library = vim.api.nvim_get_runtime_file("", true),
+          workspace = {
+          },
+          telemetry = {
+            enable = false,
+          },
         }
       }
     end
   }
 
-  use 'hrsh7th/vim-vsnip'
-  use 'hrsh7th/vim-vsnip-integ'
-  use 'tamago324/compe-zsh'
-  use 'GoldsteinE/compe-latex-symbols'
   use {
     'windwp/nvim-autopairs',
     config = function()
@@ -408,95 +421,91 @@ return require('packer').startup(function()
         check_ts = true,
         enable_check_bracket_line = true,
       }
-      local autopairs_compe = require("nvim-autopairs.completion.compe")
-      autopairs_compe.setup {
-        map_cr = true, --  map <CR> on insert mode
-        map_complete = true, -- it will auto insert `(` after select function or method item
-        auto_select = true,  -- auto select first item
-      }
     end
   }
   use {
-    'hrsh7th/nvim-compe',
+    'L3MON4D3/LuaSnip',
+    requires = {
+      'rafamadriz/friendly-snippets'
+    },
     config = function()
-      local compe = require('compe')
-      compe.setup {
-        enabled = true;
-        autocomplete = true;
-        debug = false;
-        min_length = 1;
-        preselect = 'enable';
-        throttle_time = 80;
-        source_timeout = 200;
-        incomplete_delay = 400;
-        max_abbr_width = 100;
-        max_kind_width = 100;
-        max_menu_width = 100;
-        documentation = true;
-        source = {
-          path = true;
-          buffer = true;
-          calc = true;
-          nvim_lsp = true;
-          nvim_lua = true;
-          vsnip = true;
-          zsh = true;
-          latex_symbols = true;
-        };
+      require("luasnip/loaders/from_vscode").lazy_load()
+    end
+  }
+  use {
+    'hrsh7th/nvim-cmp',
+    requires = {
+      'hrsh7th/cmp-nvim-lua',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-cmdline',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-buffer',
+      'saadparwaiz1/cmp_luasnip',
+    },
+    config = function()
+      vim.o.completeopt = 'menu,menuone,noselect'
+      local luasnip = require('luasnip')
+      local function has_words_before()
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+      end
+      local cmp = require('cmp')
+      cmp.setup {
+        snippet = {
+          expand = function(args) luasnip.lsp_expand(args.body) end
+        },
+        mapping = {
+          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+          ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+          ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+          ['<C-y>'] = cmp.config.disable,
+          ['<C-e>'] = cmp.mapping { i = cmp.mapping.abort(), c = cmp.mapping.close() },
+          ['<CR>'] = cmp.mapping.confirm { select = true },
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            elseif has_words_before() then
+              cmp.complete()
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+        },
+        sources = cmp.config.sources {
+          { name = 'luasnip', group_index = 1 },
+          { name = 'nvim_lsp', group_index = 2 },
+          { name = 'buffer', group_index = 3 },
+          { name = 'path' },
+          { name = 'cmdline' },
+          { name = 'nvim_lua' },
+        }
       }
-
-      -- Use (s-)tab to:
-      --- move to prev/next item in completion menuone
-      --- jump to prev/next snippet's placeholder
-      local function t(str)
-        return vim.api.nvim_replace_termcodes(str, true, true, true)
-      end
-      local function check_back_space()
-        local col = vim.fn.col('.') - 1
-        if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-          return true
-        else
-          return false
-        end
-      end
-      _G.tab_complete = function()
-        if vim.fn.pumvisible() == 1 then
-          return t "<C-n>"
-        elseif vim.fn.call("vsnip#available", {1}) == 1 then
-          return t "<Plug>(vsnip-expand-or-jump)"
-        elseif check_back_space() then
-          return t "<Tab>"
-        else
-          return vim.fn['compe#complete']()
-        end
-      end
-      (map "Smart Tab complete")
-        ['<Tab>'] = "v:lua.tab_complete()"
-
-      _G.s_tab_complete = function()
-        if vim.fn.pumvisible() == 1 then
-          return t "<C-p>"
-        elseif vim.fn.call("vsnip#jumpable", {-1}) == 1 then
-          return t "<Plug>(vsnip-jump-prev)"
-        else
-          return t "<S-Tab>"
-        end
-      end
-      (map "Smart Shift-Tab complete")
-        .shift ["Tab"] = "v:lua.s_tab_complete()"
-
-      map:split { modes = 'is', expr = true };
-
-      (map "Force completion")
-        .ctrl ['Space'] = 'compe#complete()'
-      (map "Cancel completion")
-        .ctrl ['e'] = 'compe#close("<C-e>")'
-      (map "Scroll completion up")
-        .ctrl ['f'] = 'compe#scroll({"delta": +4 })'
-      (map "Scroll completion down")
-        .ctrl ['d'] = 'compe#scroll({"delta": -4 })'
-
-      map:register { as = 'call', modes = 'i', remap = false }
+      cmp.setup.cmdline('/', {
+        sources = {
+          { name = 'buffer' },
+          { name = 'path' },
+        }
+      })
+      cmp.setup.cmdline(':', {
+        sources = cmp.config.sources {
+          { name = 'path', group_index = 1 },
+          { name = 'nvim_lua', group_index = 2 },
+          { name = 'cmdline', group_index = 3 },
+        }
+      })
+      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+      cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done {})
     end
   }
 
@@ -521,7 +530,11 @@ return require('packer').startup(function()
     "ahmedkhalf/project.nvim",
     config = function()
       local project = require("project_nvim")
-      project.setup {}
+      project.setup {
+        detection_methods = { "lsp", "pattern" },
+        patterns = { "^.config" },
+        silent_chdir = false,
+      }
     end
   }
   use 'airodactyl/neovim-ranger'
@@ -529,7 +542,14 @@ return require('packer').startup(function()
     'ntpeters/vim-better-whitespace',
     config = function()
       vim.g.better_whitespace_filetypes_blacklist = { 'diff', 'pandoc', 'markdown', 'gitcommit', 'qf', 'help' }
-      vim.cmd 'au BufEnter * if index(g:better_whitespace_filetypes_blacklist, &ft) < 0 | exec "EnableStripWhitespaceOnSave" | endif'
+      vim.api.nvim_create_autocmd('BufEnter', {
+        callback = function()
+          for _, v in pairs(vim.g.better_whitespace_filetypes_blacklist) do
+            if v == vim.o.ft then return end
+          end
+          vim.cmd 'EnableStripWhitespaceOnSave'
+        end
+      })
     end
   }
 
@@ -638,8 +658,9 @@ return require('packer').startup(function()
     config = function()
       local gitsigns = require('gitsigns')
       gitsigns.setup {
-        watch_index = {
-          interval = 5000
+        watch_gitdir = {
+          interval = 5000,
+          follow_files = true,
         },
         current_line_blame = true,
         current_line_blame_opts = {
@@ -655,6 +676,7 @@ return require('packer').startup(function()
     requires = {
       'romgrk/nvim-treesitter-context',
       'RRethy/nvim-treesitter-textsubjects',
+      'RRethy/nvim-treesitter-endwise',
       'windwp/nvim-ts-autotag',
     },
     config = function()
@@ -665,6 +687,9 @@ return require('packer').startup(function()
           enable = true
         },
         indent = {
+          enable = true
+        },
+        endwise = {
           enable = true
         },
         autotag = {
@@ -689,15 +714,6 @@ return require('packer').startup(function()
           },
         },
       }
-
-      local tree_sitter_parsers = require("nvim-treesitter.parsers").get_parser_configs()
-      tree_sitter_parsers.markdown = {
-        install_info = {
-          url = "https://github.com/ikatyang/tree-sitter-markdown",
-          files = { "src/parser.c", "src/scanner.cc" },
-        },
-        filetype = "markdown",
-      }
     end,
   }
 
@@ -707,16 +723,6 @@ return require('packer').startup(function()
       'godlygeek/tabular'
     },
     ft = 'markdown'
-  }
-  use {
-    'kat0h/bufpreview.vim',
-    requires = {
-      'vim-denops/denops.vim'
-    },
-    config = function()
-      vim.g.bufpreview_browser = 'chromium'
-      vim.cmd 'autocmd Filetype markdown :PreviewMarkdown'
-    end
   }
 
   use 'nvim-treesitter/playground'
