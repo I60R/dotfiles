@@ -74,4 +74,3 @@ And such workflow is possible with the help of three git aliases:
     git setup cfg # First set up generic configuration
     git setup work # Then apply work-specific settings
 ```
-
