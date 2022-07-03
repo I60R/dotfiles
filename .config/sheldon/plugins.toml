@@ -1,0 +1,75 @@
+shell = "zsh"
+
+
+[plugins.zsh-defer]
+github = "romkatv/zsh-defer"
+
+
+[plugins.fast-syntax-highlighting]
+github = "zdharma-continuum/fast-syntax-highlighting"
+apply = ["defer"]
+
+[plugins.zsh-autopair]
+github = "hlissner/zsh-autopair"
+apply = ["defer"]
+
+[plugins.alias-tips]
+github = "djui/alias-tips"
+apply = ["defer"]
+
+[plugins.zsh-background-notify]
+github = "t413/zsh-background-notify"
+apply = ["defer"]
+
+[plugins.zsh-opt-path]
+github = "jreese/zsh-opt-path"
+apply = ["defer"]
+
+[plugins.zsh-tab-title]
+github = "trystan2k/zsh-tab-title"
+apply = ["defer"]
+
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+use = ["{{ name }}.zsh"]
+
+
+
+
+
+
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+
+[plugins.zsh-autocomplete]
+github = "marlonrichert/zsh-autocomplete"
+
+[plugins.oh-my-zsh]
+github = "ohmyzsh/ohmyzsh"
+use = [
+    "oh-my-zsh.sh",
+    "plugins/history-substring-search/history-substring-search.plugin.zsh",
+    "plugins/fancy-ctrl-z/fancy-ctrl-z.plugin.zsh",
+    "plugins/extract/extract.plugin.zsh",
+    "plugins/archlinux/archlinux.plugin.zsh",
+    "plugins/git/git.plugin.zsh",
+    "lib/completion.zsh",
+    "lib/history.zsh",
+    "lib/key-bindings.zsh",
+    "lib/directories.zsh",
+]
+
+
+
+[plugins.powerlevel10k]
+github = "romkatv/powerlevel10k"
+
+[plugins.hacker-quotes]
+github = "oldratlee/hacker-quotes"
+apply = ["noeol", "defer"]
+
+
+
+[templates]
+defer = { value = 'zsh-defer source "{{ file }}"', each = true }
+noeol = { value = 'export PROMPT_EOL_MARK=""; source "{{ file }}"; zsh-defer export PROMPT_EOL_MARK="%K{red} %k"', each = true }
