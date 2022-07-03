@@ -1,0 +1,5 @@
+[output LVDS-1]
+image=/home/igor/.cache/pacwall/pacwall-fit.png
+filter=fast
+scaling-mode=stretch
+anchor=center
