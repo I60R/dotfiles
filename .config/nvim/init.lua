@@ -1,10 +1,9 @@
 local packer_path = vim.fn.stdpath('data') .. '/site/pack/packer/site/packer.nvim'
 if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
-    vim.cmd('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
+  vim.cmd('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
 end
 
 vim.cmd 'packadd packer.nvim'
-vim.cmd 'autocmd BufWritePost plugins.lua source <afile> | PackerCompile'
 
 require 'plugins'
 
@@ -33,6 +32,7 @@ vim.o.number = true
 vim.o.numberwidth = 1
 
 vim.o.scrollback = -1
+vim.o.scrolloff = 1
 
 vim.o.clipboard = 'unnamedplus'
 vim.o.mouse = 'a'
@@ -59,7 +59,7 @@ vim.o.lazyredraw = true
 vim.o.hlsearch = false
 
 vim.o.fillchars = ''
-vim.o.signcolumn = 'yes'
+vim.o.signcolumn = 'yes:3'
 vim.o.showtabline = 2
 vim.o.laststatus = 0
 vim.o.shortmess = ''
@@ -76,6 +76,15 @@ vim.api.nvim_create_autocmd('VimEnter', {
 })
 vim.api.nvim_create_autocmd('CursorHold', {
   command = 'checktime'
+})
+
+vim.api.nvim_create_autocmd('BufWritePost', {
+  pattern = 'plugins.lua, config.lua, init.lua',
+  callback = function()
+    vim.cmd 'source <afile>'
+    vim.cmd 'PackerClean'
+    vim.cmd 'PackerCompile'
+  end,
 })
 
 _G.page_close = function(page_alternate_bufnr)

@@ -1,24 +1,41 @@
-return require('packer').startup(function()
+local packer_config = {
+  compile_path = vim.fn.stdpath('config') .. '/compiled.lua',
+  display = {
+    non_interactive = true,
+    open_cmd = 'enew'
+  },
+  autoremove = true,
+}
+
+return require('packer').startup({function()
   use 'wbthomason/packer.nvim'
 
   vim.g.no_plugin_maps = true
   require('keymap')
 
   use {
-    'folke/tokyonight.nvim',
-    setup = function()
-      vim.g.tokyonight_transparent = true
-      vim.g.tokyonight_style = 'night'
-    end,
+    "rebelot/kanagawa.nvim",
     config = function()
-      vim.cmd 'colorscheme tokyonight'
+      local kanagawa = require('kanagawa')
+      kanagawa.setup {
+        trasnparent = true,
+        colors = {
+          bg = 'NONE'
+        }
+      }
+      vim.cmd 'colorscheme kanagawa'
       vim.cmd 'syntax enable'
-      vim.cmd 'hi NormalFloat guibg=#000000 gui=bold'
+      vim.cmd 'hi! link TreesitterContext QuickFixLine'
+      vim.cmd 'hi! link TreesitterContextLineNumber QuickFixLine'
+      vim.cmd 'hi! link IndentBlanklineContextStart QuickFixLine'
+      vim.cmd 'hi! VertSplit guibg=NONE'
     end
   }
+
   use {
     'akinsho/nvim-bufferline.lua',
     requires = 'kyazdani42/nvim-web-devicons',
+    branch = 'main',
     config = function()
       local highlights = {
         background = { gui = 'bold', }
@@ -28,25 +45,29 @@ return require('packer').startup(function()
         'info', 'info_diagnostic',
         'warning', 'warning_diagnostic',
         'error', 'error_diagnostic',
-        'modified', 'duplicate', 'separator', 'indicator', 'pick'
+        'modified', 'duplicate', 'separator', 'indicator', 'pick', 'numbers',
       } do
         highlights[v .. '_selected'] = { guibg = '#0000FF' }
       end
-
       local bufferline = require('bufferline')
       bufferline.setup {
         options = {
           right_mouse_command = 'vertical sbuffer %d',
           middle_mouse_command = 'bdelete! %d',
           diagnostics = 'nvim_lsp',
+          diagnostics_indicator = function(count, level, diagnostics_dict, context)
+            local icon = level:match("error") and " " or " "
+            return " " .. icon .. count
+          end,
           show_buffer_close_icons = false,
           show_close_icon = false,
           always_show_bufferline = false,
           numbers = function(numbers)
-            return numbers.ordinal .. '.' .. numbers.lower(numbers.id) .. ' '
+            return numbers.ordinal .. '-' .. numbers.lower(numbers.id) .. ' '
           end,
           separator_style = { '', '' },
           indicator_icon = '',
+          color_icons = true,
           show_tab_indicators = false,
           custom_areas = {
             left = function()
@@ -77,7 +98,7 @@ return require('packer').startup(function()
       for n = 1, 9 do
         local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
         (map "Go to (" .. n .. ") buffer")
-          .alt [n] = { focus_nth_buffer, remap = false, silent = true }
+          .alt [n] = { focus_nth_buffer, remap = false, silent = true };
       end
       (map "Pick a buffer")
         .alt ['`'] = 'BufferLinePick'
@@ -97,6 +118,15 @@ return require('packer').startup(function()
 
   use 'machakann/vim-highlightedyank'
   use 'itchyny/vim-highlighturl'
+  use {
+    'chentoast/marks.nvim',
+    config = function()
+      local marks = require('marks')
+      marks.setup {
+        builtin_marks = { ".", "[", "]", "^", "'", '"', },
+      }
+    end
+  }
   use {
     'norcalli/nvim-colorizer.lua',
     config = function()
@@ -160,6 +190,7 @@ return require('packer').startup(function()
       hlslens.setup {
         calm_down = true,
         nearest_float_when = 'never',
+        virt_priority = 0,
       }
       vim.cmd 'hi IncSearch gui=bold guifg=white';
 
@@ -172,11 +203,15 @@ return require('packer').startup(function()
   }
   use {
     'lukas-reineke/indent-blankline.nvim',
-    setup = function()
-      vim.g.indent_blankline_char = '┊'
-      vim.g.indent_blankline_use_treesitter = true
-      vim.g.indent_blankline_buftype_exclude = { 'terminal', 'help' }
-      vim.g.indent_blankline_show_current_context = true
+    config = function()
+      local indent_blankline = require('indent_blankline')
+      indent_blankline.setup {
+        char = '┊',
+        use_treesitter = true,
+        buftype_exclude = { 'terminal', 'help' },
+        show_current_context = true,
+        show_current_context_start = true,
+      }
     end
   }
   use {
@@ -197,15 +232,20 @@ return require('packer').startup(function()
   use {
     'dstein64/nvim-scrollview',
     config = function()
-      vim.g.scrollview_collumn = 1
-      vim.g.scrollview_excluded_filetypes = {
-        'aerial', 'packer', 'help'
+      local scrollview = require('scrollview')
+      scrollview.setup {
+        column = 1,
+        winblend = 25,
+        base = 'left',
+        excluded_filetypes = {
+          'aerial', 'packer', 'help'
+        },
       }
     end
   }
   use {
     'inkarkat/vim-mark',
-    requires = { 'inkarkat/vim-ingo-library' },
+    requires = 'inkarkat/vim-ingo-library',
     cmd = 'Mark'
   }
   use {
@@ -213,25 +253,32 @@ return require('packer').startup(function()
     keys = 'ga'
   }
   use {
-    'junegunn/goyo.vim',
-    keys = '<Leader>f',
-    cmd = "Goyo",
-    setup = function()
-      vim.g.goyo_width = 150
-      vim.api.nvim_create_autocmd('User', {
-        pattern = 'GoyoEnter',
-        command = "Gitsigns toggle_signs | ScrollViewDisable"
-      })
-      vim.api.nvim_create_autocmd('User', {
-        pattern = 'GoyoLeave',
-        command = "hi Normal guibg=none ctermbg=none | Gitsigns toggle_signs | ScrollViewEnable"
-      });
-      (map "Distraction-free writing")
-        ['<Space>f'] = 'Goyo'
-      map:register { as = 'cmd' }
+    'folke/zen-mode.nvim',
+    config = function()
+      local toggle = require('toggle')
+      local zen_mode = require('zen-mode')
+      zen_mode.setup {
+        window = {
+          width = 120,
+          height = 0.85,
+        },
+        on_open = toggle.scrolloff,
+        on_close = toggle.scrolloff,
+      };
+      (map "Toggle zen mode")
+        ['<Leader>f'] = function() require('zen-mode').toggle() end
     end
   }
 
+  use {
+    'rainbowhxch/accelerated-jk.nvim',
+    config = function()
+      (map "Accelerated j")
+        ['j'] = { plug = 'accelerated_jk_j', modes = 'n' }
+      (map "Accelerated k")
+        ['k'] = { plug = 'accelerated_jk_k', modes = 'n' }
+    end
+  }
   use 'kana/vim-repeat'
 
   use 'machakann/vim-sandwich'
@@ -274,7 +321,10 @@ return require('packer').startup(function()
     'neovim/nvim-lsp',
     requires = {
       'onsails/lspkind-nvim',
+      'kosayoda/nvim-lightbulb',
       'neovim/nvim-lspconfig',
+      'folke/lua-dev.nvim',
+      'ray-x/lsp_signature.nvim',
       'stevearc/aerial.nvim',
       'j-hui/fidget.nvim',
     },
@@ -294,20 +344,56 @@ return require('packer').startup(function()
 
       local aerial = require('aerial')
       aerial.setup {
-        backends = { 'lsp', 'treesitter', 'markdown' },
+        backends = {
+          'lsp',
+          'treesitter',
+        },
         default_direction = "prefer_left",
-        open_automatic = function(bufnr) return true end,
-        markdown = { update_delay = 1000 },
-        lsp = { update_delay = 1000 },
-        treesitter = { update_delay = 1000 },
+        close_behavior = 'close',
+        open_automatic = function(bufnr)
+          if aerial.num_symbols(bufnr) ~= 0 then
+            vim.api.nvim_create_autocmd('BufLeave', {
+              buffer = bufnr,
+              command = 'AerialCloseAll',
+            })
+            return true
+          else
+            return false
+          end
+        end,
+        ignore = {
+          buftypes = {
+            'special',
+            'terminal',
+          }
+        },
+        markdown = {
+          update_delay = 1000
+        },
+        lsp = {
+          update_delay = 1000
+        },
+        treesitter = {
+          update_delay = 1000
+        },
       }
 
       local cmp_nvim_lsp = require('cmp_nvim_lsp');
-      local nvim_lsp = require('lspconfig')
+      local lspconfig = require('lspconfig')
       local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
       local function on_attach(client, bufnr)
         aerial.on_attach(client, bufnr);
+
+        local lspsignature = require('lsp_signature')
+        lspsignature.setup {}
+
+        local lightbulb = require('nvim-lightbulb')
+        lightbulb.setup {}
+        vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI' }, {
+          callback = function() require('nvim-lightbulb').update_lightbulb() end,
+          buffer = 0
+        });
 
         -- Mappings.
         (map "Workspace folders")
@@ -380,7 +466,7 @@ return require('packer').startup(function()
       -- and map buffer local keybindings when the language server attaches
       local servers = { "pyright", "bashls", "rust_analyzer", "clangd" }
       for _, server in ipairs(servers) do
-        nvim_lsp[server].setup {
+        lspconfig[server].setup {
           on_attach = on_attach,
           capabilities = capabilities,
           flags = {
@@ -389,27 +475,22 @@ return require('packer').startup(function()
         }
       end
 
-      nvim_lsp.sumneko_lua.setup {
-        cmd = { 'lua-language-server', '-E', '/usr/share/lua-language-server', "/main.lua" },
-        on_attach = on_attach,
-        capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 150,
-        },
-        settings = {
-          Lua = {
-            runtime = {
-              version = 'LuaJIT',
-            }
+      local lua_dev = require('lua-dev')
+      lua_dev.setup {
+        lspconfig = {
+          on_attach = on_attach,
+          capabilities = capabilities,
+          flags = {
+            debounce_text_changes = 150,
           },
-          library = vim.api.nvim_get_runtime_file("", true),
-          workspace = {
-          },
-          telemetry = {
-            enable = false,
-          },
+          settings = {
+            telemetry = {
+              enable = false,
+            },
+          }
         }
       }
+      lspconfig.sumneko_lua.setup(lua_dev)
     end
   }
 
@@ -531,7 +612,7 @@ return require('packer').startup(function()
     config = function()
       local project = require("project_nvim")
       project.setup {
-        detection_methods = { "lsp", "pattern" },
+        detection_methods = { "pattern", "lsp", },
         patterns = { "^.config" },
         silent_chdir = false,
       }
@@ -563,15 +644,15 @@ return require('packer').startup(function()
         uppercase_labels = true,
       };
       (map "Jump to a line")
-        ['F'] = function() vim.cmd 'norm 0<CR>'; hop.hint_lines_skip_whitespace() end
+        ['f'] = function() vim.cmd 'norm V'; hop.hint_lines_skip_whitespace() end
       (map "Jump to a letter")
-        ['f'] = function() hop.hint_char1() end
+        ['F'] = function() hop.hint_words() end
       map:split { modes = 'o' };
 
       (map "Jump to a line and focus on it")
-        ['F'] = function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end
+        ['f'] = function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end
       (map "Jump to a letter")
-        ['f'] = function() hop.hint_char1() end
+        ['F'] = function() hop.hint_words() end
       map:register { modes = 'n' }
     end
   }
@@ -639,6 +720,7 @@ return require('packer').startup(function()
 
   use 'aperezdc/vim-template'
   use 'antoyo/vim-licenses'
+  use 'chrisbra/unicode.vim'
   use 'fidian/hexmode'
   use {
     'lambdalisue/suda.vim',
@@ -664,7 +746,10 @@ return require('packer').startup(function()
         },
         current_line_blame = true,
         current_line_blame_opts = {
-          delay = 0
+          virt_text = true,
+          virt_text_pos = 'right_align',
+          delay = 0,
+          ignore_whitespace = false,
         }
       }
     end
@@ -682,7 +767,7 @@ return require('packer').startup(function()
     config = function()
       local tree_sitter = require('nvim-treesitter.configs')
       tree_sitter.setup {
-        ensure_installed = 'maintained',
+        ensure_installed = 'all',
         highlight = {
           enable = true
         },
@@ -713,6 +798,23 @@ return require('packer').startup(function()
             node_decremental = '<S-Tab>',
           },
         },
+      }
+      local tree_sitter_context = require('treesitter-context')
+      tree_sitter_context.setup {
+        max_lines = 1,
+        patterns = {
+          default = {
+            'class',
+            'function',
+            'method',
+            'field',
+            'for',
+            'while',
+            'if',
+            'switch',
+            'case',
+          }
+        }
       }
     end,
   }
@@ -762,32 +864,20 @@ return require('packer').startup(function()
       (map "Close all non-file windows")
         ['<Esc><Esc>'] = { 'helpcl | lcl | ccl | nohls | silent! Goyo!', as = 'cmd' }
 
-      local function keepmiddle_toggle()
-        if vim.wo.scrolloff == 999 then
-          if vim.w.keepmiddle_toggle_scrolloff_backup ~= nil then
-            vim.wo.scrolloff = vim.w.keepmiddle_toggle_scrolloff_backup
-          else
-            vim.wo.scrolloff = 0
-          end
-        else
-          if vim.wo.scrolloff ~= 0 then
-            vim.w.keepmiddle_scrolloff_backup = vim.wo.scrolloff
-          end
-          vim.wo.scrolloff = 999
-          vim.cmd 'norm M'
-        end
-      end
-      (map "Toggle scrolloff")
-        ['MM'] = { keepmiddle_toggle, remap = false }
+      local toggle = require('toggle');
 
-      local function cursorcolumn_toggle()
-        vim.wo.cursorcolumn = not vim.wo.cursorcolumn
-      end
+      (map "Toggle scrolloff")
+        ['MM'] = { toggle.scrolloff, remap = false }
       (map "Toggle cursorcolumn")
-        ['MC'] = { cursorcolumn_toggle, remap = false }
+        ['MC'] = { toggle.cursorcolumn, remap = false }
 
       (map "Undo")
         ['U'] = '<C-r>'
+
+      (map "Swap go to mark line with go to mark position")
+        ["'"] = '`'
+      (map "Swap go to mark position with go to mark line")
+        ['`'] = "'"
 
       (map "Create new file")
         .ctrl ['t'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', remap = true, modes = 'vto' }
@@ -795,4 +885,4 @@ return require('packer').startup(function()
       map:register { modes = 'n' }
     end
   }
-end)
+end, packer_config})
