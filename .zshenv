@@ -1,10 +1,6 @@
 export PERL_HOME="/usr/bin/perl:/usr/bin/core_perl"
 export JAVA_HOME="/usr/lib/jvm/default"
 
-export HASKELL_BIN="$HOME/.cabal/bin"
-export RUST_BIN="$HOME/.cargo/bin"
-
-export RUST_SRC_PATH="/usr/src/rust/src"
 
 
 export ANDROID_HOME="/opt/android-sdk"
@@ -23,7 +19,8 @@ if [[ -e $ANDROID_HOME ]]; then
 fi
 
 
-export PATH="$PATH:$HOME/.local/bin:$RUST_BIN:$JAVA_HOME:$PERL_HOME:$HASKELL_BIN"
+
+export PATH="$PATH:$HOME/.local/bin:$JAVA_HOME:$PERL_HOME"
 
 
 
@@ -32,37 +29,55 @@ export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 
 
 
-export QT_SELECT=5
-export QT_STYLE_OVERRIDE=gtk
-
-if [ -n "$GTK_MODULES" ]; then
-    GTK_MODULES="${GTK_MODULES}:appmenu-gtk-module"
+if [[ $(lsmod | rg "nouveau") ]]; then
+    export LIBVA_DRIVER_NAME=nouveau
+    export VDPAU_DRIVER=nouveau
+    export GDK_BACKEND=wayland
+    export XDG_SESSION_TYPE=wayland
+    export XDG_CURRENT_DESKTOP=sway
+    export XDG_SESSION_DESKTOP=sway
+    export MOZ_ENABLE_WAYLAND=1
+    export QT_QPA_PLATFORM=wayland
 else
-    GTK_MODULES="appmenu-gtk-module"
+    export GDK_BACKEND=x11
+    export XDG_SESSION_TYPE=x11
+    export XDG_CURRENT_DESKTOP=xfce4
+    export XDG_SESSION_DESKTOP=xfce4
+    export MOZ_ENABLE_WAYLAND=0
+    export QT_QPA_PLATFORM=xcb
 fi
 
-if [ -z "$UBUNTU_MENUPROXY" ]; then
-    UBUNTU_MENUPROXY=1
-fi
+export XCURSOR_THEME=Fuchsia
+export XCURSOR_SIZE=22
 
-export UBUNTU_MENUPROXY
-export GTK_MODULES
+export QT_SELECT=5
+export QT_STYLE_OVERRIDE=kvantum
 
-#export _JAVA_OPTIONS="${_JAVA_OPTIONS} -javaagent:/usr/share/java/jayatanaag.jar"
-#export JAYATANA_FORCE=1
+export GTK_THEME=Qogir-ubuntu-light
+
+export WINIT_HIDPI_FACTOR=1.33
+
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+
+
+export XDG_CONFIG_DIR="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+
+export ZDOTDIR="$HOME/.config/zsh"
+export HISTFILE="$XDG_DATA_HOME"/zsh/history
 
 
 
 export EDITOR="nvr"
 export VISUAL="nvr"
-export MANPAGER="nvr -c 'set ft=man' - "
-export PAGER="page"
+export MANPAGER="page -C -e 'au User PageDisconnect sleep 100m|%y p|enew! |bd! #|pu p| Man!'"
+export PAGER="page -q 90000 -O"
 export BROWSER="firefox"
-export SELECT="sk --reverse -e --height=40 --ansi"
+export FILTER="fzf --reverse --inline-info --height=40 --ansi --color=dark,bg+:-1,border:0,info:8,prompt:8,hl:34,hl+:34,pointer:34 --bind=tab:down,btab:up"
 
 
 
 systemctl --user import-environment PATH
 systemctl --user import-environment JAVA_HOME
-systemctl --user import-environment GTK_MODULES
-systemctl --user import-environment UBUNTU_MENUPROXY
