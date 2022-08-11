@@ -1,5 +1,5 @@
 local packer_config = {
-  compile_path = vim.fn.stdpath('config') .. '/compiled.lua',
+  compile_path = vim.fn.stdpath('data') .. '/site/plugin/packer_compiled.lua',
   display = {
     non_interactive = true,
     open_cmd = 'enew'
@@ -7,14 +7,31 @@ local packer_config = {
   autoremove = true,
 }
 
-return require('packer').startup({function()
-  use 'wbthomason/packer.nvim'
-
-  vim.g.no_plugin_maps = true
-  require('keymap')
+local packer_plugins = function(use)
+  use {
+    'wbthomason/packer.nvim',
+    config = function()
+      local packer = require('packer')
+      local options = require('plugins')
+      packer.startup(options)
+    end,
+    cmd = {
+      'PackerSync',
+      'PackerCompile',
+      'PackerClean',
+      'PackerUpdate',
+      'PackerStatus',
+      'PackerInstall',
+      'PackerProfile',
+      'PackerSnapshot',
+      'PackerSnapshotDelete',
+      'PackerSnapshotRollback',
+      'PackerLoad',
+    }
+  }
 
   use {
-    "rebelot/kanagawa.nvim",
+    'rebelot/kanagawa.nvim',
     config = function()
       local kanagawa = require('kanagawa')
       kanagawa.setup {
@@ -116,8 +133,6 @@ return require('packer').startup({function()
     end
   }
 
-  use 'machakann/vim-highlightedyank'
-  use 'itchyny/vim-highlighturl'
   use {
     'chentoast/marks.nvim',
     config = function()
@@ -226,7 +241,9 @@ return require('packer').startup({function()
     'nacro90/numb.nvim',
     config = function()
       local numb = require('numb')
-      numb.setup {}
+      numb.setup {
+        number_only = true
+      }
     end
   }
   use {
@@ -234,7 +251,7 @@ return require('packer').startup({function()
     config = function()
       local scrollview = require('scrollview')
       scrollview.setup {
-        column = 1,
+        column = 2,
         winblend = 25,
         base = 'left',
         excluded_filetypes = {
@@ -280,14 +297,15 @@ return require('packer').startup({function()
     end
   }
   use 'kana/vim-repeat'
-
-  use 'machakann/vim-sandwich'
   use {
-    'kana/vim-operator-user',
-    requires = {
-      'rhysd/vim-operator-surround'
-    }
+    "kylechui/nvim-surround",
+    config = function()
+      local surround = require("nvim-surround")
+      surround.setup {}
+    end
   }
+
+
   use {
     'kana/vim-textobj-user',
     requires = {
@@ -619,21 +637,6 @@ return require('packer').startup({function()
     end
   }
   use 'airodactyl/neovim-ranger'
-  use {
-    'ntpeters/vim-better-whitespace',
-    config = function()
-      vim.g.better_whitespace_filetypes_blacklist = { 'diff', 'pandoc', 'markdown', 'gitcommit', 'qf', 'help' }
-      vim.api.nvim_create_autocmd('BufEnter', {
-        callback = function()
-          for _, v in pairs(vim.g.better_whitespace_filetypes_blacklist) do
-            if v == vim.o.ft then return end
-          end
-          vim.cmd 'EnableStripWhitespaceOnSave'
-        end
-      })
-    end
-  }
-
 
   use {
     'phaazon/hop.nvim',
@@ -664,6 +667,13 @@ return require('packer').startup({function()
       (map "Jump to a tree node")
         ['m'] = { function() require('tsht').nodes() end, remap = false }
       map:register { modes = 'ov' }
+    end
+  }
+  use {
+    'mizlan/iswap.nvim',
+    config = function()
+      (map "Swap with")
+        ['s'] = { 'ISwapWith', as = 'cmd' }
     end
   }
   use 'chaoren/vim-wordmotion'
@@ -827,8 +837,18 @@ return require('packer').startup({function()
     ft = 'markdown'
   }
 
-  use 'nvim-treesitter/playground'
   use 'dzeban/vim-log-syntax'
+
+  use 'arjunmahishi/run-code.nvim'
+  use 'nvim-treesitter/playground'
+
+  use {
+    'zakharykaplan/nvim-retrail',
+    config = function()
+      local retrail = require('retrail')
+      retrail.setup {}
+    end
+  }
 
   use {
     'folke/which-key.nvim',
@@ -885,4 +905,9 @@ return require('packer').startup({function()
       map:register { modes = 'n' }
     end
   }
-end, packer_config})
+end
+
+return {
+  packer_plugins,
+  config = packer_config
+}

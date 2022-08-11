@@ -1,11 +1,15 @@
-local packer_path = vim.fn.stdpath('data') .. '/site/pack/packer/site/packer.nvim'
+vim.g.no_plugin_maps = true
+require('keymap')
+
+local packer_path = vim.fn.stdpath('data') .. '/site/pack/packer/opt/packer.nvim'
 if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
   vim.cmd('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
+  vim.cmd 'packadd packer.nvim'
+  local options = require('plugins')
+  packer.setup(options)
+  packer.sync()
 end
 
-vim.cmd 'packadd packer.nvim'
-
-require 'plugins'
 
 vim.o.title = true
 vim.o.titlestring = '%{expand("%:p:h")}'
@@ -101,4 +105,14 @@ vim.api.nvim_create_autocmd('User', {
     map <buffer> <C-c> :lua page_close(vim.b.page_alternate_bufnr)<CR>
     tmap <buffer> <C-c> :lua page_close(vim.b.page_alternate_bufnr)<CR>
   ]]
+})
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  pattern = '*',
+  callback = function()
+    vim.highlight.on_yank {
+      higroup = 'TermCursor',
+      timeout = 400
+    }
+  end
 })
