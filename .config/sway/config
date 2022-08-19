@@ -91,6 +91,10 @@ set $term alacritty msg create-window $term_args || alacritty $term_args
 bindsym $Mod+Return exec $term
 
 
+# Start an empty workspace
+bindsym $Mod+Shift_R exec ~/.config/sway/wsempty.py
+
+
 # Start a browser
 # urlencode from https://stackoverflow.com/a/34407620/6186709
 set $search firefox --new-tab https://google.com/search?q=$(wl-clip -o | jq -Rr @uri)
@@ -238,6 +242,9 @@ bindsym $Mod+Shift+6 move container to workspace number 6
 bindsym $Mod+Shift+7 move container to workspace number 7
 bindsym $Mod+Shift+8 move container to workspace number 8
 bindsym $Mod+Shift+9 move container to workspace number 9
+
+bindsym $Mod+Shift+BackSpace workspace next
+bindsym       $Mod+BackSpace workspace prev
 
 
 
