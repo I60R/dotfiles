@@ -16,6 +16,7 @@ block = "focused_window"
 show_marks = "visible"
 max_width = 2000
 format = "<span font_size='150%' font_weight='heavy' color='skyblue'>{title}</span> "
+on_click = "swaymsg gaps inner current toggle 30"
 [block.theme_overrides]
 idle_bg = "#00000000"
 
