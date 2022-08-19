@@ -1,0 +1,52 @@
+icons = "material-nf"
+icons_format = " <span font_size='135%'>{icon}</span> "
+
+
+[theme]
+name = "slick"
+[theme.overrides]
+separator = ""
+
+
+
+#
+
+[[block]]
+block = "focused_window"
+show_marks = "visible"
+max_width = 2000
+format = "<span font_size='150%' font_weight='heavy' color='skyblue'>{title}</span> "
+[block.theme_overrides]
+idle_bg = "#00000000"
+
+
+[[block]]
+block = "pomodoro"
+length = 45
+break_length = 7
+message = "Take a break!"
+break_message = "Back to work!"
+notifier = "swaynag"
+icons_format = " <span font_size='250%' color='#ff0000' baseline_shift='-6pt'>{icon}</span> "
+
+
+[[block]]
+block = "weather"
+format = " <span color='cyan'>{temp} {humidity}% {direction}{wind}m/s</span> "
+service = { name = "openweathermap", api_key = "212dbd65c18ac42f9d884dde9b49692a", city_id = "7530791", units = "metric" }
+icons_format = "  <span font_size='300%' baseline_shift='-12pt'>{icon}</span> "
+on_click = "~/.config/sway/wsempty.py gnome-weather"
+
+
+[[block]]
+block = "time"
+format = "<span baseline_shift='4pt' color='gray'>%a %e.%b</span> <span font_size='18pt'>%H:%M</span>"
+timezone = "Europe/Warsaw"
+on_click = "~/.config/sway/wsempty.py alacritty -e 'calcurse'"
+interval = 60
+icons_format = " "
+
+
+
+
+

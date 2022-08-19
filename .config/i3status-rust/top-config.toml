@@ -1,0 +1,129 @@
+icons = "material-nf"
+icons_format = " <span font_size='135%'>{icon}</span> "
+
+
+[theme]
+name = "slick"
+[theme.overrides]
+separator = ""
+
+
+#
+
+[[block]]
+block = "pacman"
+interval = 600
+format = "{pacman} + {aur}(AUR) = {both} updates available "
+format_singular = "{both} update available"
+format_up_to_date = "system up to date"
+critical_updates_regex = "(linux|linux-lts|)"
+aur_command = "paru -Qua"
+icons_format = " <span font_size='200%' baseline_shift='-3pt'>{icon}</span> "
+
+
+
+[[block]]
+block = "net"
+format = " {ip}<span color='yellow' letter_spacing='-512'>{speed_down;K}{speed_up;K}</span> "
+icons_format = "  <span font_size='200%' baseline_shift='-5pt'>{icon}</span> "
+hide_inactive = true
+
+
+[[block]]
+block = "networkmanager"
+primary_only = true
+device_format = "<span letter_spacing='-512'>{ap}</span>"
+connection_format = "{devices}"
+icons_format = ""
+on_click = "~/.config/sway/wsempty.py alacritty -e 'nmtui'"
+
+
+[[block]]
+block = "backlight"
+device = "nv_backlight"
+format = "<span baseline_shift='4pt'>{brightness}</span>"
+icons_format = " <span font_size='250%' baseline_shift='-2pt' color='cyan'>{icon}</span> "
+
+[[block]]
+driver = "pulseaudio"
+block = "sound"
+max_vol = 150
+step_width = 3
+show_volume_when_muted = true
+format = "<span baseline_shift='6pt'>{volume}</span>"
+icons_format = " <span font_size='250%' baseline_shift='-2pt' color='cyan'>{icon}</span> "
+on_click = "~/.config/sway/wsempty.py env WAYLAND_DISPLAY=wayland-0 pavucontrol"
+
+
+[[block]]
+block = "battery"
+driver = "upower"
+format = "<span font_size='200%' baseline_shift='-3pt'>{percentage} {time}</span>"
+icons_format = " <span font_size='200%' baseline_shift='-2pt'>{icon}</span> "
+
+
+[[block]]
+block = "cpu"
+interval = 1
+format = "{frequency}"
+icons_format = " <span font_size='250%' color='cyan' baseline_shift='-8pt'>{icon}</span> "
+
+[[block]]
+block = "cpu"
+interval = 1
+format = "  <span font_size='130%' baseline_shift='-6pt' color='cyan'>{utilization1:6#100}{utilization2:6#100}{utilization3:6#100}{utilization4:6#100}</span>"
+icons_format = ""
+
+
+[[block]]
+block = "temperature"
+collapsed = false
+interval = 2
+chip = "*-isa-*"
+format = " {min} ~{max}<span baseline_shift='superscript'>max</span>"
+icons_format = ""
+
+[[block]]
+block = "temperature"
+collapsed = false
+interval = 2
+chip = "*-pci-*"
+format = "{average}<span baseline_shift='superscript'>gpu</span>"
+icons_format = ""
+
+
+[[block]]
+block = "memory"
+format_mem = "<span font_size='97%'>{mem_total_used}<span font_size='150%' baseline_shift='-2pt'> ⇄</span>{swap_used}</span> "
+format_swap = " (swap: {swap_used}/{swap_total}, buf: {buffers}, cache: {cached}) "
+icons_format = "  <span font_size='250%' color='yellow' baseline_shift='-5pt'>{icon}</span> "
+
+
+[[block]]
+path = "/"
+block = "disk_space"
+format = "<span color='yellow'>{path}</span>{available}"
+on_click = "~/.config/sway/wsempty.py krusader"
+
+[[block]]
+path = "~/"
+block = "disk_space"
+format = " <span color='yellow'>{path}</span>{available} "
+on_click = "~/.config/sway/wsempty.py krusader"
+
+
+[[block]]
+block = "uptime"
+icons_format = " <span font_size='250%' color='skyblue' baseline_shift='-5pt'>{icon}</span> "
+
+
+
+[[block]]
+block = "keyboard_layout"
+driver = "sway"
+format = "<span font_size='200%'>{layout}</span>"
+[block.mappings]
+"English (US)" = "🇺🇸"
+"Russian (N/A)" = "🇷🇺"
+"Polish (N/A)" = "🇵🇱"
+"Ukrainian (N/A)" = "🇺🇦"
