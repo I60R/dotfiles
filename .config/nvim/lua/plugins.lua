@@ -55,7 +55,7 @@ local packer_plugins = function(use)
     branch = 'main',
     config = function()
       local highlights = {
-        background = { gui = 'bold', }
+        background = { bold = true }
       }
       for _, v in ipairs {
         'tab', 'close_button', 'buffer', 'diagnostic',
@@ -64,7 +64,7 @@ local packer_plugins = function(use)
         'error', 'error_diagnostic',
         'modified', 'duplicate', 'separator', 'indicator', 'pick', 'numbers',
       } do
-        highlights[v .. '_selected'] = { guibg = '#0000FF' }
+        highlights[v .. '_selected'] = { bg = '#0000FF' }
       end
       local bufferline = require('bufferline')
       bufferline.setup {
@@ -92,20 +92,20 @@ local packer_plugins = function(use)
               local git = vim.b.gitsigns_status_dict
               local added = git['added']
               if added > 0 then
-                result[#result + 1] = { text = tostring(added), guifg = 'grey'  }
-                result[#result + 1] = { text = '樂', guifg = 'DarkGreen' }
+                result[#result + 1] = { text = tostring(added), fg = 'grey'  }
+                result[#result + 1] = { text = '樂', fg = 'DarkGreen' }
               end
               local removed = git['removed']
               if removed > 0 then
-                result[#result + 1] = { text = tostring(removed), guifg = 'grey' }
-                result[#result + 1] = { text = ' ', guifg = 'DarkRed' }
+                result[#result + 1] = { text = tostring(removed), fg = 'grey' }
+                result[#result + 1] = { text = ' ', fg = 'DarkRed' }
               end
               local changed = git['changed']
               if changed > 0 then
-                result[#result + 1] = { text = tostring(changed), guifg = 'grey'  }
-                result[#result + 1] = { text = 'ﰣ ', guifg = 'DarkYellow' }
+                result[#result + 1] = { text = tostring(changed), fg = 'grey' }
+                result[#result + 1] = { text = 'ﰣ ', fg = 'DarkYellow' }
               end
-              result[#result + 1] = { text = ' ' .. git.head, guifg = 'white', gui = 'bold' }
+              result[#result + 1] = { text = ' ' .. git.head, fg = 'white', bold = true }
               return result
             end,
           },
