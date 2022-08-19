@@ -1,40 +1,10 @@
 ### Global variables
 
-set $mod Mod4
-
-set $left  h
-set $down  j
-set $up    k
-set $right l
-
+set $Mod Mod4
 set $CapsLock 66
-
 
 set $font pango:Iosevka, Heavy 9
 
-set $palette albert toggle
-
-set $fm krusader
-
-set $gal gthumb
-
-set $media vlc
-
-set $office libreoffice
-
-set $ide code
-
-set $screenshot slurp | grim -g - $(xdg-user-dir PICTURES)/sc/$(date +'%Y-%m-%d-%H%M%S.png')
-
-set $record obs
-
-set $search firefox --new-tab https://google.com/search?q=$(wl-clip -o | jq -Rr @uri) # urlencode from https://stackoverflow.com/a/34407620/6186709
-
-set $calculator gnome-calculator
-
-
-set $term_args --working-directory="$(swaycwd)" -e nvim term://zsh --cmd 'au TermOpen * ++once normal a'
-set $term alacritty msg create-window $term_args || alacritty $term_args
 
 
 
@@ -52,15 +22,14 @@ bindcode      Shift+$CapsLock  $keyboard xkb_layout ru; $keyboard xkb_options $x
 bindcode       Ctrl+$CapsLock  $keyboard xkb_layout pl; $keyboard xkb_options $xkbopt_pl xkb_numlock disabled
 bindcode            $CapsLock  $keyboard xkb_layout us; $keyboard xkb_options $xkbopt xkb_numlock disabled
 
-input type:touchpad {
-    tap enabled
-}
-
 
 
 
 ### Pointer configuration
 focus_wrapping no
+input type:touchpad {
+    tap enabled
+}
 
 
 
@@ -85,20 +54,10 @@ seat seat0 xcursor_theme Fuchsia 22
 
 ### Modify windows
 
-for_window [app_id="fmit"]   fullscreen enable
-
-for_window [class="vlc"]               floating enable
-for_window [app_id="guitarix"]         floating enable
-for_window [app_id="gnome-calculator"] floating enable
-for_window [app_id="albert"]           floating enable; move up 200 px
-
-no_focus   [app_id="firefox" title="Picture-in-Picture"]
-for_window [app_id="firefox" title="Picture-in-Picture"] floating enable; move position 66 ppt 66 ppt; resize set width 30 ppt; resize set height 30 ppt; sticky enable; opacity 0.7
-no_focus   [app_id="firefox" title="Firefox — Sharing Indicator"]
-for_window [app_id="firefox" title="Firefox — Sharing Indicator"] floating enable; move down 450 px; sticky enable
-
-for_window [app_id="firefox" title="Mozilla Firefox \(Private Browsing\)"] move container to workspace 9; workspace 9
-
+for_window [app_id="fmit"]     fullscreen enable
+for_window [class="vlc"]       floating enable
+for_window [app_id="guitarix"] floating enable
+for_window [app_id="albert"]   floating enable; move up 200 px
 
 
 
@@ -117,299 +76,347 @@ default_floating_border none
 gaps inner 1
 gaps outer 1
 
+floating_modifier $Mod normal
+
 font $font
 
 
 
-### Key bindings
 
-## Basics:
+### Launcher key bindings:
 
-    # Drag floating windows by holding down $mod and left mouse button.
-    # Resize them with right mouse button + $mod.
-    # Despite the name, also works for non-floating windows.
-    floating_modifier $mod normal
-
-
-    # Start a terminal
-    bindsym $mod+Return exec $term
-
-    # Start a browser
-    bindsym XF86HomePage exec $search
-
-    # Start a browser
-    bindsym XF86Calculator exec $calculator
-
-    # Start your launcher
-    bindsym $mod+Menu exec $palette
-
-    # Start galery app
-    bindsym $mod+Shift+Menu exec $gal
-
-    # Start file manager
-    bindsym $mod+Ctrl+Menu exec $fm
-
-    # Start office
-    bindsym $mod+Multi_key+Menu exec $office
-
-    # Start media player
-    bindsym $mod+Ctrl+Shift+Menu exec $media
-
-    # Start favorite text editor
-    bindsym $mod+Alt+Menu exec $ide
-
-    # Start screen recording
-    bindsym $mod+Insert exec $record
-
-    # Start screenshot
-    bindsym $mod+Shift+Insert exec $screenshot
+# Start a terminal
+set $term_args --working-directory="$(swaycwd)" -e nvim term://zsh --cmd 'au TermOpen * ++once normal a'
+set $term alacritty msg create-window $term_args || alacritty $term_args
+bindsym $Mod+Return exec $term
 
 
-    # Lock screen
-    bindcode $mod+66 exec ~/.config/sway/screenlock-instant.sh
+# Start a browser
+# urlencode from https://stackoverflow.com/a/34407620/6186709
+set $search firefox --new-tab https://google.com/search?q=$(wl-clip -o | jq -Rr @uri)
+bindsym XF86HomePage exec $search
+no_focus   [app_id="firefox" title="Picture-in-Picture"]
+for_window [app_id="firefox" title="Picture-in-Picture"] floating enable; move position 66 ppt 66 ppt; resize set width 30 ppt; resize set height 30 ppt; sticky enable; opacity 0.7
+no_focus   [app_id="firefox" title="Firefox — Sharing Indicator"]
+for_window [app_id="firefox" title="Firefox — Sharing Indicator"] floating enable; move down 450 px; sticky enable
+for_window [app_id="firefox" title="Mozilla Firefox \(Private Browsing\)"] move container to workspace number 9; workspace number 9
 
 
-    # Kill focused window
-    bindsym $mod+c kill
-
-    # Prevent this idiotic binding from killing windows
-    bindsym Ctrl+q exec
-
-    # Reload the configuration file
-    bindsym $mod+Ctrl+r reload
-
-    # Exit sway (logs you out of your wayland session)
-    bindsym $mod+Ctrl+q exit
+# Start a calculator
+bindsym XF86Calculator exec gnome-calculator
+for_window [app_id="org.gnome.Calculator"] floating enable
 
 
-## Notifications
-
-    bindsym $mod+n exec dunstctl close
-    bindsym $mod+Ctrl+n exec dunstctl close-all
-    bindsym $mod+Shift+n exec dunstctl history-pop
-    bindsym $mod+Ctrl+Shift+n exec dunstctl action
+# Start launcher
+bindsym $Mod+Menu exec albert toggle
 
 
-## Moving around:
-
-    # Move focus around
-    bindsym $mod+$left  focus left
-    bindsym $mod+$down  focus down
-    bindsym $mod+$up    focus up
-    bindsym $mod+$right focus right
-
-    # Cycle through windows
-    bindsym $mod+Tab       focus next
-    bindsym $mod+Shift+Tab focus prev
-
-    # Move the focused window through workspace
-    bindsym $mod+Shift+$left  move left
-    bindsym $mod+Shift+$down  move down
-    bindsym $mod+Shift+$up    move up
-    bindsym $mod+Shift+$right move right
+# Start galery app
+bindsym $Mod+Shift+Menu exec gthumb
 
 
-## Workspaces:
-
-    # Switch to workspace
-    bindsym $mod+grave workspace back_and_forth
-    bindsym $mod+1 workspace number 1
-    bindsym $mod+2 workspace number 2
-    bindsym $mod+3 workspace number 3
-    bindsym $mod+4 workspace number 4
-    bindsym $mod+5 workspace number 5
-    bindsym $mod+6 workspace number 6
-    bindsym $mod+7 workspace number 7
-    bindsym $mod+8 workspace number 8
-    bindsym $mod+9 workspace number 9
-
-    # Move focused container to workspace
-    bindsym $mod+Shift+1 move container to workspace number 1
-    bindsym $mod+Shift+2 move container to workspace number 2
-    bindsym $mod+Shift+3 move container to workspace number 3
-    bindsym $mod+Shift+4 move container to workspace number 4
-    bindsym $mod+Shift+5 move container to workspace number 5
-    bindsym $mod+Shift+6 move container to workspace number 6
-    bindsym $mod+Shift+7 move container to workspace number 7
-    bindsym $mod+Shift+8 move container to workspace number 8
-    bindsym $mod+Shift+9 move container to workspace number 9
+# Start file manager
+bindsym $Mod+Ctrl+Menu exec krusader
 
 
-## Layout stuff:
+# Start office
+bindsym $Mod+Multi_key+Menu exec libreoffice
 
-    # Split the current object of your focus
-    bindsym $mod+bar splith
-    bindsym $mod+minus splitv
 
-    # Switch the current container between different layout styles
-    bindsym $mod+s layout stacking
-    bindsym $mod+t layout tabbed
-    bindsym $mod+Escape layout toggle split
+# Start media player
+bindsym $Mod+Ctrl+Shift+Menu exec vlc
 
-    bindsym $mod+f fullscreen
+
+# Start favorite text editor
+bindsym $Mod+Alt+Menu exec code
+
+
+# Start screen recording
+bindsym $Mod+Insert exec obs
+
+
+# Start screenshot
+set $screenshot slurp | grim -g - $(xdg-user-dir PICTURES)/sc/$(date +'%Y-%m-%d-%H%M%S.png')
+bindsym $Mod+Shift+Insert exec $screenshot
+
+
+# Start sound config
+bindsym KP_Enter workspace number 8; exec helvum; exec pavucontrol; exec easyeffects;
+for_window [app_id="pavucontrol"]                 move container to workspace number 8; workspace number 8; resize shrink width 300 px; splitv
+for_window [app_id="org.pipewire.Helvum"]         move container to workspace number 8; workspace number 8
+for_window [app_id="com.github.wwmm.easyeffects"] move container to workspace number 8; workspace number 8
+
+# Start system monitor
+bindsym KP_Multiply exec gnome-system-monitor
+for_window [app_id="gnome-system-monitor"] fullscreen enable
+
+# Start keylogger
+bindsym       $Mod+Ctrl+Space exec wshowkeys -a left -a bottom
+bindsym $Mod+Shift+Ctrl+Space exec killall wshowkeys
+
+
+
+
+
+
+### Basic key bindings:
+
+# Lock screen
+bindcode $Mod+66 exec ~/.config/sway/screenlock-instant.sh
+
+
+# Kill focused window
+bindsym $Mod+c kill
+# Prevent this binding from killing windows
+bindsym Ctrl+q exec
+
+
+# Reload the configuration file
+bindsym $Mod+Ctrl+r reload
+
+
+# Exit sway (logs you out of your wayland session)
+bindsym $Mod+Ctrl+q exit
+
+
+
+
+### Notification key bindings:
+
+bindsym $Mod+n            exec dunstctl close
+bindsym $Mod+Ctrl+n       exec dunstctl close-all
+bindsym $Mod+Shift+n      exec dunstctl history-pop
+bindsym $Mod+Ctrl+Shift+n exec dunstctl action
+
+
+
+
+### Moving around key bindings:
+
+# Move focus around
+bindsym $Mod+h focus left
+bindsym $Mod+j focus down
+bindsym $Mod+k focus up
+bindsym $Mod+l focus right
+
+# Cycle through windows
+bindsym $Mod+Tab       focus next
+bindsym $Mod+Shift+Tab focus prev
+
+# Move the focused window through workspace
+bindsym $Mod+Shift+h move left
+bindsym $Mod+Shift+j move down
+bindsym $Mod+Shift+k move up
+bindsym $Mod+Shift+l move right
+
+
+
+
+### Workspace key bindings:
+
+# Toggle workspace
+bindsym $Mod+grave workspace back_and_forth
+
+# Switch to workspace
+bindsym $Mod+1 workspace number 1
+bindsym $Mod+2 workspace number 2
+bindsym $Mod+3 workspace number 3
+bindsym $Mod+4 workspace number 4
+bindsym $Mod+5 workspace number 5
+bindsym $Mod+6 workspace number 6
+bindsym $Mod+7 workspace number 7
+bindsym $Mod+8 workspace number 8
+bindsym $Mod+9 workspace number 9
+
+# Move focused container to workspace
+bindsym $Mod+Shift+1 move container to workspace number 1
+bindsym $Mod+Shift+2 move container to workspace number 2
+bindsym $Mod+Shift+3 move container to workspace number 3
+bindsym $Mod+Shift+4 move container to workspace number 4
+bindsym $Mod+Shift+5 move container to workspace number 5
+bindsym $Mod+Shift+6 move container to workspace number 6
+bindsym $Mod+Shift+7 move container to workspace number 7
+bindsym $Mod+Shift+8 move container to workspace number 8
+bindsym $Mod+Shift+9 move container to workspace number 9
+
+
+
+
+### Layout key bindings:
+
+# Split the current object of your focus
+bindsym $Mod+bar splith
+bindsym $Mod+minus splitv
+
+# Switch the current container between different layout styles
+bindsym $Mod+s layout stacking
+bindsym $Mod+t layout tabbed
+bindsym $Mod+Escape layout toggle split
 
 # Make the current focus fullscreen:
+bindsym $Mod+f fullscreen
 
-    # Swap focus between the tiling area and the floating area
-    bindsym $mod+w focus mode_toggle
+# Toggle the current focus between tiling and floating mode
+bindsym $Mod+Shift+w floating toggle
 
-    # Toggle the current focus between tiling and floating mode
-    bindsym $mod+Shift+w floating toggle
-
-
-
-
-## Scratchpad:
-
-    # Move the currently focused window to the scratchpad
-    bindsym $mod+Shift+0 move scratchpad
-
-    # Show the next scratchpad window or hide the focused scratchpad window.
-    # If there are multiple scratchpad windows, this command cycles through them.
-    bindsym $mod+0 scratchpad show
+# Swap focus between the tiling area and the floating area
+bindsym $Mod+w focus mode_toggle
 
 
-## Media keys:
+# Move the currently focused window to the scratchpad
+bindsym $Mod+Shift+0 move scratchpad
 
-    # Volume control
-    bindsym Home          exec pactl set-sink-volume @DEFAULT_SINK@ +2%; exec pactl set-sink-mute @DEFAULT_SINK@ 0
-    bindsym End           exec pactl set-sink-volume @DEFAULT_SINK@ -2%; exec pactl set-sink-mute @DEFAULT_SINK@ 0
-    bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-
-
-    bindsym Prior exec echo $(($(cat /sys/class/backlight/nv_backlight/brightness) + 2)) > /sys/class/backlight/nv_backlight/brightness
-    bindsym Next  exec echo $(($(cat /sys/class/backlight/nv_backlight/brightness) - 2)) > /sys/class/backlight/nv_backlight/brightness
-
-    bindsym XF86PowerOff exec wlogout
-
-    bindsym       KP_Delete exec ydotool key Ctrl+Tab
-    bindsym Shift+KP_Delete exec ydotool key Ctrl+Shift+Tab
-
-    bindsym       KP_Insert exec ydotool key Ctrl+w
-    bindsym Shift+KP_Insert exec ydotool key Ctrl+T
-
-    bindsym KP_Begin exec ydotool key Right
-    bindsym KP_Right exec ydotool key KEY_BACK
-
-    bindsym KP_Multiply exec alacritty msg create-window -e htop || alacritty -e htop
-
-    bindsym $mod+Ctrl+Space exec wshowkeys -a left -a bottom
-    bindsym $mod+Shift+Ctrl+Space exec killall wshowkeys
-
-    bindcode          94 exec ydotool key          Shift+6
-    bindcode     Ctrl+94 exec ydotool key     Ctrl+Shift+6
-    bindcode      Alt+94 exec ydotool key      Alt+Shift+6
-    bindcode Ctrl+Alt+94 exec ydotool key Ctrl+Alt+Shift+6
-
-    bindcode    Shift+94 exec ydotool key KEY_FORWARD
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $Mod+0 scratchpad show
 
 
 
-## Modes:
 
-    bindsym $mod+r mode "RESIZE"
-    mode "RESIZE" {
-        # Shrink/grow the containers width/height
-        bindsym $left resize shrink width 10 px or 10 ppt
-        bindsym $down resize grow height 10 px or 10 ppt
-        bindsym $up resize shrink height 10 px or 10 ppt
-        bindsym $right resize grow width 10 px or 10 ppt
+### Media key bindings:
 
-        # return to default mode
-        bindsym $mod+r mode "default"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-    }
+# Logout menu
+bindsym XF86PowerOff exec wlogout
 
-    bindsym $mod+g mode "GAPS"
-    mode "GAPS" {
-        # Shrink/grow the containers inner/outer gaps
-        bindsym $left gaps inner current minus 10
-        bindsym $right gaps inner current plus 10
-        bindsym $up gaps outer current minus 10
-        bindsym $down gaps outer current plus 10
+# Volume control
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym Home          exec pactl set-sink-volume @DEFAULT_SINK@ +2%; exec pactl set-sink-mute @DEFAULT_SINK@ 0
+bindsym End           exec pactl set-sink-volume @DEFAULT_SINK@ -2%; exec pactl set-sink-mute @DEFAULT_SINK@ 0
 
-        # reset to default
-        bindsym 0 gaps inner current set 1; gaps outer current set 1
-        bindsym 1 gaps inner current set 1
-
-        # return to default mode
-        bindsym $mod+g mode "default"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-    }
-
-    bindsym $mod+o mode "OPACITY"
-    bindsym $mod+Shift+o mark --toggle "opaque"
-    mode "OPACITY" {
-        bindsym $up opacity plus 0.3
-        bindsym $down opacity minus 0.3
-
-        # reset to default
-        bindsym 0 opacity 1
-        bindsym 1 opacity 0
-
-        # return to default mode
-        bindsym $mod+o mode "default"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-    }
-
-    bindsym $mod+Space mode "NAVIGATION"
-    mode "NAVIGATION" {
-        bindsym h exec ydotool key Left
-        bindsym j exec ydotool key Down
-        bindsym k exec ydotool key Up
-        bindsym l exec ydotool key Right
-        bindsym $mod+h exec ydotool key Left
-        bindsym $mod+j exec ydotool key Down
-        bindsym $mod+k exec ydotool key Up
-        bindsym $mod+l exec ydotool key Right
-
-        bindsym $mod+Shift+h exec ydotool key Shift+Ctrl+Left
-        bindsym $mod+Shift+j exec ydotool key Shift+Ctrl+Down
-        bindsym $mod+Shift+k exec ydotool key Shift+Ctrl+Up
-        bindsym $mod+Shift+l exec ydotool key Shift+Ctrl+Right
-
-        bindsym $mod+Shift+Ctrl+h exec ydotool key Shift+Left
-        bindsym $mod+Shift+Ctrl+j exec ydotool key Shift+Down
-        bindsym $mod+Shift+Ctrl+k exec ydotool key Shift+Up
-        bindsym $mod+Shift+Ctrl+l exec ydotool key Shift+Right
-
-        bindsym b exec ydotool key Ctrl+Left
-        bindsym e exec ydotool key Ctrl+Right
-
-        bindsym w exec ydotool key Ctrl+Tab
-        bindsym s exec ydotool key Ctrl+Shift+Tab
-
-        bindsym a exec ydotool key Alt+Left
-        bindsym q exec ydotool key Alt+Right
-
-        bindsym g exec ydotool key Ctrl  --down
-        bindsym v exec ydotool key Shift --down
-
-        bindsym d exec ydotool key Ctrl+w
-        bindsym x exec ydotool key Ctrl+x
-        bindsym y exec ydotool key Ctrl+c
-        bindsym p exec ydotool key Ctrl+v
-
-        bindsym u exec ydotool key Up   --repeat 10 --repeat-delay 0
-        bindsym n exec ydotool key Down --repeat 10 --repeat-delay 0
-
-        bindsym Shift+h exec ydotool key Ctrl+Home
-        bindsym Shift+j exec ydotool key PageDown
-        bindsym Shift+k exec ydotool key PageUp
-        bindsym Shift+l exec ydotool key Ctrl+End
-
-        # return to default mode
-        bindsym $mod+Space exec ydotool key Shift --up key Ctrl --up; mode "default"
-        bindsym i          exec ydotool key Shift --up key Ctrl --up; mode "default"
-        bindsym Return     exec ydotool key Shift --up key Ctrl --up; mode "default"
-        bindsym Escape     exec ydotool key Shift --up key Ctrl --up; mode "default"
-    }
+# Backlight control
+bindsym Prior exec echo $(($(cat /sys/class/backlight/nv_backlight/brightness) + 2)) > /sys/class/backlight/nv_backlight/brightness
+bindsym Next  exec echo $(($(cat /sys/class/backlight/nv_backlight/brightness) - 2)) > /sys/class/backlight/nv_backlight/brightness
 
 
-### Top status Bar
+bindsym       KP_Delete exec ydotool key Ctrl+Tab
+bindsym Shift+KP_Delete exec ydotool key Ctrl+Shift+Tab
+
+bindsym       KP_Insert exec ydotool key Ctrl+w
+bindsym Shift+KP_Insert exec ydotool key Ctrl+T
+
+bindsym KP_Begin exec ydotool key Right
+bindsym KP_Right exec ydotool key KEY_BACK
+
+bindcode          94 exec ydotool key          Shift+6
+bindcode     Ctrl+94 exec ydotool key     Ctrl+Shift+6
+bindcode      Alt+94 exec ydotool key      Alt+Shift+6
+bindcode Ctrl+Alt+94 exec ydotool key Ctrl+Alt+Shift+6
+
+bindcode    Shift+94 exec ydotool key KEY_FORWARD
+
+
+
+
+### Modes:
+
+bindsym $Mod+r mode "RESIZE"
+mode "RESIZE" {
+    # Shrink/grow the containers width/height
+    bindsym h resize shrink width  10 px or 10 ppt
+    bindsym j resize grow   height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow   width  10 px or 10 ppt
+
+    # return to default mode
+    bindsym $Mod+r mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $Mod+g mode "GAPS"
+mode "GAPS" {
+    # Shrink/grow the containers inner/outer gaps
+    bindsym h gaps inner current minus 10
+    bindsym j gaps outer current plus  10
+    bindsym k gaps outer current minus 10
+    bindsym l gaps inner current plus  10
+
+    # reset to default
+    bindsym 0 gaps inner current set 1; gaps outer current set 1
+    bindsym 1 gaps inner current set 1
+
+    # return to default mode
+    bindsym $Mod+g mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $Mod+o mode "OPACITY"
+bindsym $Mod+Shift+o mark --toggle "opaque"
+mode "OPACITY" {
+    bindsym j opacity minus 0.3
+    bindsym k opacity plus 0.3
+
+    # reset to default
+    bindsym 0 opacity 1
+    bindsym 1 opacity 0
+
+    # return to default mode
+    bindsym $Mod+o mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $Mod+Space mode "NAVIGATION"
+mode "NAVIGATION" {
+    bindsym                 h exec ydotool key Left
+    bindsym                 j exec ydotool key Down
+    bindsym                 k exec ydotool key Up
+    bindsym                 l exec ydotool key Right
+
+    bindsym            $Mod+h exec ydotool key Left
+    bindsym            $Mod+j exec ydotool key Down
+    bindsym            $Mod+k exec ydotool key Up
+    bindsym            $Mod+l exec ydotool key Right
+
+    bindsym      $Mod+Shift+h exec ydotool key Shift+Ctrl+Left
+    bindsym      $Mod+Shift+j exec ydotool key Shift+Ctrl+Down
+    bindsym      $Mod+Shift+k exec ydotool key Shift+Ctrl+Up
+    bindsym      $Mod+Shift+l exec ydotool key Shift+Ctrl+Right
+
+    bindsym $Mod+Shift+Ctrl+h exec ydotool key Shift+Left
+    bindsym $Mod+Shift+Ctrl+j exec ydotool key Shift+Down
+    bindsym $Mod+Shift+Ctrl+k exec ydotool key Shift+Up
+    bindsym $Mod+Shift+Ctrl+l exec ydotool key Shift+Right
+
+    bindsym b exec ydotool key Ctrl+Left
+    bindsym e exec ydotool key Ctrl+Right
+
+    bindsym w exec ydotool key       Ctrl+Tab
+    bindsym s exec ydotool key Ctrl+Shift+Tab
+
+    bindsym a exec ydotool key Alt+Left
+    bindsym q exec ydotool key Alt+Right
+
+    bindsym g exec ydotool key Ctrl  --down
+    bindsym v exec ydotool key Shift --down
+
+    bindsym d exec ydotool key Ctrl+w
+    bindsym x exec ydotool key Ctrl+x
+    bindsym y exec ydotool key Ctrl+c
+    bindsym p exec ydotool key Ctrl+v
+
+    bindsym u exec ydotool key Up   --repeat 10 --repeat-delay 0
+    bindsym n exec ydotool key Down --repeat 10 --repeat-delay 0
+
+    bindsym Shift+h exec ydotool key Ctrl+Home
+    bindsym Shift+j exec ydotool key PageDown
+    bindsym Shift+k exec ydotool key PageUp
+    bindsym Shift+l exec ydotool key Ctrl+End
+
+    # return to default mode
+    bindsym $Mod+Space exec ydotool key Shift --up key Ctrl --up; mode "default"
+    bindsym i          exec ydotool key Shift --up key Ctrl --up; mode "default"
+    bindsym Return     exec ydotool key Shift --up key Ctrl --up; mode "default"
+    bindsym Escape     exec ydotool key Shift --up key Ctrl --up; mode "default"
+}
+
+
+
+
+### Status
+
+# Top
 bar {
     font $font
     position top
@@ -434,8 +441,7 @@ bar {
     }
 }
 
-
-### Bottom status Bar
+# Bottom
 bar {
     font $font
     position bottom
