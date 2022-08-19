@@ -11,15 +11,12 @@ separator = ""
 #
 
 [[block]]
-block = "pacman"
-interval = 600
-format = "{pacman} + {aur}(AUR) = {both} updates available "
-format_singular = "{both} update available"
-format_up_to_date = "system up to date"
-critical_updates_regex = "(linux|linux-lts|)"
-aur_command = "paru -Qua"
-icons_format = " <span font_size='200%' baseline_shift='-3pt'>{icon}</span> "
-
+block = "music"
+max_width = 70
+dynamic_width = true
+hide_when_empty = true
+buttons = ["prev", "play", "next"]
+icons_format = "  <span font_size='200%' baseline_shift='-3pt' color='green'>{icon}</span>  "
 
 
 [[block]]
@@ -115,6 +112,18 @@ on_click = "~/.config/sway/wsempty.py krusader"
 [[block]]
 block = "uptime"
 icons_format = " <span font_size='250%' color='skyblue' baseline_shift='-5pt'>{icon}</span> "
+
+
+[[block]]
+block = "pacman"
+interval = 600
+format = " {pacman} + {aur}(AUR) = {both} "
+format_singular = " {both} "
+format_up_to_date = "up to date"
+critical_updates_regex = "(linux|linux-lts|)"
+aur_command = "paru -Qua"
+icons_format = "  <span font_size='220%' baseline_shift='-4pt'>{icon}</span> "
+on_click = "~/.config/sway/wsempty.py alacritty -e nvim term://'sudo pacman -Syu && paru -Syu' --cmd 'au TermOpen * ++once normal a'"
 
 
 
