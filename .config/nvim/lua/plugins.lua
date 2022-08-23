@@ -83,7 +83,9 @@ local packer_plugins = function(use)
             return numbers.ordinal .. '-' .. numbers.lower(numbers.id) .. ' '
           end,
           separator_style = { '', '' },
-          indicator_icon = '',
+          indicator = {
+            style = 'icon'
+          },
           color_icons = true,
           show_tab_indicators = false,
           custom_areas = {
@@ -139,6 +141,15 @@ local packer_plugins = function(use)
       local marks = require('marks')
       marks.setup {
         builtin_marks = { ".", "[", "]", "^", "'", '"', },
+      }
+    end
+  }
+  use {
+    'RRethy/vim-illuminate',
+    config = function ()
+      local illuminate = require('illuminate')
+      illuminate.configure {
+        delay = 500,
       }
     end
   }
@@ -269,6 +280,7 @@ local packer_plugins = function(use)
     'tpope/vim-characterize',
     keys = 'ga'
   }
+
   use {
     'folke/zen-mode.nvim',
     config = function()
@@ -338,7 +350,6 @@ local packer_plugins = function(use)
   use {
     'neovim/nvim-lsp',
     requires = {
-      'onsails/lspkind-nvim',
       'kosayoda/nvim-lightbulb',
       'neovim/nvim-lspconfig',
       'folke/lua-dev.nvim',
@@ -347,9 +358,6 @@ local packer_plugins = function(use)
       'j-hui/fidget.nvim',
     },
     config = function()
-      local lspkind = require('lspkind')
-      lspkind.init {}
-
       local fidget = require('fidget')
       fidget.setup {
         window = {
@@ -385,9 +393,6 @@ local packer_plugins = function(use)
             'terminal',
           }
         },
-        markdown = {
-          update_delay = 1000
-        },
         lsp = {
           update_delay = 1000
         },
@@ -398,20 +403,28 @@ local packer_plugins = function(use)
 
       local cmp_nvim_lsp = require('cmp_nvim_lsp');
       local lspconfig = require('lspconfig')
-      local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
 
       local function on_attach(client, bufnr)
-        aerial.on_attach(client, bufnr);
+        aerial.on_attach(client, bufnr)
 
         local lspsignature = require('lsp_signature')
-        lspsignature.setup {}
+        lspsignature.on_attach({}, bufnr)
 
         local lightbulb = require('nvim-lightbulb')
-        lightbulb.setup {}
-        vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI' }, {
-          callback = function() require('nvim-lightbulb').update_lightbulb() end,
-          buffer = 0
-        });
+        lightbulb.setup {
+          autocmd = {
+            enabled = true
+          },
+          sign = {
+            enabled = false
+          },
+          float = {
+            enabled = true
+          }
+        };
 
         -- Mappings.
         (map "Workspace folders")
@@ -465,8 +478,16 @@ local packer_plugins = function(use)
             hi LspReferenceWrite gui=underlineline
           ]]
           local g = vim.api.nvim_create_augroup('lsp_document_highlight', { clear = true })
-          vim.api.nvim_create_autocmd('CursorHold', { callback = function() vim.lsp.buf.document_highlight() end, group = g, buffer = 0 })
-          vim.api.nvim_create_autocmd('CursorMoved', { callback = function() vim.lsp.buf.clear_references() end, group = g, buffer = 0 })
+          vim.api.nvim_create_autocmd('CursorHold', {
+            callback = function() vim.lsp.buf.document_highlight() end,
+            group = g,
+            buffer = 0,
+          })
+          vim.api.nvim_create_autocmd('CursorMoved', {
+            callback = function() vim.lsp.buf.clear_references() end,
+            group = g,
+            buffer = 0,
+          })
         end
       end
 
@@ -505,6 +526,14 @@ local packer_plugins = function(use)
             telemetry = {
               enable = false,
             },
+            Lua = {
+              diagnostics = {
+                globalse = {
+                  'vim',
+                  'map'
+                }
+              }
+            }
           }
         }
       }
@@ -540,6 +569,7 @@ local packer_plugins = function(use)
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-buffer',
       'saadparwaiz1/cmp_luasnip',
+      'onsails/lspkind-nvim',
     },
     config = function()
       vim.o.completeopt = 'menu,menuone,noselect'
@@ -548,8 +578,15 @@ local packer_plugins = function(use)
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))
         return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
       end
+      local lspkind = require('lspkind')
       local cmp = require('cmp')
       cmp.setup {
+        formatting = {
+          format = lspkind.cmp_format({
+            mode = 'symbol_text',
+            maxwidth = 50,
+          })
+        },
         snippet = {
           expand = function(args) luasnip.lsp_expand(args.body) end
         },
@@ -676,7 +713,25 @@ local packer_plugins = function(use)
         ['s'] = { 'ISwapWith', as = 'cmd' }
     end
   }
-  use 'chaoren/vim-wordmotion'
+  use {
+    'chaoren/vim-wordmotion',
+    setup = function()
+      vim.g.wordmotion_mappings = {
+        w = 'W',
+        b = 'B',
+        e = 'E',
+        ge = 'gE',
+        aw = 'aW',
+        iw = 'iW',
+        W = 'w',
+        B = 'b',
+        E = 'e',
+        gE = 'ge',
+        aW = 'aw',
+        iW = 'iw',
+      }
+    end
+  }
   use 'mg979/vim-visual-multi'
 
   use {
@@ -803,8 +858,8 @@ local packer_plugins = function(use)
           enable = true,
           keymaps = {
             init_selection = '<CR>',
-            scope_incremental = '<CR>',
-            node_incremental = '<Tab>',
+            scope_incremental = '<Tab>',
+            node_incremental = '<CR>',
             node_decremental = '<S-Tab>',
           },
         },
