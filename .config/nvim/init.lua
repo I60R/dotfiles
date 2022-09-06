@@ -1,10 +1,13 @@
 vim.g.no_plugin_maps = true
 require('keymap')
 
-local packer_path = vim.fn.stdpath('data') .. '/site/pack/packer/opt/packer.nvim'
-if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
+local packer_path = vim.fn.stdpath('data')
+packer_path = packer_path .. '/site/pack/packer/opt/packer.nvim'
+packer_path = vim.fn.glob(packer_path)
+if vim.fn.empty(packer_path) > 0 then
   vim.cmd('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
   vim.cmd 'packadd packer.nvim'
+  local packer = require('packer')
   local options = require('plugins')
   packer.setup(options)
   packer.sync()
@@ -75,9 +78,11 @@ vim.o.whichwrap = 'b,s,<,>,h,l,[,]'
 vim.o.splitbelow = true
 vim.o.splitright = true
 
+
 vim.api.nvim_create_autocmd('VimEnter', {
   command = 'silent exec "!kill -s SIGWINCH $PPID"'
 })
+
 vim.api.nvim_create_autocmd('CursorHold', {
   command = 'checktime'
 })
@@ -91,20 +96,23 @@ vim.api.nvim_create_autocmd('BufWritePost', {
   end,
 })
 
-_G.page_close = function(page_alternate_bufnr)
-  local current_buffer_num = vim.api.nvim_get_current_buf()
-  vim.api.nvim_buf_delete(current_buffer_num, { force = true })
-  if current_buffer_num == page_alternate_bufnr and vim.api.nvim_get_mode() == 'n' then
-    vim.cmd 'norm a'
-  end
-end
-
 vim.api.nvim_create_autocmd('User', {
   pattern = 'PageOpen',
-  command = [[
-    map <buffer> <C-c> :lua page_close(vim.b.page_alternate_bufnr)<CR>
-    tmap <buffer> <C-c> :lua page_close(vim.b.page_alternate_bufnr)<CR>
-  ]]
+  callback = function()
+    (map "Close page")
+      .ctrl ['c'] = {
+        function()
+          local current_buffer_num = vim.api.nvim_get_current_buf()
+          vim.api.nvim_buf_delete(current_buffer_num, { force = true })
+          if current_buffer_num == vim.b.page_alternate_bufnr and
+            vim.api.nvim_get_mode() == 'n'
+          then
+            vim.cmd 'norm a'
+          end
+        end,
+        modes = 'nt'
+      }
+  end
 })
 
 vim.api.nvim_create_autocmd('TextYankPost', {

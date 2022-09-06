@@ -71,7 +71,7 @@ local packer_plugins = function(use)
         options = {
           right_mouse_command = 'vertical sbuffer %d',
           middle_mouse_command = 'bdelete! %d',
-          diagnostics = 'nvim_lsp',
+          diagnostics = true,
           diagnostics_indicator = function(count, level, diagnostics_dict, context)
             local icon = level:match("error") and " " or " "
             return " " .. icon .. count
@@ -295,7 +295,8 @@ local packer_plugins = function(use)
         on_close = toggle.scrolloff,
       };
       (map "Toggle zen mode")
-        ['<Leader>f'] = function() require('zen-mode').toggle() end
+        ['<F11>'] = function() require('zen-mode').toggle() end
+      map:register {}
     end
   }
 
@@ -451,13 +452,13 @@ local packer_plugins = function(use)
         (map "References")
           ['gr'] = vim.lsp.buf.references;
         (map "Diagnostics")
-          ['<Leader>e' ] = vim.lsp.diagnostic.show_line_diagnostics;
+          ['<Leader>e' ] = vim.diagnostic.open_float;
         (map "Previous diagnostic")
-          ['[d'] = vim.lsp.diagnostic.goto_prev;
+          ['[d'] = vim.diagnostic.goto_prev;
         (map "Next diagnostic")
-          [']d'] = vim.lsp.diagnostic.goto_next;
+          [']d'] = vim.diagnostic.goto_next;
         (map "Set loclist")
-          ['<Leader>q'] = vim.lsp.diagnostic.set_loclist;
+          ['<Leader>q'] = vim.diagnostic.setloclist;
 
         -- Set some keybinds conditional on server capabilities
         if client.resolved_capabilities.document_formatting then
@@ -514,8 +515,7 @@ local packer_plugins = function(use)
         }
       end
 
-      local lua_dev = require('lua-dev')
-      lua_dev.setup {
+      local lua_dev = require('lua-dev').setup {
         lspconfig = {
           on_attach = on_attach,
           capabilities = capabilities,
@@ -528,9 +528,9 @@ local packer_plugins = function(use)
             },
             Lua = {
               diagnostics = {
-                globalse = {
+                globals = {
                   'vim',
-                  'map'
+                  'map',
                 }
               }
             }
@@ -755,11 +755,23 @@ local packer_plugins = function(use)
   use 'triglav/vim-visual-increment'
   use 'terryma/vim-expand-region'
   use {
-    'winston0410/commented.nvim',
+    'numToStr/Comment.nvim',
     config = function()
-      local commented = require('commented')
-      commented.setup {
-        keybindings = { n = ';', v = ';', nl = ';;' }
+      local comment = require('Comment')
+      comment.setup {
+        toggler = {
+          line = ';h',
+          block = ';;h',
+        },
+        opleader = {
+          line = ';',
+          block = ';;',
+        },
+        extra = {
+          above = ';k',
+          below = ';j',
+          eol = ';l',
+        },
       }
     end
   }
