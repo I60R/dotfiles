@@ -16,10 +16,12 @@ local Map = {}
 -- Mappings aren't registered yet but only temporarily stored
 -- in the table until `map:register {}` is called
 Map.__newindex = function(self, key, mapping_arguments)
+    key = tostring(key)
+
     if type(mapping_arguments) ~= 'table' then
         -- It can be function or a string
         mapping_arguments = {
-            mapping_arguments
+            mapping_arguments,
         }
     end
 
@@ -29,7 +31,7 @@ Map.__newindex = function(self, key, mapping_arguments)
     end
 
     local key_arguments_tuple = {
-        [tostring(key)] = mapping_arguments
+        [key] = mapping_arguments,
     }
 
     local unique_id = #self + 1
@@ -52,15 +54,12 @@ Map.__concat = function(self, more_description)
 end
 
 
-
-
 --- Next enables `split` and `register` methods on keymaps
 --- table that allows to batch-operate on its contents.
 --- Also provides Ctrl, Alt, Shift modifier keymaps that could
 --- be used instead of <C-..>, <M-..>, <S-..>
 local MapIndex = {}
 Map.__index = MapIndex
-
 
 -- Helper to map ctrl, atl, shift and their permutations, for example:
 --
@@ -74,6 +73,8 @@ local function map_with_modifiers(modifiers_list, next_possible_modifiers_list)
 
     MapModifier.__index = next_possible_modifiers_list
     MapModifier.__newindex = function(_, key, mapping_arguments)
+        key = tostring(key)
+
         if type(mapping_arguments) ~= 'table' then
             -- It can be function or a string
             mapping_arguments = {
@@ -119,47 +120,63 @@ MapIndex.alt = map_with_modifiers({ "alt" }, {
 MapIndex.shift = map_with_modifiers { "shift" }
 
 
+
+
+-- Common function for `MapIndex.split` and `MapIndex.register`
+local function override_arguments(key_arguments_tuple, extra_arguments, for_each_hook)
+    local key, mapping_arguments = next(key_arguments_tuple)
+
+    for arg, value in pairs(extra_arguments) do repeat
+            -- append extra modes instead of overriding them
+            if arg == "modes" and mapping_arguments.modes then
+                mapping_arguments.modes = mapping_arguments.modes .. value
+                break
+            end
+
+            -- override arguments otherwise
+            mapping_arguments[arg] = value
+        until true
+    end
+
+    -- call hook that allows to modify the key
+    if for_each_hook ~= nil then
+        for_each_hook(key, mapping_arguments)
+    end
+end
+
+
 -- This method thematically groups keymappings that currently
 -- are in the table but not belongs to another group yet, and
 -- allows to batch-modify them. This could be used to avoid
 -- repeating the same arguments before each mapping e.g. `mode`.
-MapIndex.split = function(self, override_arguments)
+MapIndex.split = function(self, extra_arguments)
     -- retain the function that would be called with each
     -- keymap and allows to modify them in this way
-    local for_each_hook = override_arguments.each
-    override_arguments.each = nil
+    local for_each_hook = extra_arguments.each
+    extra_arguments.each = nil
 
     -- iterate from the end
     for rev_id = #self, 1, -1 do
-        local prev_key_arguments_tuple = self[rev_id]
+        local key_arguments_tuple_from_end = self[rev_id]
+
         -- stop if another group was ended here
-        if prev_key_arguments_tuple == "GROUP-END" then
+        if key_arguments_tuple_from_end == "GROUP-DELIMITER" then
             break
         end
 
-        -- modify keymapping arguments
-        local key, mapping_arguments = next(prev_key_arguments_tuple)
-        for arg, value in pairs(override_arguments) do repeat
-                -- append extra modes instead of overriding them
-                if arg == "modes" and mapping_arguments.modes then
-                    mapping_arguments.modes = mapping_arguments.modes .. value
-                    break
-                end
-
-                -- override arguments otherwise
-                mapping_arguments[arg] = value
-            until true
-        end
-
-        -- call hook that allows to modify the key
-        if for_each_hook ~= nil then
-            for_each_hook(key, mapping_arguments)
+        if extra_arguments and next(extra_arguments) ~= nil then
+            -- modify keymapping arguments
+            override_arguments(
+                key_arguments_tuple_from_end,
+                extra_arguments,
+                for_each_hook
+            )
         end
     end
 
     -- set delimiter so anoter `map:split {}` call wouldn't
     -- iterate over these options
-    rawset(self, #self + 1, "GROUP-END")
+    rawset(self, #self + 1, "GROUP-DELIMITER")
 end
 
 -- This method registers all keymappings that currently are
@@ -173,23 +190,27 @@ MapIndex.register = function(self, extra_arguments)
     local for_each_hook = extra_arguments.each;
     extra_arguments.each = nil
 
-    -- try append extra arguments to mapping if the list of
-    -- them was provided and it isn't empty
-    if extra_arguments and next(extra_arguments) ~= nil then
-        self:split(extra_arguments)
-    end
-
     -- iterate from beginning
-    for id, next_key_arguments_tuple in ipairs(self) do repeat
+    for id, key_arguments_tuple in ipairs(self) do repeat
             -- instantly remove the element
             self[id] = nil
+
             -- skip through group delimiters
-            if next_key_arguments_tuple == "GROUP-END" then
+            if key_arguments_tuple == "GROUP-DELIMITER" then
                 break
             end
 
+            -- override arguments if extra provided
+            if extra_arguments and next(extra_arguments) ~= nil then
+                override_arguments(
+                    key_arguments_tuple,
+                    extra_arguments,
+                    for_each_hook
+                )
+            end
+
             -- proceed to registering the mapping
-            local key, mapping_arguments = next(next_key_arguments_tuple)
+            local key, mapping_arguments = next(key_arguments_tuple)
             -- update rhs if `type` and/or `plug` are provided
             local rhs = mapping_arguments[1]
             -- process `as = 'cmd'` and `as = 'lua'`
