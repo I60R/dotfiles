@@ -213,6 +213,7 @@ MapIndex.register = function(self, extra_arguments)
             local key, mapping_arguments = next(key_arguments_tuple)
             -- update rhs if `type` and/or `plug` are provided
             local rhs = mapping_arguments[1]
+
             -- process `as = 'cmd'` and `as = 'lua'`
             if type(rhs) == "string" then
                 if mapping_arguments[2] ~= nil then

@@ -2,7 +2,7 @@ local PackerArguments = {}
 
 
 PackerArguments.config = {
-    compile_path = vim.fn.stdpath('data') .. '/site/plugin/packer_compiled.lua',
+    compile_path = vim.fn.stdpath('data') .. '/site/plugin/packer_compiled.vim',
     display = {
         non_interactive = true,
         open_cmd = 'enew'
@@ -125,6 +125,7 @@ PackerArguments[1] = function(use)
                 (map "Go to (" .. n .. ") buffer")
                     .alt[n] = { focus_nth_buffer, remap = false, silent = true };
             end
+
             (map "Pick a buffer")
                 .alt['`'] = 'BufferLinePick'
             (map "Previous buffer")
@@ -137,6 +138,7 @@ PackerArguments[1] = function(use)
                 ['<F13>'] = 'BufferLineCyclePrev'
             (map "Next buffer")
                 ['<F14>'] = 'BufferLineCycleNext'
+
             map:register { as = 'cmd', modes = 'nicxsot' }
         end
     }
@@ -213,6 +215,7 @@ PackerArguments[1] = function(use)
                 ['g*'] = { plug = 'asterisk-gz*', 'require("hlslens").start()' }
             (map "Go to search word backwards")
                 ['g#'] = { plug = 'asterisk-gz#', 'require("hlslens").start()' }
+
             map:register { as = 'lua' }
         end
     }
@@ -231,6 +234,7 @@ PackerArguments[1] = function(use)
                 ['n'] = function() vim.cmd('normal! ' .. vim.v.count1 .. 'n'); require('hlslens').start() end
             (map "Prev match")
                 ['N'] = function() vim.cmd('normal! ' .. vim.v.count1 .. 'N'); require('hlslens').start() end
+
             map:register { remap = false }
         end
     }
@@ -302,6 +306,7 @@ PackerArguments[1] = function(use)
 
             (map "Toggle zen mode")
                 ['<F11>'] = function() require('zen-mode').toggle() end
+
             map:register {}
         end
     }
@@ -309,10 +314,13 @@ PackerArguments[1] = function(use)
     use {
         'rainbowhxch/accelerated-jk.nvim',
         config = function()
+
             (map "Accelerated j")
                 ['j'] = { plug = 'accelerated_jk_j', modes = 'n' }
             (map "Accelerated k")
                 ['k'] = { plug = 'accelerated_jk_k', modes = 'n' }
+
+            map:register {}
         end
     }
     use 'kana/vim-repeat'
@@ -341,6 +349,7 @@ PackerArguments[1] = function(use)
             vim.g.textobj_lastpat_no_default_key_mappings = true
         end,
         config = function()
+
             (map "Inner indent")
                 ['ai'] = { plug = 'textobj-indent-a' }
             (map "Outer indent")
@@ -349,6 +358,7 @@ PackerArguments[1] = function(use)
                 ['an'] = { plug = 'textobj-lastpat-n' }
             (map "Previous pattern")
                 ['aN'] = { plug = 'textobj-lastpat-N' }
+
             map:register { modes = 'o' }
         end
     }
@@ -359,7 +369,7 @@ PackerArguments[1] = function(use)
         requires = {
             'kosayoda/nvim-lightbulb',
             'neovim/nvim-lspconfig',
-            'folke/lua-dev.nvim',
+            'folke/neodev.nvim',
             'ray-x/lsp_signature.nvim',
             'stevearc/aerial.nvim',
             'j-hui/fidget.nvim',
@@ -402,11 +412,23 @@ PackerArguments[1] = function(use)
                 },
             }
 
+            local lua_dev = require('neodev');
+            lua_dev.setup {
+                lspconfig = true,
+                library = {
+                    enabled = true,
+                    runtime = true,
+                    types = true,
+                    plugins = true,
+                },
+                setup_jsonls = false,
+            }
+
             local cmp_nvim_lsp = require('cmp_nvim_lsp');
             local lspconfig = require('lspconfig')
 
             local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
+            capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
             local function on_attach(client, bufnr)
                 aerial.on_attach(client, bufnr)
@@ -474,10 +496,10 @@ PackerArguments[1] = function(use)
                 -- Set autocommands conditional on server_capabilities
                 if client.resolved_capabilities.document_highlight then
                     vim.cmd [[
-            hi LspReferenceRead gui=underlineline
-            hi LspReferenceText gui=underlineline
-            hi LspReferenceWrite gui=underlineline
-          ]]
+                        hi LspReferenceRead gui=underlineline
+                        hi LspReferenceText gui=underlineline
+                        hi LspReferenceWrite gui=underlineline
+                    ]]
                     local g = vim.api.nvim_create_augroup('lsp_document_highlight', { clear = true })
                     vim.api.nvim_create_autocmd('CursorHold', {
                         callback = function() vim.lsp.buf.document_highlight() end,
@@ -515,29 +537,15 @@ PackerArguments[1] = function(use)
                 }
             end
 
-            local lua_dev = require('lua-dev').setup {
-                lspconfig = {
-                    on_attach = on_attach,
-                    capabilities = capabilities,
-                    flags = {
-                        debounce_text_changes = 150,
-                    },
-                    settings = {
-                        telemetry = {
-                            enable = false,
-                        },
-                        Lua = {
-                            diagnostics = {
-                                globals = {
-                                    'vim',
-                                    'map',
-                                }
-                            }
-                        }
-                    }
+            lspconfig.sumneko_lua.setup {
+              settings = {
+                Lua = {
+                  completion = {
+                    callSnippet = "Replace"
+                  }
                 }
+              }
             }
-            lspconfig.sumneko_lua.setup(lua_dev)
         end
     }
 
@@ -685,34 +693,42 @@ PackerArguments[1] = function(use)
                 inclusive_jump = true,
                 uppercase_labels = true,
             };
+
             (map "Jump to a line")
                 ['f'] = function() vim.cmd 'norm V'; hop.hint_lines_skip_whitespace() end
             (map "Jump to a letter")
                 ['F'] = function() hop.hint_words() end
+
             map:split { modes = 'o' };
 
             (map "Jump to a line and focus on it")
                 ['f'] = function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end
             (map "Jump to a letter")
                 ['F'] = function() hop.hint_words() end
+
             map:register { modes = 'n' }
         end
     }
     use {
         'mfussenegger/nvim-treehopper',
         config = function()
+
             (map "Jump to a tree node")
                 ['m'] = function() require('tsht').nodes() end
             (map "Jump to a tree node")
                 ['m'] = { function() require('tsht').nodes() end, remap = false }
+
             map:register { modes = 'ov' }
         end
     }
     use {
         'mizlan/iswap.nvim',
         config = function()
+
             (map "Swap with")
                 ['s'] = { 'ISwapWith', as = 'cmd' }
+
+            map:register {}
         end
     }
     use {
@@ -740,16 +756,20 @@ PackerArguments[1] = function(use)
         'AndrewRadev/switch.vim',
         keys = 't',
         config = function()
+
             (map "Toggle value")
                 ['t'] = 'Switch'
+
             map:register { as = 'cmd' }
         end
     }
     use {
         'junegunn/vim-easy-align',
         config = function()
+
             (map "Align by symbol")
                 ['|'] = { plug = 'EasyAlign' }
+
             map:register { modes = 'nxv' }
         end
     }
@@ -907,6 +927,15 @@ PackerArguments[1] = function(use)
         },
         ft = 'markdown'
     }
+    use {
+        "iamcco/markdown-preview.nvim",
+        run = "cd app && npm install",
+        ft = { "markdown" },
+        setup = function()
+            vim.g.mkdp_filetypes = { "markdown" }
+            vim.g.mkdp_browser = "chromium"
+        end,
+    }
 
     use 'dzeban/vim-log-syntax'
 
@@ -940,16 +969,19 @@ PackerArguments[1] = function(use)
                     winblend = 23
                 },
             };
+
             (map "Unmap space")
                 ['<Space>'] = '<Nop>'
             (map "Space is the leader key!")
                 ['<Space>'] = '<Leader>'
+
             map:split { remap = true };
 
             (map "Exit from terminal mode")
                 ['<Esc><Esc>'] = 'stopinsert'
             (map "Exit from terminal mode and focus on center")
                 ['<Esc><Esc><Esc>'] = 'stopinsert | call timer_start(100, { -> execute("norm M") }, {})'
+
             map:split { as = 'cmd', modes = 't', remap = false };
 
             (map "Close all non-file windows")

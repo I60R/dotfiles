@@ -3,8 +3,8 @@ require('keymap')
 
 local packer_path = vim.fn.stdpath('data')
 packer_path = packer_path .. '/site/pack/packer/opt/packer.nvim'
-packer_path = vim.fn.glob(packer_path)
-if vim.fn.empty(packer_path) > 0 then
+
+if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
     vim.cmd('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
     vim.cmd 'packadd packer.nvim'
     local packer = require('packer')
