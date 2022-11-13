@@ -4,8 +4,7 @@ local PackerArguments = {}
 PackerArguments.config = {
     compile_path = vim.fn.stdpath('data') .. '/site/plugin/packer_compiled.vim',
     display = {
-        non_interactive = true,
-        open_cmd = 'enew'
+        open_cmd = '90vnew \\[packer\\]'
     },
     autoremove = true,
 }
@@ -45,9 +44,6 @@ PackerArguments[1] = function(use)
             }
             vim.cmd 'colorscheme kanagawa'
             vim.cmd 'syntax enable'
-            vim.cmd 'hi! link TreesitterContext QuickFixLine'
-            vim.cmd 'hi! link TreesitterContextLineNumber QuickFixLine'
-            vim.cmd 'hi! link IndentBlanklineContextStart QuickFixLine'
             vim.cmd 'hi! VertSplit guibg=NONE'
         end
     }
@@ -245,10 +241,15 @@ PackerArguments[1] = function(use)
             indent_blankline.setup {
                 char = '┊',
                 use_treesitter = true,
-                buftype_exclude = { 'terminal', 'help' },
+                buftype_exclude = {
+                    'aerial',
+                    'terminal',
+                    'help',
+                },
                 show_current_context = true,
                 show_current_context_start = true,
             }
+            vim.cmd 'hi! link IndentBlanklineContextStart QuickFixLine'
         end
     }
     use {
@@ -387,12 +388,32 @@ PackerArguments[1] = function(use)
 
             local aerial = require('aerial')
             aerial.setup {
-                backends = { 'lsp', 'treesitter' },
-                default_direction = "prefer_left",
-                close_behavior = 'close',
+                on_attach = function(bufnr)
+
+                    (map "Jump next aerial")
+                        ['{'] = 'AerialPrev'
+                    (map "Jump next aerial")
+                        ['}'] = 'AerialNext'
+
+                    map:register {
+                        as = 'cmd',
+                        buffer = bufnr,
+                    }
+                end,
+                backends = {
+                    'lsp',
+                    'treesitter',
+                    'man',
+                },
+                layout = {
+                    default_direction = "prefer_left",
+                },
+                close_automatic_events = {
+                    'unsupported'
+                },
                 open_automatic = function(bufnr)
                     if aerial.num_symbols(bufnr) ~= 0 then
-                        vim.api.nvim_create_autocmd('BufLeave', {
+                        vim.api.nvim_create_autocmd('BufDelete', {
                             buffer = bufnr,
                             command = 'AerialCloseAll',
                         })
@@ -402,7 +423,10 @@ PackerArguments[1] = function(use)
                     end
                 end,
                 ignore = {
-                    buftypes = { 'special', 'terminal' }
+                    buftypes = {
+                        'special',
+                        'terminal',
+                    }
                 },
                 lsp = {
                     update_delay = 1000
@@ -431,8 +455,6 @@ PackerArguments[1] = function(use)
             capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
             local function on_attach(client, bufnr)
-                aerial.on_attach(client, bufnr)
-
                 local lspsignature = require('lsp_signature')
                 lspsignature.on_attach({}, bufnr)
 
@@ -483,10 +505,10 @@ PackerArguments[1] = function(use)
                     ['<Leader>q'] = vim.diagnostic.setloclist;
 
                 -- Set some keybinds conditional on server capabilities
-                if client.resolved_capabilities.document_formatting then
+                if client.server_capabilities.document_formatting then
                     (map "Document formatting")
                         ['<Leader>f'] = vim.lsp.buf.formatting;
-                elseif client.resolved_capabilities.document_range_formatting then
+                elseif client.server_capabilities.document_range_formatting then
                     (map "Range formatting")
                         ['<Leader>f'] = vim.lsp.buf.range_formatting;
                 end
@@ -494,7 +516,7 @@ PackerArguments[1] = function(use)
                 map:register { silent = true, remap = false, buffer = bufnr }
 
                 -- Set autocommands conditional on server_capabilities
-                if client.resolved_capabilities.document_highlight then
+                if client.server_capabilities.document_highlight then
                     vim.cmd [[
                         hi LspReferenceRead gui=underlineline
                         hi LspReferenceText gui=underlineline
@@ -845,10 +867,11 @@ PackerArguments[1] = function(use)
                     interval = 5000,
                     follow_files = true,
                 },
+                numhl = true,
                 current_line_blame = true,
                 current_line_blame_opts = {
                     virt_text = true,
-                    virt_text_pos = 'right_align',
+                    virt_text_pos = 'eol',
                     delay = 0,
                     ignore_whitespace = false,
                 }
@@ -866,6 +889,9 @@ PackerArguments[1] = function(use)
             'windwp/nvim-ts-autotag',
         },
         config = function()
+            vim.cmd 'hi! link TreesitterContext QuickFixLine'
+            vim.cmd 'hi! link TreesitterContextLineNumber QuickFixLine'
+
             local tree_sitter = require('nvim-treesitter.configs')
             tree_sitter.setup {
                 ensure_installed = 'all',
@@ -946,7 +972,24 @@ PackerArguments[1] = function(use)
         'zakharykaplan/nvim-retrail',
         config = function()
             local retrail = require('retrail')
-            retrail.setup {}
+            retrail.setup {
+                filetype = {
+                    exclude = {
+                        "",
+                        "alpha",
+                        "checkhealth",
+                        "diff",
+                        "help",
+                        "lspinfo",
+                        "man",
+                        "terminal",
+                        "Trouble",
+                        "WhichKey",
+                        "aerial",
+                        "pager",
+                    }
+                }
+            }
         end
     }
 
