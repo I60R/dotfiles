@@ -1,6 +1,5 @@
 local PackerArguments = {}
 
-
 PackerArguments.config = {
     compile_path = vim.fn.stdpath('data') .. '/site/plugin/packer_compiled.vim',
     display = {
@@ -54,7 +53,9 @@ PackerArguments[1] = function(use)
         branch = 'main',
         config = function()
             local highlights = {}
-            highlights.background = { bold = true }
+            highlights.background = {
+                bold = true
+            }
 
             for _, v in ipairs {
                 'tab', 'close_button', 'buffer', 'diagnostic',
@@ -63,7 +64,9 @@ PackerArguments[1] = function(use)
                 'error', 'error_diagnostic',
                 'modified', 'duplicate', 'separator', 'indicator', 'pick', 'numbers',
             } do
-                highlights[v .. '_selected'] = { bg = '#0000FF' }
+                highlights[v .. '_selected'] = {
+                    bg = '#0000FF'
+                }
             end
 
             local bufferline = require('bufferline')
@@ -153,6 +156,10 @@ PackerArguments[1] = function(use)
         config = function()
             local illuminate = require('illuminate')
             illuminate.configure {
+                providers = {
+                    'lsp',
+                    'treesitter',
+                },
                 delay = 500,
             }
         end
@@ -160,6 +167,7 @@ PackerArguments[1] = function(use)
     use {
         'norcalli/nvim-colorizer.lua',
         config = function()
+            vim.o.termguicolors = true
             local colorizer = require('colorizer')
             colorizer.setup {
                 '*',
@@ -227,9 +235,15 @@ PackerArguments[1] = function(use)
             vim.cmd 'hi IncSearch gui=bold guifg=white';
 
             (map "Next match")
-                ['n'] = function() vim.cmd('normal! ' .. vim.v.count1 .. 'n'); require('hlslens').start() end
+                ['n'] = function()
+                    vim.cmd('normal! ' .. vim.v.count1 .. 'n')
+                    require('hlslens').start()
+                end
             (map "Prev match")
-                ['N'] = function() vim.cmd('normal! ' .. vim.v.count1 .. 'N'); require('hlslens').start() end
+                ['N'] = function()
+                    vim.cmd('normal! ' .. vim.v.count1 .. 'N')
+                    require('hlslens').start()
+                end
 
             map:register { remap = false }
         end
@@ -274,17 +288,16 @@ PackerArguments[1] = function(use)
         config = function()
             local scrollview = require('scrollview')
             scrollview.setup {
-                column = 2,
-                winblend = 25,
+                column = 1,
+                winblend = 20,
                 base = 'left',
-                excluded_filetypes = { 'aerial', 'packer', 'help' },
+                excluded_filetypes = {
+                    'aerial',
+                    'packer',
+                    'help',
+                },
             }
         end
-    }
-    use {
-        'inkarkat/vim-mark',
-        requires = 'inkarkat/vim-ingo-library',
-        cmd = 'Mark'
     }
     use {
         'tpope/vim-characterize',
@@ -298,6 +311,7 @@ PackerArguments[1] = function(use)
             local zen_mode = require('zen-mode')
             zen_mode.setup {
                 window = {
+                    backdrop = 1,
                     width = 120,
                     height = 0.85,
                 },
@@ -366,14 +380,13 @@ PackerArguments[1] = function(use)
 
 
     use {
-        'neovim/nvim-lsp',
+        'neovim/nvim-lspconfig',
         requires = {
-            'kosayoda/nvim-lightbulb',
-            'neovim/nvim-lspconfig',
-            'folke/neodev.nvim',
-            'ray-x/lsp_signature.nvim',
-            'stevearc/aerial.nvim',
             'j-hui/fidget.nvim',
+            'stevearc/aerial.nvim',
+            'folke/neodev.nvim',
+            'kosayoda/nvim-lightbulb',
+            'ray-x/lsp_signature.nvim',
         },
         config = function()
             local fidget = require('fidget')
@@ -448,20 +461,37 @@ PackerArguments[1] = function(use)
                 setup_jsonls = false,
             }
 
-            local cmp_nvim_lsp = require('cmp_nvim_lsp');
             local lspconfig = require('lspconfig')
+            local capabilities = vim.lsp.protocol.make_client_capabilities();
 
-            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            (map "Diagnostics")
+                ['<Leader>e'] = vim.diagnostic.open_float;
+            (map "Previous diagnostic")
+                ['[d'] = vim.diagnostic.goto_prev;
+            (map "Next diagnostic")
+                [']d'] = vim.diagnostic.goto_next;
+            (map "Set loclist")
+                ['<Leader>q'] = vim.diagnostic.setloclist;
+
+            map:register { silent = true }
+
+
+            local cmp_nvim_lsp = require('cmp_nvim_lsp')
             capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
             local function on_attach(client, bufnr)
-                local lspsignature = require('lsp_signature')
-                lspsignature.on_attach({}, bufnr)
+                local lsp_signature = require('lsp_signature')
+                lsp_signature.on_attach({}, bufnr)
 
-                local lightbulb = require('nvim-lightbulb')
-                lightbulb.setup {
+                local nvim_lightbulb = require('nvim-lightbulb')
+                nvim_lightbulb.setup {
                     autocmd = {
-                        enabled = true
+                        enabled = true,
+                        pattern = { '*' },
+                        events = {
+                            'CursorHold',
+                            'CursorHoldI',
+                        }
                     },
                     sign = {
                         enabled = false
@@ -495,14 +525,6 @@ PackerArguments[1] = function(use)
                     ['<Leader>rn'] = vim.lsp.buf.rename;
                 (map "References")
                     ['gr'] = vim.lsp.buf.references;
-                (map "Diagnostics")
-                    ['<Leader>e'] = vim.diagnostic.open_float;
-                (map "Previous diagnostic")
-                    ['[d'] = vim.diagnostic.goto_prev;
-                (map "Next diagnostic")
-                    [']d'] = vim.diagnostic.goto_next;
-                (map "Set loclist")
-                    ['<Leader>q'] = vim.diagnostic.setloclist;
 
                 -- Set some keybinds conditional on server capabilities
                 if client.server_capabilities.document_formatting then
@@ -513,7 +535,7 @@ PackerArguments[1] = function(use)
                         ['<Leader>f'] = vim.lsp.buf.range_formatting;
                 end
 
-                map:register { silent = true, remap = false, buffer = bufnr }
+                map:register { silent = true, buffer = bufnr }
 
                 -- Set autocommands conditional on server_capabilities
                 if client.server_capabilities.document_highlight then
@@ -522,15 +544,17 @@ PackerArguments[1] = function(use)
                         hi LspReferenceText gui=underlineline
                         hi LspReferenceWrite gui=underlineline
                     ]]
-                    local g = vim.api.nvim_create_augroup('lsp_document_highlight', { clear = true })
+                    local group = vim.api.nvim_create_augroup('lsp_document_highlight', {
+                        clear = true
+                    })
                     vim.api.nvim_create_autocmd('CursorHold', {
                         callback = function() vim.lsp.buf.document_highlight() end,
-                        group = g,
+                        group = group,
                         buffer = 0,
                     })
                     vim.api.nvim_create_autocmd('CursorMoved', {
                         callback = function() vim.lsp.buf.clear_references() end,
-                        group = g,
+                        group = group,
                         buffer = 0,
                     })
                 end
@@ -548,7 +572,12 @@ PackerArguments[1] = function(use)
 
             -- Use a loop to conveniently both setup defined servers
             -- and map buffer local keybindings when the language server attaches
-            local servers = { "pyright", "bashls", "rust_analyzer", "clangd" }
+            local servers = {
+                "pyright",
+                "bashls",
+                "rust_analyzer",
+                "clangd",
+            }
             for _, server in ipairs(servers) do
                 lspconfig[server].setup {
                     on_attach = on_attach,
@@ -560,13 +589,13 @@ PackerArguments[1] = function(use)
             end
 
             lspconfig.sumneko_lua.setup {
-              settings = {
-                Lua = {
-                  completion = {
-                    callSnippet = "Replace"
-                  }
+                settings = {
+                    Lua = {
+                        completion = {
+                            callSnippet = "Replace"
+                        }
+                    }
                 }
-              }
             }
         end
     }
@@ -603,14 +632,22 @@ PackerArguments[1] = function(use)
         },
         config = function()
             vim.o.completeopt = 'menu,menuone,noselect'
+
             local luasnip = require('luasnip')
             local function has_words_before()
                 local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-                return col ~= 0 and
-                    vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+                return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+            end
+
+            local function line_empty()
+                local line = vim.api.nvim_get_current_line()
+                local line_trimmed = line:gsub("^%s*(.-)%s*$", "%1")
+                return line_trimmed == ''
             end
 
             local lspkind = require('lspkind')
+            lspkind.init {}
+
             local cmp = require('cmp')
             cmp.setup {
                 formatting = {
@@ -622,54 +659,69 @@ PackerArguments[1] = function(use)
                 snippet = {
                     expand = function(args) luasnip.lsp_expand(args.body) end
                 },
-                mapping = {
-                    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-                    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-                    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-                    ['<C-y>'] = cmp.config.disable,
-                    ['<C-e>'] = cmp.mapping { i = cmp.mapping.abort(), c = cmp.mapping.close() },
-                    ['<CR>'] = cmp.mapping.confirm { select = true },
-                    ["<Tab>"] = cmp.mapping(function(fallback)
+                mapping = cmp.mapping.preset.insert {
+                    ['<C-Space>'] = function()
                         if cmp.visible() then
                             cmp.select_next_item()
-                        elseif luasnip.expand_or_jumpable() then
-                            luasnip.expand_or_jump()
-                        elseif has_words_before() then
-                            cmp.complete()
+                            cmp.mapping.complete {}
                         else
-                            fallback()
+                            cmp.mapping.complete {}
                         end
-                    end, { "i", "s" }),
-                    ["<S-Tab>"] = cmp.mapping(function(fallback)
-                        if cmp.visible() then
-                            cmp.select_prev_item()
-                        elseif luasnip.jumpable(-1) then
-                            luasnip.jump(-1)
-                        else
-                            fallback()
-                        end
-                    end, { "i", "s" }),
+                    end,
+                    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+                    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                    ['<C-y>'] = cmp.config.disable,
+                    ['<C-e>'] = cmp.mapping.abort(),
+                    ['<CR>'] = cmp.mapping.confirm { select = true },
+                    ["<Tab>"] = cmp.mapping(
+                        function(fallback)
+                            if line_empty() and cmp.get_active_entry() == nil then
+                                fallback()
+                            elseif cmp.visible() then
+                                cmp.select_next_item()
+                            elseif luasnip.expand_or_jumpable() then
+                                luasnip.expand_or_jump()
+                            elseif has_words_before() then
+                                cmp.complete()
+                            else
+                                fallback()
+                            end
+                        end,
+                        { "i", "s" }
+                    ),
+                    ["<S-Tab>"] = cmp.mapping(
+                        function(fallback)
+                            if cmp.visible() then
+                                cmp.select_prev_item()
+                            elseif luasnip.jumpable(-1) then
+                                luasnip.jump(-1)
+                            else
+                                fallback()
+                            end
+                        end,
+                        { "i", "s" }
+                    ),
                 },
                 sources = cmp.config.sources {
                     { name = 'luasnip', group_index = 1 },
                     { name = 'nvim_lsp', group_index = 2 },
                     { name = 'buffer', group_index = 3 },
-                    { name = 'path' },
-                    { name = 'cmdline' },
-                    { name = 'nvim_lua' },
+                    { name = 'path', group_index = 4 },
+                    { name = 'cmdline', group_index = 5 },
+                    { name = 'nvim_lua', group_index = 6 },
                 }
             }
             cmp.setup.cmdline('/', {
                 sources = {
-                    { name = 'buffer' },
-                    { name = 'path' },
+                    { name = 'buffer', group_index = 1 },
+                    { name = 'path', group_index = 2 },
                 }
             })
             cmp.setup.cmdline(':', {
                 sources = cmp.config.sources {
-                    { name = 'path', group_index = 1 },
-                    { name = 'nvim_lua', group_index = 2 },
-                    { name = 'cmdline', group_index = 3 },
+                    { name = 'cmdline', group_index = 1 },
+                    { name = 'path', group_index = 2 },
+                    { name = 'nvim_lua', group_index = 3 },
                 }
             })
             local cmp_autopairs = require('nvim-autopairs.completion.cmp')
