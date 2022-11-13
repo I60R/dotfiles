@@ -19,6 +19,7 @@ def main():
     for ws in sway.get_tree().workspaces():
         if not ws.leaves():
             execute_command(i)
+            return
         if ws.num == i:
             i += 1
             continue

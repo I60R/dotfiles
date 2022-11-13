@@ -45,7 +45,7 @@ def remove_opacity(ipc):
 
 def handle_mark(ipc, event):
     marked = event.container
-    marked.command("border pixel 5" if "opaque" in marked.marks else "border pixel 0")
+    marked.command("border pixel 5" if "opaque" in marked.marks else "border pixel 1")
 
 if __name__ == "__main__":
     transparency_val = "0.77"

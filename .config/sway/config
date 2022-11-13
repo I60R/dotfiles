@@ -64,17 +64,19 @@ for_window [app_id="albert"]   floating enable; move up 200 px
 
 ### Misc options
 
-set $focus_color #53326D
-set $inact_color #42215C
+set $focus_color #63326D
+set $inact_color #32215C
 set $label_color #CCCCCC
 
 client.focused   $focus_color $focus_color $label_color $focus_color $focus_color
 client.unfocused $inact_color $inact_color $label_color $inact_color $inact_color
 
-default_border none
-default_floating_border none
-gaps inner 1
-gaps outer 1
+default_border pixel 2
+default_floating_border pixel 2
+gaps inner 6
+gaps outer 3
+
+workspace number 1
 
 floating_modifier $Mod normal
 
@@ -136,12 +138,12 @@ bindsym $Mod+Alt+Menu exec code
 
 
 # Start screen recording
-bindsym $Mod+Insert exec obs
+bindsym $Mod+Shift+Insert exec obs
 
 
 # Start screenshot
-set $screenshot slurp | grim -g - $(xdg-user-dir PICTURES)/sc/$(date +'%Y-%m-%d-%H%M%S.png')
-bindsym $Mod+Shift+Insert exec $screenshot
+
+bindsym $Mod+Insert exec ~/.config/sway/screenshot.sh
 
 
 # Start sound config
@@ -427,8 +429,8 @@ mode "NAVIGATION" {
 bar {
     font $font
     position top
-    gaps 2 0 0 2
-    height 24
+    gaps 4 0 0 4
+    height 26
     status_command i3status-rs ~/.config/i3status-rust/top-config.toml
     separator_symbol ""
     workspace_buttons no
@@ -452,8 +454,8 @@ bar {
 bar {
     font $font
     position bottom
-    gaps 2 0 0 2
-    height 24
+    gaps 4 0 0 4
+    height 26
     strip_workspace_name no
     strip_workspace_numbers no
     status_command i3status-rs ~/.config/i3status-rust/bottom-config.toml

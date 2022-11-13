@@ -34,6 +34,7 @@ launch ~/.config/sway/wsdnames.py
 launch flashfocus -t 160 -n 2 -o 0.86 --flash-lone-windows=always
 launch systembus-notify
 launch ydotoold
+launch udiskie -anTF
 
 
 LOCKSCREEN='~/.config/sway/screenlock.sh'
