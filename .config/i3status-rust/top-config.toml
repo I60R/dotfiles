@@ -12,11 +12,13 @@ separator = ""
 
 [[block]]
 block = "music"
-max_width = 50
+max_width = 75
+marquee_speed = 0.2
+buttons = []
 dynamic_width = true
 hide_when_empty = true
-buttons = ["prev", "play", "next"]
-icons_format = "  <span font_size='200%' baseline_shift='-3pt' color='green'>{icon}</span>  "
+format = " {combo} "
+icons_format = " <span font_size='200%' baseline_shift='-3pt' color='grey'>{icon}</span> "
 
 
 [[block]]
@@ -99,14 +101,14 @@ icons_format = "  <span font_size='250%' color='yellow' baseline_shift='-5pt'>{i
 [[block]]
 path = "/"
 block = "disk_space"
-format = "<span color='yellow'>{path}</span>{available}"
-on_click = "~/.config/sway/wsempty.py krusader"
+format = "<span color='yellow'>/</span>{available}"
+on_click = '~/.config/sway/wsempty.py krusader --right $HOME --left $(fd . /run/media/$USER -d 1 | read && echo "/run/media/$USER" || echo "/")'
 
 [[block]]
 path = "~/"
 block = "disk_space"
-format = " <span color='yellow'>{path}</span>{available} "
-on_click = "~/.config/sway/wsempty.py krusader"
+format = " <span color='yellow'>~</span>{available} "
+on_click = "~/.config/sway/wsempty.py krusader --right $HOME --left $HOME"
 
 
 [[block]]
