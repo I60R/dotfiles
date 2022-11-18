@@ -672,7 +672,17 @@ PackerArguments[1] = function(use)
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
                     ['<C-y>'] = cmp.config.disable,
                     ['<C-e>'] = cmp.mapping.abort(),
-                    ['<CR>'] = cmp.mapping.confirm { select = true },
+                    ['<CR>'] = cmp.mapping(
+                        function(fallback)
+                            if line_empty() and cmp.get_active_entry() == nil then
+                                fallback()
+                            elseif cmp.visible() then
+                                cmp.mapping.confirm { select = true }
+                            else
+                                fallback()
+                            end
+                        end
+                    ),
                     ["<Tab>"] = cmp.mapping(
                         function(fallback)
                             if line_empty() and cmp.get_active_entry() == nil then
