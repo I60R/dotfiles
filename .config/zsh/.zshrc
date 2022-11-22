@@ -1,5 +1,5 @@
-
-#                              Globals
+#                           Globals
+#
 
 POWERLEVEL9K_IGNORE_TERM_COLORS=true
 POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
@@ -181,23 +181,40 @@ alias          mv!='mvf'
 
 alias          '.'='nvr -cc ":term ranger $PWD" -c ":norm! i"'
 alias -g     '<<<'='tail -f '
-alias -g      '~!'="/run/user/$UID"
+alias -g      '~!'='/run/user/$UID'
 alias -g      '\\'=' > $(page) '
 alias -g      '//'=' | rg --smart-case'
 alias -g      '>|'=' > /dev/null 2>&1 '
 
-alias      r_trace="export RUST_BACKTRACE=full && export RUST_LOG=trace"
-alias      r_debug="export RUST_BACKTRACE=full && export RUST_LOG=debug"
-alias       r_info="export RUST_BACKTRACE=full && export RUST_LOG=info "
-alias      r_error="export RUST_BACKTRACE=0    && export RUST_LOG=error"
+alias         rtrc='export RUST_BACKTRACE=full && export RUST_LOG=trace'
+alias         rdbg='export RUST_BACKTRACE=full && export RUST_LOG=debug'
+alias         rinf='export RUST_BACKTRACE=full && export RUST_LOG=info '
+alias         rerr='export RUST_BACKTRACE=0    && export RUST_LOG=error'
 
+alias            c='cargo'
+alias           cb='cargo build'
+alias           cr='cargo run -- '
+alias           ct='[[ "$(pwd)" == */target/debug ]] && z ... || cd target/debug'
 
 
 
 #                              Functions
 
-preexec() { [ ! -z "$NVIM_LISTEN_ADDRESS" ] && echo "${1// *|*}" | read -A words; export PAGE_BUFFER_NAME="${words[@]:0:2}" }
-chpwd() { [ ! -z "$NVIM_LISTEN_ADDRESS" ] && nvr -cc "let b:working_dir = '$PWD'" }
+preexec () {
+    [ -z "$NVIM" ] && return
+    WORDS=(${1// *|*})
+    export PAGE_BUFFER_NAME="${WORDS[@]:0:2}"
+}
+
+chpwd () {
+    [ ! -z "$NVIM" ] && nvr -cc "let b:working_dir = '$PWD'"
+}
+
+man () {
+    PROGRAM="${@[-1]}"
+    SECTION="${@[-2]}"
+    page "man://$PROGRAM${SECTION:+($SECTION)}"
+}
 
 mkd() { mkdir -p $* && cd $1 }
 mkp() { mkdir -p $* }
@@ -208,10 +225,9 @@ mvf() { dir=${@:$#} && mkdir -p $dir && mv ${@:1:(( $# - 1 ))} $dir }
 bk() { cp -r $1 ~$1~ }
 kb() { cp -r ~$1~ $1 }
 
-note () { echo '\n     ———————————————:( '$(date +%T)' ):———————————————\n\n'"$*"'\n' >> ~/.notes/$(date +%F) }
-notes() { [[ -z $* ]] && cd ~/.notes || rg "$@" ~/.notes }
+acd() { P=$1.mount; mkdir $P && archivemount $1 $P && cd $P; }
+abd() { P=$1.mount; umount $P && rm -r $P }
 
-acd() { P=$1.mount; mkdir $P; archivemount $1 $P && cd $P; }
 
 
 #                             Settings

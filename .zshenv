@@ -53,7 +53,7 @@ export XCURSOR_SIZE=22
 export QT_SELECT=5
 export QT_STYLE_OVERRIDE=kvantum
 
-export GTK_THEME=Qogir-ubuntu-light
+export GTK_THEME=Materia
 
 export WINIT_HIDPI_FACTOR=1.33
 
@@ -70,8 +70,8 @@ export HISTFILE="$XDG_DATA_HOME"/zsh/history
 
 
 
-export EDITOR="nvr"
-export VISUAL="nvr"
+export EDITOR="nv"
+export VISUAL="nv"
 export MANPAGER="page -C -e 'au User PageDisconnect sleep 100m|%y p|enew! |bd! #|pu p| Man!'"
 export PAGER="page -q 90000 -O"
 export BROWSER="firefox"
