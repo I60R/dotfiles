@@ -1,5 +1,4 @@
 vim.g.no_plugin_maps = true
-require('keymap')
 
 local packer_path = vim.fn.stdpath('data')
 packer_path = packer_path .. '/site/pack/packer/opt/packer.nvim'

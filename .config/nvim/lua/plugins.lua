@@ -9,6 +9,75 @@ PackerArguments.config = {
 }
 
 PackerArguments[1] = function(use)
+
+    use {
+        'I60R/map-dsl.nvim',
+        requires = 'folke/which-key.nvim',
+        config = function()
+            local map_dsl = require('map-dsl')
+            local which_key = require('which-key')
+            which_key.setup {
+                icons = {
+                    separator = ''
+                },
+                layout = {
+                    align = 'center',
+                    width = { min = 0, max = 200 },
+                },
+                window = {
+                    position = 'top',
+                    margin = { 3, 8, 3, 8 },
+                    padding = { 3, 8, 3, 8 },
+                    winblend = 23
+                },
+            };
+
+            (map "Unmap space")
+                ['<Space>'] = '<Nop>'
+            (map "Space is the leader key!")
+                ['<Space>'] = '<Leader>'
+
+            map:split { remap = true };
+
+            (map "Exit from terminal mode")
+                ['<Esc><Esc>'] = 'stopinsert'
+            (map "Exit from terminal mode and focus on center")
+                ['<Esc><Esc><Esc>'] = 'stopinsert | call timer_start(100, { -> execute("norm M") }, {})'
+
+            map:split { as = 'cmd', modes = 't', remap = false };
+
+            (map "Close all non-file windows")
+                ['<Esc><Esc>'] = { 'helpcl | lcl | ccl | nohls | silent! Goyo!', as = 'cmd' }
+
+            local toggle = require('toggle');
+
+            (map "Toggle scrolloff")
+                ['MM'] = { toggle.scrolloff, remap = false }
+            (map "Toggle cursorcolumn")
+                ['MC'] = { toggle.cursorcolumn, remap = false }
+
+            (map "Undo")
+                ['U'] = '<C-r>'
+
+            (map "Swap go to mark line with go to mark position")
+                ["'"] = '`'
+            (map "Swap go to mark position with go to mark line")
+                ['`'] = "'"
+
+            (map "Create new file")
+                .ctrl['t'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', remap = true, modes = 'vto' }
+
+            map:register { modes = 'n' }
+        end
+    }
+
+    _G.use = function(spec)
+        if type(spec.after) == 'string' then
+            spec.after = { spec.after, }
+        end
+        spec.after[#spec.after+1] = "map-dsl.nvim"
+    end
+
     use {
         'wbthomason/packer.nvim',
         config = function()
@@ -21,8 +90,8 @@ PackerArguments[1] = function(use)
             'PackerCompile',
             'PackerClean',
             'PackerUpdate',
-            'PackerStatus',
             'PackerInstall',
+            'PackerStatus',
             'PackerProfile',
             'PackerSnapshot',
             'PackerSnapshotDelete',
@@ -37,9 +106,6 @@ PackerArguments[1] = function(use)
             local kanagawa = require('kanagawa')
             kanagawa.setup {
                 transparent = true,
-                colors = {
-                    bg = 'NONE'
-                }
             }
             vim.cmd 'colorscheme kanagawa'
             vim.cmd 'syntax enable'
@@ -65,7 +131,7 @@ PackerArguments[1] = function(use)
                 'modified', 'duplicate', 'separator', 'indicator', 'pick', 'numbers',
             } do
                 highlights[v .. '_selected'] = {
-                    bg = '#0000FF'
+                    bg = '#7E9CD8'
                 }
             end
 
@@ -92,7 +158,7 @@ PackerArguments[1] = function(use)
                     color_icons = true,
                     show_tab_indicators = false,
                     custom_areas = {
-                        left = function()
+                        right = function()
                             local result = {}
                             local git = vim.b.gitsigns_status_dict
                             local added = git['added']
@@ -307,11 +373,13 @@ PackerArguments[1] = function(use)
     use {
         'folke/zen-mode.nvim',
         config = function()
+            vim.cmd 'hi Normal guibg=#00000000';
+
             local toggle = require('toggle')
             local zen_mode = require('zen-mode')
             zen_mode.setup {
                 window = {
-                    backdrop = 1,
+                    backdrop = 0.5,
                     width = 120,
                     height = 0.85,
                 },
@@ -645,6 +713,10 @@ PackerArguments[1] = function(use)
                 return line_trimmed == ''
             end
 
+            local function str_ends_with(str, ending)
+               return ending == "" or ending == nil or str:sub(-#ending) == ending
+            end
+
             local lspkind = require('lspkind')
             lspkind.init {}
 
@@ -686,9 +758,11 @@ PackerArguments[1] = function(use)
                     ["<Tab>"] = cmp.mapping(
                         function(fallback)
                             if line_empty() and cmp.get_active_entry() == nil then
+                                cmp.abort()
                                 fallback()
                             elseif cmp.visible() then
                                 cmp.select_next_item()
+                                cmp.complete()
                             elseif luasnip.expand_or_jumpable() then
                                 luasnip.expand_or_jump()
                             elseif has_words_before() then
@@ -1052,65 +1126,6 @@ PackerArguments[1] = function(use)
                     }
                 }
             }
-        end
-    }
-
-    use {
-        'folke/which-key.nvim',
-        config = function()
-            local which_key = which_key or require('which-key')
-            which_key.setup {
-                icons = {
-                    separator = ''
-                },
-                layout = {
-                    align = 'center',
-                    width = { min = 0, max = 200 },
-                },
-                window = {
-                    position = 'top',
-                    margin = { 3, 8, 3, 8 },
-                    padding = { 3, 8, 3, 8 },
-                    winblend = 23
-                },
-            };
-
-            (map "Unmap space")
-                ['<Space>'] = '<Nop>'
-            (map "Space is the leader key!")
-                ['<Space>'] = '<Leader>'
-
-            map:split { remap = true };
-
-            (map "Exit from terminal mode")
-                ['<Esc><Esc>'] = 'stopinsert'
-            (map "Exit from terminal mode and focus on center")
-                ['<Esc><Esc><Esc>'] = 'stopinsert | call timer_start(100, { -> execute("norm M") }, {})'
-
-            map:split { as = 'cmd', modes = 't', remap = false };
-
-            (map "Close all non-file windows")
-                ['<Esc><Esc>'] = { 'helpcl | lcl | ccl | nohls | silent! Goyo!', as = 'cmd' }
-
-            local toggle = require('toggle');
-
-            (map "Toggle scrolloff")
-                ['MM'] = { toggle.scrolloff, remap = false }
-            (map "Toggle cursorcolumn")
-                ['MC'] = { toggle.cursorcolumn, remap = false }
-
-            (map "Undo")
-                ['U'] = '<C-r>'
-
-            (map "Swap go to mark line with go to mark position")
-                ["'"] = '`'
-            (map "Swap go to mark position with go to mark line")
-                ['`'] = "'"
-
-            (map "Create new file")
-                .ctrl['t'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', remap = true, modes = 'vto' }
-
-            map:register { modes = 'n' }
         end
     }
 end
