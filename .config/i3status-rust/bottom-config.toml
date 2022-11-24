@@ -3,7 +3,7 @@ icons_format = " <span font_size='135%'>{icon}</span> "
 
 
 [theme]
-name = "slick"
+name = "native"
 [theme.overrides]
 separator = ""
 
@@ -23,9 +23,9 @@ idle_bg = "#00000000"
 
 [[block]]
 block = "weather"
-format = "{weather_verbose} <span color='cyan'>{temp} {humidity}<span font_size='90%' baseline_shift='superscript'>🌢</span> {wind}<span font_size='90%' baseline_shift='superscript'>~m/s</span></span>"
+format = "<span baseline_shift='4pt'>{weather_verbose}</span> <span color='cyan'>{temp} {humidity}<span font_size='90%' baseline_shift='superscript'>🌢</span> {wind}<span font_size='90%' baseline_shift='superscript'>~m/s</span></span>"
 service = { name = "openweathermap", api_key = "212dbd65c18ac42f9d884dde9b49692a", city_id = "7530791", units = "metric" }
-icons_format = " <span font_size='140%' baseline_shift='-2pt'>{icon}</span> "
+icons_format = " <span font_size='140%' baseline_shift='2pt'>{icon}</span> "
 on_click = "~/.config/sway/wsempty.py gnome-weather"
 [block.icons_overrides]
 weather_sun = "☀️"

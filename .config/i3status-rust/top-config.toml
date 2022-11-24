@@ -3,7 +3,7 @@ icons_format = " <span font_size='135%'>{icon}</span> "
 
 
 [theme]
-name = "slick"
+name = "gruvbox-dark"
 [theme.overrides]
 separator = ""
 
@@ -26,6 +26,7 @@ block = "net"
 format = " {ip}<span color='yellow' letter_spacing='-512'>{speed_down;K}{speed_up;K}</span> "
 icons_format = "  <span font_size='200%' baseline_shift='-5pt'>{icon}</span> "
 hide_inactive = true
+on_click = "iwgtk"
 
 
 [[block]]
@@ -34,7 +35,7 @@ primary_only = true
 device_format = "<span letter_spacing='-512'>{ap}</span>"
 connection_format = "{devices}"
 icons_format = ""
-on_click = "~/.config/sway/wsempty.py alacritty -e 'nmtui'"
+on_click = "iwgtk"
 
 
 [[block]]
