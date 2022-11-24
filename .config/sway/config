@@ -54,25 +54,29 @@ seat seat0 xcursor_theme Fuchsia 22
 
 ### Modify windows
 
-for_window [app_id="fmit"]     fullscreen enable
-for_window [class="vlc"]       floating enable
-for_window [app_id="guitarix"] floating enable
-for_window [app_id="albert"]   floating enable; move up 200 px
+for_window [app_id="fmit"]               fullscreen enable
+for_window [class="vlc"]                 floating enable
+for_window [app_id="org.twosheds.iwgtk"] floating enable
+for_window [title="Copying.*Krusader"]   floating enable
+for_window [title="Moving.*Krusader"]    floating enable
+for_window [app_id="iwgtk"]              floating enable
+for_window [app_id="guitarix"]           floating enable
+for_window [app_id="albert"]             floating enable; move up 200 px
 
 
 
 
 ### Misc options
 
-set $focus_color #63326D
-set $inact_color #32215C
+set $focus_color #0000FF33
+set $inact_color #00000000
 set $label_color #CCCCCC
 
 client.focused   $focus_color $focus_color $label_color $focus_color $focus_color
 client.unfocused $inact_color $inact_color $label_color $inact_color $inact_color
 
-default_border pixel 2
-default_floating_border pixel 2
+default_border pixel 3
+default_floating_border pixel 3
 gaps inner 6
 gaps outer 3
 
@@ -138,12 +142,17 @@ bindsym $Mod+Alt+Menu exec code
 
 
 # Start screen recording
-bindsym $Mod+Shift+Insert exec obs
+bindsym $Mod+Ctrl+Shift+Insert exec obs
 
 
 # Start screenshot
 
 bindsym $Mod+Insert exec ~/.config/sway/screenshot.sh
+
+
+# Start color picker
+
+bindsym $Mod+Shift+Insert exec wl-color-picker
 
 
 # Start sound config
@@ -296,22 +305,29 @@ bindsym End           exec pactl set-sink-volume @DEFAULT_SINK@ -2%; exec pactl 
 bindsym Prior exec echo $(($(cat /sys/class/backlight/nv_backlight/brightness) + 2)) > /sys/class/backlight/nv_backlight/brightness
 bindsym Next  exec echo $(($(cat /sys/class/backlight/nv_backlight/brightness) - 2)) > /sys/class/backlight/nv_backlight/brightness
 
+set $ctrl  29:1
+set $shift 42:1
+set $alt   56:1
 
-bindsym       KP_Delete exec ydotool key Ctrl+Tab
-bindsym Shift+KP_Delete exec ydotool key Ctrl+Shift+Tab
+bindsym       KP_Delete exec ydotool key        $ctrl 15:1 15:0 29:0      #tab
+bindsym Shift+KP_Delete exec ydotool key $ctrl $shift 15:1 15:0 29:0 42:0
 
-bindsym       KP_Insert exec ydotool key Ctrl+w
-bindsym Shift+KP_Insert exec ydotool key Ctrl+T
+bindsym       KP_Insert exec ydotool key        $ctrl 17:1 17:0 29:0      #w
+bindsym Shift+KP_Insert exec ydotool key $ctrl $shift 20:1 20:0 29:0 42:0 #t
 
-bindsym KP_Begin exec ydotool key Right
-bindsym KP_Right exec ydotool key KEY_BACK
+bindsym KP_Begin exec ydotool     key 106:1 106:0 #KEY_RIGHT
+bindsym KP_Right exec ydotool     key 158:1 158:0 #KEY_BACK
 
-bindcode          94 exec ydotool key          Shift+6
-bindcode     Ctrl+94 exec ydotool key     Ctrl+Shift+6
-bindcode      Alt+94 exec ydotool key      Alt+Shift+6
-bindcode Ctrl+Alt+94 exec ydotool key Ctrl+Alt+Shift+6
+bindcode    Shift+94 exec ydotool key 159:1 159:0 #KEY_FORWARD
 
-bindcode    Shift+94 exec ydotool key KEY_FORWARD
+bindcode          94 exec ydotool key            $shift+7:1 7:0 42:0 #6
+bindcode     Ctrl+94 exec ydotool key      $ctrl+$shift+7:1 7:0 42:0 29:0
+bindcode Ctrl+Alt+94 exec ydotool key $ctrl+$alt+$shift+7:1 7:0 42:0 29:0
+bindcode      Alt+94 exec ydotool key       $alt+$shift+7:1 7:0 42:0 56:0
+
+
+bindsym KP_Up exec wtype ⦗
+bindsym KP_Down exec wtype ⦘
 
 
 
