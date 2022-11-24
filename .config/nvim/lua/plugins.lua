@@ -13,6 +13,7 @@ PackerArguments[1] = function(use)
     use {
         'I60R/map-dsl.nvim',
         requires = 'folke/which-key.nvim',
+        as = 'map',
         config = function()
             local map_dsl = require('map-dsl')
             local which_key = require('which-key')
@@ -71,13 +72,6 @@ PackerArguments[1] = function(use)
         end
     }
 
-    _G.use = function(spec)
-        if type(spec.after) == 'string' then
-            spec.after = { spec.after, }
-        end
-        spec.after[#spec.after+1] = "map-dsl.nvim"
-    end
-
     use {
         'wbthomason/packer.nvim',
         config = function()
@@ -115,7 +109,10 @@ PackerArguments[1] = function(use)
 
     use {
         'akinsho/nvim-bufferline.lua',
-        requires = 'kyazdani42/nvim-web-devicons',
+        requires = {
+            'kyazdani42/nvim-web-devicons',
+            'map'
+        },
         branch = 'main',
         config = function()
             local highlights = {}
@@ -260,7 +257,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'haya14busa/vim-asterisk',
-        event = 'VimEnter',
+        requires = 'map',
         setup = function()
             vim.g['asterisk#keeppos'] = 1
         end,
@@ -291,6 +288,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'kevinhwang91/nvim-hlslens',
+        requires = 'map',
         config = function()
             local hlslens = require('hlslens')
             hlslens.setup {
@@ -329,7 +327,7 @@ PackerArguments[1] = function(use)
                 show_current_context = true,
                 show_current_context_start = true,
             }
-            vim.cmd 'hi! link IndentBlanklineContextStart QuickFixLine'
+            vim.cmd 'hi! IndentBlanklineContextStart guisp=underdot'
         end
     }
     use {
@@ -372,14 +370,15 @@ PackerArguments[1] = function(use)
 
     use {
         'folke/zen-mode.nvim',
+        requires = 'map',
         config = function()
-            vim.cmd 'hi Normal guibg=#00000000';
+            vim.cmd 'hi Normal guibg=NONE';
 
             local toggle = require('toggle')
             local zen_mode = require('zen-mode')
             zen_mode.setup {
                 window = {
-                    backdrop = 0.5,
+                    backdrop = 1.0,
                     width = 120,
                     height = 0.85,
                 },
@@ -396,6 +395,7 @@ PackerArguments[1] = function(use)
 
     use {
         'rainbowhxch/accelerated-jk.nvim',
+        requires = 'map',
         config = function()
 
             (map "Accelerated j")
@@ -419,6 +419,7 @@ PackerArguments[1] = function(use)
     use {
         'kana/vim-textobj-user',
         requires = {
+            'map',
             'wellle/targets.vim',
             'rhysd/vim-textobj-anyblock',
             'rhysd/vim-textobj-conflict',
@@ -450,6 +451,7 @@ PackerArguments[1] = function(use)
     use {
         'neovim/nvim-lspconfig',
         requires = {
+            'map',
             'j-hui/fidget.nvim',
             'stevearc/aerial.nvim',
             'folke/neodev.nvim',
@@ -713,10 +715,6 @@ PackerArguments[1] = function(use)
                 return line_trimmed == ''
             end
 
-            local function str_ends_with(str, ending)
-               return ending == "" or ending == nil or str:sub(-#ending) == ending
-            end
-
             local lspkind = require('lspkind')
             lspkind.init {}
 
@@ -815,7 +813,7 @@ PackerArguments[1] = function(use)
 
     use {
         'lotabout/skim',
-        requires = { 'lotabout/skim.vim' },
+        requires = 'lotabout/skim.vim',
         run = './install',
     }
     use {
@@ -835,7 +833,10 @@ PackerArguments[1] = function(use)
         config = function()
             local project = require("project_nvim")
             project.setup {
-                detection_methods = { "pattern", "lsp", },
+                detection_methods = {
+                    "pattern",
+                    "lsp",
+                },
                 patterns = { "^.config" },
                 silent_chdir = false,
             }
@@ -845,6 +846,7 @@ PackerArguments[1] = function(use)
 
     use {
         'phaazon/hop.nvim',
+        requires = 'map',
         config = function()
             local hop = require('hop')
             hop.setup {
@@ -869,6 +871,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'mfussenegger/nvim-treehopper',
+        requires = 'map',
         config = function()
 
             (map "Jump to a tree node")
@@ -881,6 +884,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'mizlan/iswap.nvim',
+        requires = 'map',
         config = function()
 
             (map "Swap with")
@@ -912,6 +916,7 @@ PackerArguments[1] = function(use)
 
     use {
         'AndrewRadev/switch.vim',
+        requires = 'map',
         keys = 't',
         config = function()
 
@@ -923,6 +928,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'junegunn/vim-easy-align',
+        requires = 'map',
         config = function()
 
             (map "Align by symbol")
@@ -1043,7 +1049,13 @@ PackerArguments[1] = function(use)
                 autotag = {
                     enable = true,
                     filetypes = {
-                        'html', 'javascript', 'javascriptreact', 'typescriptreact', 'svelte', 'vue', 'markdown'
+                        'html',
+                        'javascript',
+                        'javascriptreact',
+                        'typescriptreact',
+                        'svelte',
+                        'vue',
+                        'markdown',
                     }
                 },
                 textsubjects = {
@@ -1081,6 +1093,24 @@ PackerArguments[1] = function(use)
             }
         end,
     }
+    use {
+        'Wansmer/treesj',
+        requires = {
+            'map',
+            'nvim-treesitter',
+        },
+        config = function()
+            local treesj = require('treesj')
+            treesj.setup {
+                use_default_keymaps = false,
+            };
+
+            (map "Split/join node")
+                .ctrl['J'] = 'TSJToggle'
+
+            map:register { as = 'cmd' }
+        end,
+    }
 
     use {
         'plasticboy/vim-markdown',
@@ -1108,24 +1138,7 @@ PackerArguments[1] = function(use)
         'zakharykaplan/nvim-retrail',
         config = function()
             local retrail = require('retrail')
-            retrail.setup {
-                filetype = {
-                    exclude = {
-                        "",
-                        "alpha",
-                        "checkhealth",
-                        "diff",
-                        "help",
-                        "lspinfo",
-                        "man",
-                        "terminal",
-                        "Trouble",
-                        "WhichKey",
-                        "aerial",
-                        "pager",
-                    }
-                }
-            }
+            retrail.setup { }
         end
     }
 end

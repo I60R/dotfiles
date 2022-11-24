@@ -68,7 +68,7 @@ vim.o.fillchars = ''
 vim.o.signcolumn = 'yes:3'
 vim.o.showtabline = 2
 vim.o.laststatus = 0
-vim.o.shortmess = ''
+vim.o.shortmess = 'oOWAIcFS'
 
 vim.o.ignorecase = true
 vim.o.smartcase = true
