@@ -1,0 +1,239 @@
+/** Set tab elements properties **/
+
+.tab {
+  line-height: normal;
+  height: 22px;
+  color: var(--browser-fg) !important;
+}
+
+
+/** Disable new tab button **/
+
+#tabbar {
+  bottom: 0px;
+}
+.newtab-button-box {
+  display: none;
+}
+
+
+
+/** Disable tab closebox **/
+
+.closebox {
+  display: none;
+}
+
+
+
+/** Disable tab drag notification **/
+
+.tab-drag-notification {
+  display: none;
+}
+
+
+
+/** Disable attention marker and highlighter **/
+
+.tab {
+  --attention-marker-gradient: none;
+  --attention-marker-gradient-hover: none;
+  --attention-marker-x-offset: none;
+  --attention-marker-y-offset: none;
+  --tab-highlighter: none;
+  --tab-highlighter-inactive: none;
+}
+
+
+
+/** Set smaller contextual identity size **/
+
+.tab:not(.faviconized) .contextual-identity-marker {
+  width: 2px !important;
+  top: 0px !important;
+  bottom: 0px !important;
+}
+.tab.faviconized .contextual-identity-marker {
+  height: 2px !important;
+  width: 100% !important;
+  top: 0px !important;
+  left: 0px !important;
+  right: 0px !important;
+}
+
+
+
+/** Set smaller pinned tab size **/
+
+.tab.faviconized {
+  height: 20px;
+  max-width: 28px !important;
+  width: 40px;
+  align-items: center;
+}
+
+
+
+
+/** Set bg and fg to match browser theme **/
+
+#background {
+  background-color: var(--browser-background) !important;
+}
+.label-content {
+  color: var(--browser-fg) !important;
+}
+
+
+
+/** Set margin between favicon and tab title **/
+
+tab-item:not(.faviconized) tab-favicon {
+  margin-right: 6px;
+}
+
+
+
+/** Make sound button better visible and non-clickable **/
+
+tab-sound-button {
+  opacity: 1.0;
+  pointer-events: none;
+}
+
+tab-sound-button::before, tab-sound-button::after {
+  background-image: none !important;
+  color: var(--browser-fg) !important;
+  text-shadow:
+    1px 0px var(--browser-background),
+    -1px 0px var(--browser-background),
+    0px 1px var(--browser-background),
+    0px -1px var(--browser-background);
+  font-size: 18px;
+  line-height: 14px;
+}
+
+tab-item.pinned tab-sound-button::before {
+  font-size: 14px;
+}
+
+tab-item:not(.muted) tab-sound-button::before {
+  content: "墳" !important;
+}
+
+tab-sound-button::before {
+  content: "ﱝ" !important;
+}
+
+
+
+/** Make scrollbar less intrusive **/
+
+#tabbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--browser-border) var(--browser-background);
+}
+
+
+
+/** Emphasize important tabs **/
+
+.tab.last-active {
+  text-decoration: underline !important;
+}
+.tab.last-active.faviconized {
+  box-shadow: 0px 1px !important;
+}
+.tab:hover, .tab.active, .tab.highlighted {
+  background-color: var(--browser-bg-darker);
+  box-shadow: inset 2px 0px !important;
+}
+.tab:hover.faviconized, .tab.active.faviconized, .tab.highlighted.faviconized {
+  background-color: var(--browser-bg-darker);
+  box-shadow: 0px 2px !important;
+}
+.tab.active {
+  font-weight: bold !important;
+}
+
+
+
+/** Invert tabs list! **/
+.tabs {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+}
+
+
+
+/** Move pinned tabs to the right side **/
+
+.last-row {
+  left: calc(100% - var(--pinned-position-left) - var(--tab-size)) !important;
+}
+
+
+
+/** Improve twisty behavior **/
+
+tab-twisty {
+  min-width: 22px !important;
+  min-height: 22px !important;
+  text-align: center !important;
+  font-family: "Roboto" !important;
+  font-size: 14px !important;
+}
+tab-twisty::before {
+  background: none !important;
+  content: "▴" !important;
+  padding-top: 6px !important;
+}
+
+tab-item.subtree-collapsed tab-twisty {
+  font-size: 6px !important;
+  transform: unset !important;
+}
+tab-item.subtree-collapsed tab-twisty::before {
+  padding-top: 8px !important;
+  content: "▷" !important;
+}
+
+tab-item:not(.collapsed).subtree-collapsed tab-twisty:hover {
+  margin-bottom: 4px !important;
+  font-size: 24px !important;
+}
+tab-item:not(.collapsed).subtree-collapsed tab-twisty:hover::before {
+  padding-top: 0px !important;
+  content: "▾" !important;
+}
+tab-item:not(.collapsed):not(.subtree-collapsed) tab-twisty:hover {
+  margin-bottom: 10px !important;
+  font-size: 20px !important;
+}
+tab-item:not(.collapsed):not(.subtree-collapsed) tab-twisty:hover::before {
+  content: "▷" !important;
+}
+
+
+
+/** Downscale tab counter **/
+
+tab-counter {
+  font-size: 60%;
+  opacity: 60%;
+  height: 14px !important;
+  margin: 3px;
+}
+
+tab-counter::before, tab-counter::after {
+  content: none !important;
+}
+
+
+
+/** Improve performance a bit **/
+
+.favicon {
+  loading: "lazy" !important;
+}
