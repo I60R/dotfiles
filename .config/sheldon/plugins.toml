@@ -71,5 +71,17 @@ apply = ["noeol", "defer"]
 
 
 [templates]
-defer = { value = 'zsh-defer source "{{ file }}"', each = true }
-noeol = { value = 'export PROMPT_EOL_MARK=""; source "{{ file }}"; zsh-defer export PROMPT_EOL_MARK="%K{red} %k"', each = true }
+
+defer = """
+    {% for file in files %}
+        zsh-defer source "{{ file }}"
+    {% endfor %}
+"""
+
+noeol = """
+    {% for file in files %}
+        export PROMPT_EOL_MARK="";
+        source "{{ file }}";
+        zsh-defer export PROMPT_EOL_MARK="%K{red} %k"
+    {% endfor %}
+"""
