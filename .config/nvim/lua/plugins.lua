@@ -103,16 +103,17 @@ PackerArguments[1] = function(use)
             }
             vim.cmd 'colorscheme kanagawa'
             vim.cmd 'syntax enable'
-            vim.cmd 'hi! VertSplit guibg=NONE'
+
+            vim.api.nvim_set_hl(0, 'VertSplit', {
+                ctermbg = 0
+            })
         end
     }
 
     use {
         'akinsho/nvim-bufferline.lua',
-        requires = {
-            'kyazdani42/nvim-web-devicons',
-            'map'
-        },
+        after = 'map',
+        requires = 'kyazdani42/nvim-web-devicons',
         branch = 'main',
         config = function()
             local highlights = {}
@@ -128,7 +129,7 @@ PackerArguments[1] = function(use)
                 'modified', 'duplicate', 'separator', 'indicator', 'pick', 'numbers',
             } do
                 highlights[v .. '_selected'] = {
-                    bg = '#7E9CD8'
+                    ctermbg = '#7E9CD8'
                 }
             end
 
@@ -257,7 +258,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'haya14busa/vim-asterisk',
-        requires = 'map',
+        after = 'map',
         setup = function()
             vim.g['asterisk#keeppos'] = 1
         end,
@@ -288,7 +289,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'kevinhwang91/nvim-hlslens',
-        requires = 'map',
+        after = 'map',
         config = function()
             local hlslens = require('hlslens')
             hlslens.setup {
@@ -296,7 +297,11 @@ PackerArguments[1] = function(use)
                 nearest_float_when = 'never',
                 virt_priority = 0,
             }
-            vim.cmd 'hi IncSearch gui=bold guifg=white';
+
+            vim.api.nvim_set_hl(0, 'IncSearch', {
+                bold = true,
+                ctermfg = 'white'
+            });
 
             (map "Next match")
                 ['n'] = function()
@@ -327,7 +332,10 @@ PackerArguments[1] = function(use)
                 show_current_context = true,
                 show_current_context_start = true,
             }
-            vim.cmd 'hi! IndentBlanklineContextStart guisp=underdot'
+
+            vim.api.nvim_set_hl(0, 'IndentBlanklineContextStart', {
+                underdashed = true
+            })
         end
     }
     use {
@@ -354,7 +362,6 @@ PackerArguments[1] = function(use)
             scrollview.setup {
                 column = 1,
                 winblend = 20,
-                base = 'left',
                 excluded_filetypes = {
                     'aerial',
                     'packer',
@@ -370,9 +377,11 @@ PackerArguments[1] = function(use)
 
     use {
         'folke/zen-mode.nvim',
-        requires = 'map',
+        after = 'map',
         config = function()
-            vim.cmd 'hi Normal guibg=NONE';
+            vim.api.nvim_set_hl(0, "ZenBg", {
+                ctermbg = 0,
+            })
 
             local toggle = require('toggle')
             local zen_mode = require('zen-mode')
@@ -386,6 +395,7 @@ PackerArguments[1] = function(use)
                 on_close = toggle.scrolloff,
             };
 
+
             (map "Toggle zen mode")
                 ['<F11>'] = function() require('zen-mode').toggle() end
 
@@ -395,7 +405,7 @@ PackerArguments[1] = function(use)
 
     use {
         'rainbowhxch/accelerated-jk.nvim',
-        requires = 'map',
+        after = 'map',
         config = function()
 
             (map "Accelerated j")
@@ -418,8 +428,8 @@ PackerArguments[1] = function(use)
 
     use {
         'kana/vim-textobj-user',
+        after = 'map',
         requires = {
-            'map',
             'wellle/targets.vim',
             'rhysd/vim-textobj-anyblock',
             'rhysd/vim-textobj-conflict',
@@ -449,26 +459,9 @@ PackerArguments[1] = function(use)
 
 
     use {
-        'neovim/nvim-lspconfig',
-        requires = {
-            'map',
-            'j-hui/fidget.nvim',
-            'stevearc/aerial.nvim',
-            'folke/neodev.nvim',
-            'kosayoda/nvim-lightbulb',
-            'ray-x/lsp_signature.nvim',
-        },
-        config = function()
-            local fidget = require('fidget')
-            fidget.setup {
-                window = {
-                    blend = 0,
-                },
-                fmt = {
-                    upwards = false,
-                }
-            }
-
+        'stevearc/aerial.nvim',
+        after = 'map',
+        config = function ()
             local aerial = require('aerial')
             aerial.setup {
                 on_attach = function(bufnr)
@@ -496,10 +489,6 @@ PackerArguments[1] = function(use)
                 },
                 open_automatic = function(bufnr)
                     if aerial.num_symbols(bufnr) ~= 0 then
-                        vim.api.nvim_create_autocmd('BufDelete', {
-                            buffer = bufnr,
-                            command = 'AerialCloseAll',
-                        })
                         return true
                     else
                         return false
@@ -518,7 +507,78 @@ PackerArguments[1] = function(use)
                     update_delay = 1000
                 },
             }
+        end
+    }
+    use {
+        'ray-x/lsp_signature.nvim',
+        config = function ()
+            local lsp_signature = require('lsp_signature')
+            lsp_signature.setup {
+                bind = false,
+                handler_opts = {
+                    border = "none"
+                }
+            }
+        end
+    }
+    use {
+        'j-hui/fidget.nvim',
+        config = function ()
+            local fidget = require('fidget')
+            fidget.setup {
+                window = {
+                    blend = 0,
+                },
+                fmt = {
+                    upwards = false,
+                }
+            }
+        end
+    }
+    use {
+        "glepnir/lspsaga.nvim",
+        branch = "main",
+        after = 'map',
+        config = function()
+            local saga = require("lspsaga")
+            saga.init_lsp_saga {}--[[  ]];
 
+            (map "LSP finder")
+                ['<F6>'] = 'Lspsaga lsp_finder'
+            (map "LSP actions")
+                ['<F3>'] = 'Lspsaga code_action'
+            (map "LSP rename")
+                ['<Leader>r'] = 'Lspsaga rename'
+            (map "LSP peek definition")
+                ['<Leader>d'] = 'Lspsaga peek_definition'
+            (map "LSP line diagnostic")
+                ['<Leader>l'] = 'Lspsaga show_line_diagnostics'
+            (map "LSP cursor diagnostic")
+                ['<Leader>c'] = 'Lspsaga show_cursor_diagnostics'
+            (map "LSP hover doc")
+                ['K'] = 'Lspsaga hover_doc'
+
+            map:split { as = 'cmd', silent = true };
+
+
+            (map "LSP next diagnostic")
+                ['<F8>'] = function()
+                    require("lspsaga.diagnostic")
+                        .goto_prev({ severity = vim.diagnostic.severity.ERROR })
+                end
+            (map "LSP next diagnostic")
+                .shift['<F8>'] = function()
+                    require("lspsaga.diagnostic")
+                        .goto_next({ severity = vim.diagnostic.severity.ERROR })
+                end
+
+            map:register { silent = true }
+        end,
+    }
+    use {
+        'folke/neodev.nvim',
+        after = 'nvim-lspconfig',
+        config = function()
             local lua_dev = require('neodev');
             lua_dev.setup {
                 lspconfig = true,
@@ -530,7 +590,15 @@ PackerArguments[1] = function(use)
                 },
                 setup_jsonls = false,
             }
-
+        end
+    }
+    use {
+        'neovim/nvim-lspconfig',
+        after = {
+            'map',
+            'cmp-nvim-lsp',
+        },
+        config = function()
             local lspconfig = require('lspconfig')
             local capabilities = vim.lsp.protocol.make_client_capabilities();
 
@@ -545,32 +613,10 @@ PackerArguments[1] = function(use)
 
             map:register { silent = true }
 
-
             local cmp_nvim_lsp = require('cmp_nvim_lsp')
             capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
             local function on_attach(client, bufnr)
-                local lsp_signature = require('lsp_signature')
-                lsp_signature.on_attach({}, bufnr)
-
-                local nvim_lightbulb = require('nvim-lightbulb')
-                nvim_lightbulb.setup {
-                    autocmd = {
-                        enabled = true,
-                        pattern = { '*' },
-                        events = {
-                            'CursorHold',
-                            'CursorHoldI',
-                        }
-                    },
-                    sign = {
-                        enabled = false
-                    },
-                    float = {
-                        enabled = true
-                    }
-                };
-
                 -- Mappings.
                 (map "Workspace folders")
                     ['<Leader>wl'] = function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end
@@ -609,11 +655,16 @@ PackerArguments[1] = function(use)
 
                 -- Set autocommands conditional on server_capabilities
                 if client.server_capabilities.document_highlight then
-                    vim.cmd [[
-                        hi LspReferenceRead gui=underlineline
-                        hi LspReferenceText gui=underlineline
-                        hi LspReferenceWrite gui=underlineline
-                    ]]
+                    vim.api.nvim_set_hl(0, 'LspReferenceRead', {
+                        underdouble = true
+                    })
+                    vim.api.nvim_set_hl(0, 'LspReferenceText', {
+                        underdouble = true
+                    })
+                    vim.api.nvim_set_hl(0, 'LspReferenceWrite ', {
+                        underdouble = true
+                    })
+
                     local group = vim.api.nvim_create_augroup('lsp_document_highlight', {
                         clear = true
                     })
@@ -704,30 +755,34 @@ PackerArguments[1] = function(use)
             vim.o.completeopt = 'menu,menuone,noselect'
 
             local luasnip = require('luasnip')
+            local lspkind = require('lspkind')
+
             local function has_words_before()
                 local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-                return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+                local curr_line = vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]
+                return col ~= 0 and curr_line:sub(col, col):match("%s") == nil
             end
 
-            local function line_empty()
-                local line = vim.api.nvim_get_current_line()
-                local line_trimmed = line:gsub("^%s*(.-)%s*$", "%1")
-                return line_trimmed == ''
+            local function line_empty(line)
+                return line:match("^%s*(.-)%s*$") == ""
             end
 
-            local lspkind = require('lspkind')
-            lspkind.init {}
+            local function ends_with(str, ending)
+               return ending == "" or str:sub(-#ending) == ending
+            end
 
             local cmp = require('cmp')
             cmp.setup {
                 formatting = {
-                    format = lspkind.cmp_format({
+                    format = lspkind.cmp_format {
                         mode = 'symbol_text',
-                        maxwidth = 50,
-                    })
+                        maxwidth = 80,
+                    }
                 },
                 snippet = {
-                    expand = function(args) luasnip.lsp_expand(args.body) end
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end
                 },
                 mapping = cmp.mapping.preset.insert {
                     ['<C-Space>'] = function()
@@ -744,21 +799,32 @@ PackerArguments[1] = function(use)
                     ['<C-e>'] = cmp.mapping.abort(),
                     ['<CR>'] = cmp.mapping(
                         function(fallback)
-                            if line_empty() and cmp.get_active_entry() == nil then
+                            if cmp.get_active_entry() == nil then
                                 fallback()
-                            elseif cmp.visible() then
-                                cmp.mapping.confirm { select = true }
                             else
-                                fallback()
+                                cmp.complete()
+                                cmp.confirm { select = true }
+                                cmp.abort()
                             end
                         end
                     ),
                     ["<Tab>"] = cmp.mapping(
                         function(fallback)
-                            if line_empty() and cmp.get_active_entry() == nil then
-                                cmp.abort()
+                            local line = vim.api.nvim_get_current_line()
+                            local active_entry = cmp.get_active_entry()
+                            local cmp_visible = cmp.visible()
+
+                            if line_empty(line) and active_entry == nil then
                                 fallback()
-                            elseif cmp.visible() then
+                            elseif cmp_visible and active_entry == nil then
+                                cmp.select_next_item()
+                                cmp.complete()
+                            elseif cmp_visible
+                                and active_entry ~= nil
+                                and not ends_with(active_entry, vim.fn.expand('<cword>'))
+                            then
+                                cmp.confirm { select = true }
+                            elseif cmp_visible then
                                 cmp.select_next_item()
                                 cmp.complete()
                             elseif luasnip.expand_or_jumpable() then
@@ -827,7 +893,6 @@ PackerArguments[1] = function(use)
 
     use 'kopischke/vim-stay'
     use 'tpope/vim-sleuth'
-    use 'tpope/vim-eunuch'
     use {
         "ahmedkhalf/project.nvim",
         config = function()
@@ -846,7 +911,7 @@ PackerArguments[1] = function(use)
 
     use {
         'phaazon/hop.nvim',
-        requires = 'map',
+        after = 'map',
         config = function()
             local hop = require('hop')
             hop.setup {
@@ -871,7 +936,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'mfussenegger/nvim-treehopper',
-        requires = 'map',
+        after = 'map',
         config = function()
 
             (map "Jump to a tree node")
@@ -884,7 +949,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'mizlan/iswap.nvim',
-        requires = 'map',
+        after = 'map',
         config = function()
 
             (map "Swap with")
@@ -916,7 +981,7 @@ PackerArguments[1] = function(use)
 
     use {
         'AndrewRadev/switch.vim',
-        requires = 'map',
+        after = 'map',
         keys = 't',
         config = function()
 
@@ -928,7 +993,7 @@ PackerArguments[1] = function(use)
     }
     use {
         'junegunn/vim-easy-align',
-        requires = 'map',
+        after = 'map',
         config = function()
 
             (map "Align by symbol")
@@ -1031,8 +1096,12 @@ PackerArguments[1] = function(use)
             'windwp/nvim-ts-autotag',
         },
         config = function()
-            vim.cmd 'hi! link TreesitterContext QuickFixLine'
-            vim.cmd 'hi! link TreesitterContextLineNumber QuickFixLine'
+            vim.api.nvim_set_hl(0, 'TreesitterContext', {
+                link = 'QuickFixLine'
+            })
+            vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', {
+                link = 'QuickFixLine'
+            })
 
             local tree_sitter = require('nvim-treesitter.configs')
             tree_sitter.setup {
@@ -1095,8 +1164,8 @@ PackerArguments[1] = function(use)
     }
     use {
         'Wansmer/treesj',
+        after = 'map',
         requires = {
-            'map',
             'nvim-treesitter',
         },
         config = function()
