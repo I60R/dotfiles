@@ -94,7 +94,7 @@ icons_format = ""
 
 [[block]]
 block = "memory"
-format_mem = "<span font_size='97%'>{mem_total_used}<span font_size='150%' baseline_shift='-2pt'> ⇄</span>{swap_used}</span> "
+format_mem = "<span font_size='97%'>{mem_total_used}<span font_size='90%' baseline_shift='2pt'> ⇄</span>{swap_used}</span> "
 format_swap = " (swap: {swap_used}/{swap_total}, buf: {buffers}, cache: {cached}) "
 icons_format = "  <span font_size='250%' color='yellow' baseline_shift='-5pt'>{icon}</span> "
 
