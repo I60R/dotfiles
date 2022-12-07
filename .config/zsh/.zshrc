@@ -169,11 +169,11 @@ alias          gdc="git diff --cached"
 alias          gau="git add -u"
 
 alias            f=$FILTER
-alias            v=$EDITOR
 alias            p=$PAGER
 alias         less=$PAGER
 alias        zless=$PAGER
 
+alias           cp=xcp
 alias          cat=bat
 alias           cd=z
 
@@ -228,6 +228,14 @@ kb() { cp -r ~$1~ $1 }
 
 acd() { P=$1.mount; mkdir $P && archivemount $1 $P && cd $P; }
 abd() { P=$1.mount; umount $P && rm -r $P }
+
+v() {
+    if [ -t 1 ] && [ 1 -eq $# ] && [ -d $1 ]; then
+        cd $1
+    else
+        nv $*
+    fi
+}
 
 
 

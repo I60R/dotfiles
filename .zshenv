@@ -26,6 +26,7 @@ export PATH="$PATH:$HOME/.local/bin:$JAVA_HOME:$PERL_HOME"
 
 export LD_LIBRARY_PATH="/usr/local/lib:/usr/lib"
 export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
+export STDERRED_ESC_CODE="$(echo -e '\033[3m\033[31m')"
 
 
 
@@ -72,8 +73,7 @@ export HISTFILE="$XDG_DATA_HOME"/zsh/history
 
 export EDITOR="nv"
 export VISUAL="nv"
-export MANPAGER="page -C -e 'au User PageDisconnect sleep 100m|%y p|enew! |bd! #|pu p| Man!'"
-export PAGER="page -q 90000 -O"
+export PAGER="page -O -q 90000"
 export BROWSER="firefox"
 export FILTER="fzf --reverse --inline-info --height=40 --ansi --color=dark,bg+:-1,border:0,info:8,prompt:8,hl:34,hl+:34,pointer:34 --bind=tab:down,btab:up"
 
