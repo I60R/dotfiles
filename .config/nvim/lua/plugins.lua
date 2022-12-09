@@ -31,41 +31,41 @@ PackerArguments[1] = function(use)
                     padding = { 3, 8, 3, 8 },
                     winblend = 23
                 },
-            };
+            }
 
-            (map "Unmap space")
+            ;(map "Unmap space")
                 ['<Space>'] = '<Nop>'
-            (map "Space is the leader key!")
+            ;(map "Space is the leader key!")
                 ['<Space>'] = '<Leader>'
 
-            map:split { remap = true };
+            map:split { remap = true }
 
-            (map "Exit from terminal mode")
+            ;(map "Exit from terminal mode")
                 ['<Esc><Esc>'] = 'stopinsert'
-            (map "Exit from terminal mode and focus on center")
+            ;(map "Exit from terminal mode and focus on center")
                 ['<Esc><Esc><Esc>'] = 'stopinsert | call timer_start(100, { -> execute("norm M") }, {})'
 
-            map:split { as = 'cmd', modes = 't', remap = false };
+            map:split { as = 'cmd', modes = 't', remap = false }
 
-            (map "Close all non-file windows")
-                ['<Esc><Esc>'] = { 'helpcl | lcl | ccl | nohls | silent! Goyo!', as = 'cmd' }
+            ;(map "Close all non-file windows")
+                ['<Esc><Esc>'] = { 'helpclose | lclose | cclose | nohlsearch', as = 'cmd' }
 
-            local toggle = require('toggle');
+            local toggle = require('toggle')
 
-            (map "Toggle scrolloff")
+            ;(map "Toggle scrolloff")
                 ['MM'] = { toggle.scrolloff, remap = false }
-            (map "Toggle cursorcolumn")
+            ;(map "Toggle cursorcolumn")
                 ['MC'] = { toggle.cursorcolumn, remap = false }
 
-            (map "Undo")
+            ;(map "Undo")
                 ['U'] = '<C-r>'
 
-            (map "Swap go to mark line with go to mark position")
+            ;(map "Swap go to mark line with go to mark position")
                 ["'"] = '`'
-            (map "Swap go to mark position with go to mark line")
+            ;(map "Swap go to mark position with go to mark line")
                 ['`'] = "'"
 
-            (map "Create new file")
+            ;(map "Create new file")
                 .ctrl['t'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', remap = true, modes = 'vto' }
 
             map:register { modes = 'n' }
@@ -185,21 +185,21 @@ PackerArguments[1] = function(use)
             for n = 1, 9 do
                 local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
 
-                (map "Go to (" .. n .. ") buffer")
+                ;(map "Go to (" .. n .. ") buffer")
                     .alt[n] = { focus_nth_buffer, remap = false, silent = true };
             end
 
-            (map "Pick a buffer")
+            ;(map "Pick a buffer")
                 .alt['`'] = 'BufferLinePick'
-            (map "Previous buffer")
+            ;(map "Previous buffer")
                 .alt['Left'] = 'BufferLineCyclePrev'
-            (map "Next buffer")
+            ;(map "Next buffer")
                 .alt['Right'] = 'BufferLineCycleNext'
-            (map "Close buffer")
+            ;(map "Close buffer")
                 .alt['q'] = 'b # | bd #'
-            (map "Previous buffer")
+            ;(map "Previous buffer")
                 ['<F13>'] = 'BufferLineCyclePrev'
-            (map "Next buffer")
+            ;(map "Next buffer")
                 ['<F14>'] = 'BufferLineCycleNext'
 
             map:register { as = 'cmd', modes = 'nicxsot' }
@@ -211,8 +211,11 @@ PackerArguments[1] = function(use)
         config = function()
             local marks = require('marks')
             marks.setup {
-                builtin_marks = { ".", "[", "]", "^", "'", '"', },
+                builtin_marks = { ".", "^", "'", '"', "`" },
             }
+            vim.api.nvim_set_hl(0, 'MarkSignNumHL', {
+                link = 'LineNr'
+            })
         end
     }
     use {
@@ -273,15 +276,15 @@ PackerArguments[1] = function(use)
                 group = g,
                 pattern = "visual_multi_exit",
                 callback = function() require('vmlens').exit() end
-            });
+            })
 
-            (map "Search word")
+            ;(map "Search word")
                 ['*'] = { plug = 'asterisk-z*', 'require("hlslens").start()' }
-            (map "Search word backwards")
+            ;(map "Search word backwards")
                 ['#'] = { plug = 'asterisk-z#', 'require("hlslens").start()' }
-            (map "Go to search word")
+            ;(map "Go to search word")
                 ['g*'] = { plug = 'asterisk-gz*', 'require("hlslens").start()' }
-            (map "Go to search word backwards")
+            ;(map "Go to search word backwards")
                 ['g#'] = { plug = 'asterisk-gz#', 'require("hlslens").start()' }
 
             map:register { as = 'lua' }
@@ -301,14 +304,14 @@ PackerArguments[1] = function(use)
             vim.api.nvim_set_hl(0, 'IncSearch', {
                 bold = true,
                 ctermfg = 'white'
-            });
+            })
 
-            (map "Next match")
+            ;(map "Next match")
                 ['n'] = function()
                     vim.cmd('normal! ' .. vim.v.count1 .. 'n')
                     require('hlslens').start()
                 end
-            (map "Prev match")
+            ;(map "Prev match")
                 ['N'] = function()
                     vim.cmd('normal! ' .. vim.v.count1 .. 'N')
                     require('hlslens').start()
@@ -334,7 +337,7 @@ PackerArguments[1] = function(use)
             }
 
             vim.api.nvim_set_hl(0, 'IndentBlanklineContextStart', {
-                underdashed = true
+                link = 'QuickFixLine'
             })
         end
     }
@@ -393,10 +396,10 @@ PackerArguments[1] = function(use)
                 },
                 on_open = toggle.scrolloff,
                 on_close = toggle.scrolloff,
-            };
+            }
 
 
-            (map "Toggle zen mode")
+            ;(map "Toggle zen mode")
                 ['<F11>'] = function() require('zen-mode').toggle() end
 
             map:register {}
@@ -408,9 +411,9 @@ PackerArguments[1] = function(use)
         after = 'map',
         config = function()
 
-            (map "Accelerated j")
+            ( map "Accelerated j")
                 ['j'] = { plug = 'accelerated_jk_j', modes = 'n' }
-            (map "Accelerated k")
+            ;(map "Accelerated k")
                 ['k'] = { plug = 'accelerated_jk_k', modes = 'n' }
 
             map:register {}
@@ -444,13 +447,13 @@ PackerArguments[1] = function(use)
         end,
         config = function()
 
-            (map "Inner indent")
+            ( map "Inner indent")
                 ['ai'] = { plug = 'textobj-indent-a' }
-            (map "Outer indent")
+            ;(map "Outer indent")
                 ['iI'] = { plug = 'textobj-indent-i' }
-            (map "Last pattern")
+            ;(map "Last pattern")
                 ['an'] = { plug = 'textobj-lastpat-n' }
-            (map "Previous pattern")
+            ;(map "Previous pattern")
                 ['aN'] = { plug = 'textobj-lastpat-N' }
 
             map:register { modes = 'o' }
@@ -466,9 +469,9 @@ PackerArguments[1] = function(use)
             aerial.setup {
                 on_attach = function(bufnr)
 
-                    (map "Jump next aerial")
+                    ( map "Jump next aerial")
                         ['{'] = 'AerialPrev'
-                    (map "Jump next aerial")
+                    ;(map "Jump next aerial")
                         ['}'] = 'AerialNext'
 
                     map:register {
@@ -541,32 +544,32 @@ PackerArguments[1] = function(use)
         after = 'map',
         config = function()
             local saga = require("lspsaga")
-            saga.init_lsp_saga {}--[[  ]];
+            saga.init_lsp_saga {}
 
-            (map "LSP finder")
+            ;(map "LSP finder")
                 ['<F6>'] = 'Lspsaga lsp_finder'
-            (map "LSP actions")
+            ;(map "LSP actions")
                 ['<F3>'] = 'Lspsaga code_action'
-            (map "LSP rename")
-                ['<Leader>r'] = 'Lspsaga rename'
-            (map "LSP peek definition")
-                ['<Leader>d'] = 'Lspsaga peek_definition'
-            (map "LSP line diagnostic")
-                ['<Leader>l'] = 'Lspsaga show_line_diagnostics'
-            (map "LSP cursor diagnostic")
-                ['<Leader>c'] = 'Lspsaga show_cursor_diagnostics'
-            (map "LSP hover doc")
+            ;(map "LSP rename")
+                ['<F2>'] = 'Lspsaga rename'
+            ;(map "LSP peek definition")
+                .leader['d'] = 'Lspsaga peek_definition'
+            ;(map "LSP line diagnostic")
+                .leader['l'] = 'Lspsaga show_line_diagnostics'
+            ;(map "LSP cursor diagnostic")
+                .leader['c'] = 'Lspsaga show_cursor_diagnostics'
+            ;(map "LSP hover doc")
                 ['K'] = 'Lspsaga hover_doc'
 
-            map:split { as = 'cmd', silent = true };
+            map:split { as = 'cmd', silent = true }
 
 
-            (map "LSP next diagnostic")
+            ;(map "LSP next diagnostic")
                 ['<F8>'] = function()
                     require("lspsaga.diagnostic")
                         .goto_prev({ severity = vim.diagnostic.severity.ERROR })
                 end
-            (map "LSP next diagnostic")
+            ;(map "LSP next diagnostic")
                 .shift['<F8>'] = function()
                     require("lspsaga.diagnostic")
                         .goto_next({ severity = vim.diagnostic.severity.ERROR })
@@ -600,16 +603,16 @@ PackerArguments[1] = function(use)
         },
         config = function()
             local lspconfig = require('lspconfig')
-            local capabilities = vim.lsp.protocol.make_client_capabilities();
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-            (map "Diagnostics")
-                ['<Leader>e'] = vim.diagnostic.open_float;
-            (map "Previous diagnostic")
-                ['[d'] = vim.diagnostic.goto_prev;
-            (map "Next diagnostic")
-                [']d'] = vim.diagnostic.goto_next;
-            (map "Set loclist")
-                ['<Leader>q'] = vim.diagnostic.setloclist;
+            ;(map "Diagnostics")
+                .leader['e'] = vim.diagnostic.open_float
+            ;(map "Previous diagnostic")
+                ['[d'] = vim.diagnostic.goto_prev
+            ;(map "Next diagnostic")
+                [']d'] = vim.diagnostic.goto_next
+            ;(map "Set loclist")
+                .leader['q'] = vim.diagnostic.setloclist
 
             map:register { silent = true }
 
@@ -618,37 +621,37 @@ PackerArguments[1] = function(use)
 
             local function on_attach(client, bufnr)
                 -- Mappings.
-                (map "Workspace folders")
-                    ['<Leader>wl'] = function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end
-                (map "Add workspace folder")
-                    ['<Leader>wa'] = vim.lsp.buf.add_workspace_folder;
-                (map "Remove workdspace folder")
-                    ['<Leader>wr'] = vim.lsp.buf.remove_workspace_folder;
+                ( map "Workspace folders")
+                    .leader['wl'] = function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end
+                ;(map "Add workspace folder")
+                    .leader['wa'] = vim.lsp.buf.add_workspace_folder
+                ;(map "Remove workdspace folder")
+                    .leader['wr'] = vim.lsp.buf.remove_workspace_folder
 
-                (map "Declaration")
-                    ['gD'] = vim.lsp.buf.declaration;
-                (map "Definition")
-                    ['gd'] = vim.lsp.buf.definition;
-                (map "Hover")
-                    ['K'] = vim.lsp.buf.hover;
-                (map "Implementation")
-                    ['gi'] = vim.lsp.buf.implementation;
-                (map "Signature")
-                    .ctrl['k'] = vim.lsp.buf.signature_help;
-                (map "Type")
-                    ['<Leader>D'] = vim.lsp.buf.type_definition;
-                (map "Rename")
-                    ['<Leader>rn'] = vim.lsp.buf.rename;
-                (map "References")
-                    ['gr'] = vim.lsp.buf.references;
+                ;(map "Declaration")
+                    ['gD'] = vim.lsp.buf.declaration
+                ;(map "Definition")
+                    ['gd'] = vim.lsp.buf.definition
+                ;(map "Hover")
+                    ['K'] = vim.lsp.buf.hover
+                ;(map "Implementation")
+                    ['gi'] = vim.lsp.buf.implementation
+                ;(map "Signature")
+                    .ctrl['k'] = vim.lsp.buf.signature_help
+                ;(map "Type")
+                    .leader['D'] = vim.lsp.buf.type_definition
+                ;(map "Rename")
+                    .leader['rn'] = vim.lsp.buf.rename
+                ;(map "References")
+                    ['gr'] = vim.lsp.buf.references
 
                 -- Set some keybinds conditional on server capabilities
                 if client.server_capabilities.document_formatting then
-                    (map "Document formatting")
-                        ['<Leader>f'] = vim.lsp.buf.formatting;
+                    ( map "Document formatting")
+                        .leader['f'] = vim.lsp.buf.formatting;
                 elseif client.server_capabilities.document_range_formatting then
-                    (map "Range formatting")
-                        ['<Leader>f'] = vim.lsp.buf.range_formatting;
+                    ( map "Range formatting")
+                        .leader['f'] = vim.lsp.buf.range_formatting;
                 end
 
                 map:register { silent = true, buffer = bufnr }
@@ -767,8 +770,8 @@ PackerArguments[1] = function(use)
                 return line:match("^%s*(.-)%s*$") == ""
             end
 
-            local function ends_with(str, ending)
-               return ending == "" or str:sub(-#ending) == ending
+            local function begins_with(str, beginning)
+               return beginning == "" or str:sub(1, #beginning) == beginning
             end
 
             local cmp = require('cmp')
@@ -784,6 +787,17 @@ PackerArguments[1] = function(use)
                         luasnip.lsp_expand(args.body)
                     end
                 },
+                enabled = function()
+                    -- disable completion in comments
+                    local context = require 'cmp.config.context'
+                    -- keep command mode completion enabled when cursor is in a comment
+                    if vim.api.nvim_get_mode().mode == 'c' then
+                        return true
+                    else
+                        return not context.in_treesitter_capture("comment")
+                          and not context.in_syntax_group("Comment")
+                    end
+                end,
                 mapping = cmp.mapping.preset.insert {
                     ['<C-Space>'] = function()
                         if cmp.visible() then
@@ -797,9 +811,25 @@ PackerArguments[1] = function(use)
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
                     ['<C-y>'] = cmp.config.disable,
                     ['<C-e>'] = cmp.mapping.abort(),
+                    ['<Up>'] = cmp.mapping(function (fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item()
+                            cmp.complete()
+                        else
+                            fallback()
+                        end
+                    end),
+                    ['<Down>'] = cmp.mapping(function (fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                            cmp.complete()
+                        else
+                            fallback()
+                        end
+                    end),
                     ['<CR>'] = cmp.mapping(
                         function(fallback)
-                            if cmp.get_active_entry() == nil then
+                            if cmp.get_selected_entry() == nil then
                                 fallback()
                             else
                                 cmp.complete()
@@ -811,8 +841,17 @@ PackerArguments[1] = function(use)
                     ["<Tab>"] = cmp.mapping(
                         function(fallback)
                             local line = vim.api.nvim_get_current_line()
-                            local active_entry = cmp.get_active_entry()
+                            local active_entry = cmp.get_selected_entry()
                             local cmp_visible = cmp.visible()
+                            local cword = vim.fn.expand('<cword>') or ""
+
+                            if active_entry ~= nil then
+                                active_entry = active_entry
+                                    .cache
+                                    .entries
+                                    .get_completion_item
+                                    .filter_text
+                            end
 
                             if line_empty(line) and active_entry == nil then
                                 fallback()
@@ -821,7 +860,7 @@ PackerArguments[1] = function(use)
                                 cmp.complete()
                             elseif cmp_visible
                                 and active_entry ~= nil
-                                and not ends_with(active_entry, vim.fn.expand('<cword>'))
+                                and begins_with(active_entry, cword)
                             then
                                 cmp.confirm { select = true }
                             elseif cmp_visible then
@@ -917,18 +956,18 @@ PackerArguments[1] = function(use)
             hop.setup {
                 inclusive_jump = true,
                 uppercase_labels = true,
-            };
+            }
 
-            (map "Jump to a line")
+            ;(map "Jump to a line")
                 ['f'] = function() vim.cmd 'norm V'; hop.hint_lines_skip_whitespace() end
-            (map "Jump to a letter")
+            ;(map "Jump to a letter")
                 ['F'] = function() hop.hint_words() end
 
-            map:split { modes = 'o' };
+            map:split { modes = 'o' }
 
-            (map "Jump to a line and focus on it")
+            ;(map "Jump to a line and focus on it")
                 ['f'] = function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end
-            (map "Jump to a letter")
+            ;(map "Jump to a letter")
                 ['F'] = function() hop.hint_words() end
 
             map:register { modes = 'n' }
@@ -939,9 +978,9 @@ PackerArguments[1] = function(use)
         after = 'map',
         config = function()
 
-            (map "Jump to a tree node")
+            ( map "Jump to a tree node")
                 ['m'] = function() require('tsht').nodes() end
-            (map "Jump to a tree node")
+            ;(map "Jump to a tree node")
                 ['m'] = { function() require('tsht').nodes() end, remap = false }
 
             map:register { modes = 'ov' }
@@ -952,7 +991,7 @@ PackerArguments[1] = function(use)
         after = 'map',
         config = function()
 
-            (map "Swap with")
+            ( map "Swap with")
                 ['s'] = { 'ISwapWith', as = 'cmd' }
 
             map:register {}
@@ -985,7 +1024,7 @@ PackerArguments[1] = function(use)
         keys = 't',
         config = function()
 
-            (map "Toggle value")
+            ( map "Toggle value")
                 ['t'] = 'Switch'
 
             map:register { as = 'cmd' }
@@ -996,7 +1035,7 @@ PackerArguments[1] = function(use)
         after = 'map',
         config = function()
 
-            (map "Align by symbol")
+            ( map "Align by symbol")
                 ['|'] = { plug = 'EasyAlign' }
 
             map:register { modes = 'nxv' }
@@ -1172,9 +1211,9 @@ PackerArguments[1] = function(use)
             local treesj = require('treesj')
             treesj.setup {
                 use_default_keymaps = false,
-            };
+            }
 
-            (map "Split/join node")
+            ;(map "Split/join node")
                 .ctrl['J'] = 'TSJToggle'
 
             map:register { as = 'cmd' }
@@ -1204,7 +1243,7 @@ PackerArguments[1] = function(use)
     use 'nvim-treesitter/playground'
 
     use {
-        'zakharykaplan/nvim-retrail',
+        'I60R/nvim-retrail',
         config = function()
             local retrail = require('retrail')
             retrail.setup { }
