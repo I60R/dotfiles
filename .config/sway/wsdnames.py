@@ -35,47 +35,50 @@ i3 = Connection()
 # Name the workspace after the focused window name
 def assign_generic_name(i3, e):
     try:
-        if not e.change == 'rename':  # avoid looping
-            con = i3.get_tree().find_focused()
-            if not con.type == 'workspace':  # avoid renaming new empty workspaces on 'binding' event
-                if not e.change == 'new':
+        if e.change == 'rename':  # avoid looping
+            return
 
-                    if con.type == 'floating_con':
-                        split_text = ''
-                    else:
-                        if con.parent.layout == 'splith':
-                            split_text = '╌'
-                        elif con.parent.layout == 'splitv':
-                            split_text = ':'
-                        else:
-                            split_text = '='
+        con = i3.get_tree().find_focused()
+        if con.type == 'workspace':  # avoid renaming new empty workspaces on 'binding' event
+            ws = con.workspace()
+            ws_new_name = "%s<span color='lightgreen'>+</span>" % ws.num
 
-                    name = con.app_id or con.window_class or con.window_instance
+            i3.command('rename workspace to "%s"' % ws_new_name)
 
-                    ws = con.workspace()
-                    ws_old_name = ws.name
-                    ws_name = "%s<span baseline_shift='superscript' color='cyan'>%s</span> <span color='orange'>%s %s</span>" % (
-                            ws.num, len(ws.leaves()), split_text, name
-                    )
+        else:
+            if e.change == 'new':
+                # In sway we may open a new window w/o moving focus; let's give the workspace a name anyway.
+                con = i3.get_tree().find_by_id(e.container.id)
+                name = con.app_id or con.window_class or con.window_instance
 
-                    i3.command('rename workspace "%s" to %s' % (ws_old_name, ws_name))
-                else:
-                    # In sway we may open a new window w/o moving focus; let's give the workspace a name anyway.
-                    con = i3.get_tree().find_by_id(e.container.id)
-                    name = con.app_id or con.window_class or con.window_instance
+                ws = con.workspace()
+                ws_name = "%s<span baseline_shift='superscript' color='cyan'>%s</span><span color='orange'>%s</span>" % (
+                        ws.num, len(ws.leaves()), name
+                )
 
-                    ws = con.workspace()
-                    ws_name = "%s<span baseline_shift='superscript' color='cyan'>%s</span><span color='orange'>%s</span>" % (
-                            ws.num, len(ws.leaves()), name
-                    )
-
-                    i3.command('rename workspace "%s" to %s' % (ws.num, ws_name))
+                i3.command('rename workspace "%s" to %s' % (ws.num, ws_name))
 
             else:
-                ws = con.workspace()
-                ws_new_name = "%s<span color='lightgreen'>+</span>" % ws.num
 
-                i3.command('rename workspace to "{}"'.format(ws_new_name))
+                if con.type == 'floating_con':
+                    split_text = ''
+                else:
+                    if con.parent.layout == 'splith':
+                        split_text = '╌'
+                    elif con.parent.layout == 'splitv':
+                        split_text = ':'
+                    else:
+                        split_text = '='
+
+                name = con.app_id or con.window_class or con.window_instance
+
+                ws = con.workspace()
+                ws_old_name = ws.name
+                ws_name = "%s<span baseline_shift='superscript' color='cyan'>%s</span> <span color='orange'>%s %s</span>" % (
+                        ws.num, len(ws.leaves()), split_text, name
+                )
+
+                i3.command('rename workspace "%s" to %s' % (ws_old_name, ws_name))
     except:
         pass
 
