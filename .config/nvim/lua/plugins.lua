@@ -544,10 +544,15 @@ PackerArguments[1] = function(use)
         after = 'map',
         config = function()
             local saga = require("lspsaga")
-            saga.init_lsp_saga {}
+            saga.init_lsp_saga {
+                border_style = "bold",
+                saga_winblend = 25,
+                max_preview_lines = 60,
+                code_action_lightbulb = {
+                    virtual_text = false
+                }
+            }
 
-            ;(map "LSP finder")
-                ['<F6>'] = 'Lspsaga lsp_finder'
             ;(map "LSP actions")
                 ['<F3>'] = 'Lspsaga code_action'
             ;(map "LSP rename")
@@ -560,6 +565,9 @@ PackerArguments[1] = function(use)
                 .leader['c'] = 'Lspsaga show_cursor_diagnostics'
             ;(map "LSP hover doc")
                 ['K'] = 'Lspsaga hover_doc'
+            ;(map "LSP hover doc")
+                .ctrl['K'] = 'Lspsaga lsp_finder'
+
 
             map:split { as = 'cmd', silent = true }
 
