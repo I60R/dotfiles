@@ -1106,6 +1106,7 @@ PackerArguments[1] = function(use)
         requires = {
             'nvim-lua/plenary.nvim'
         },
+        after = "map",
         config = function()
             local gitsigns = require('gitsigns')
             gitsigns.setup {
@@ -1118,10 +1119,19 @@ PackerArguments[1] = function(use)
                 current_line_blame_opts = {
                     virt_text = true,
                     virt_text_pos = 'eol',
-                    delay = 0,
+                    delay = 1000,
                     ignore_whitespace = false,
                 }
             }
+
+            ;(map "Stage hunk")
+                .leader['hs'] = 'Gitsigns stage_hunk'
+            ;(map "Undo stage hunk")
+                .leader['hS'] = 'Gitsigns undo_stage_hunk'
+            ;(map "Preview hunk")
+                .leader['hh'] = 'Gitsigns preview_hunk'
+
+            map:register { as = 'cmd' }
         end
     }
 
