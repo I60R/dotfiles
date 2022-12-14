@@ -1,11 +1,10 @@
-icons = "material-nf"
-icons_format = " <span font_size='135%'>{icon}</span> "
-
-
 [theme]
-name = "native"
+theme = "native"
 [theme.overrides]
 separator = ""
+
+[icons]
+icons = "material-nf"
 
 
 
@@ -13,20 +12,26 @@ separator = ""
 
 [[block]]
 block = "focused_window"
-show_marks = "visible"
-max_width = 2000
-format = "<span font_size='150%' font_weight='heavy' color='skyblue'>{title}</span> "
-on_click = "swaymsg gaps inner current toggle 30"
+format = "<span font_size='12pt' font_weight='heavy' color='skyblue'>$title.str(0,200)</span> |"
+[[block.click]]
+button = "left"
+cmd = "swaymsg gaps inner current toggle 30"
 [block.theme_overrides]
 idle_bg = "#00000000"
 
 
 [[block]]
 block = "weather"
-format = "<span baseline_shift='4pt'>{weather_verbose}</span> <span color='cyan'>{temp} {humidity}<span font_size='90%' baseline_shift='superscript'>🌢</span> {wind}<span font_size='90%' baseline_shift='superscript'>~m/s</span></span>"
+format = """ \
+    <span baseline_shift='2pt' font_size='13pt'>$icon</span> \
+    <span baseline_shift='4pt'>$weather_verbose</span> \
+    <span color='cyan'>$temp $humidity<span font_size='90%' baseline_shift='superscript'>🌢</span> \
+    $wind<span font_size='90%' baseline_shift='superscript'>~m/s</span></span> \
+"""
 service = { name = "openweathermap", api_key = "212dbd65c18ac42f9d884dde9b49692a", city_id = "7530791", units = "metric" }
-icons_format = " <span font_size='140%' baseline_shift='2pt'>{icon}</span> "
-on_click = "~/.config/sway/wsempty.py gnome-weather"
+[[block.click]]
+button = "left"
+cmd = "~/.config/sway/wsempty.py gnome-weather"
 [block.icons_overrides]
 weather_sun = "☀️"
 weather_rain = "🌧️"
@@ -37,11 +42,18 @@ weather_snow = "❄️"
 
 [[block]]
 block = "time"
-format = "<span baseline_shift='3pt' color='gray'>%a <span color='white' font_size='12pt'>%e</span>.%b</span> <span font_size='18pt'>%H:%M</span>"
+format = """\
+    <span baseline_shift='3pt' color='gray'>%a \
+    <span color='white' font_size='12pt'>%e\
+    </span>.%b </span>\
+    <span font_size='18pt'>%H:%M</span>\
+"""
 timezone = "Europe/Warsaw"
-on_click = "~/.config/sway/wsempty.py alacritty -e 'calcurse'"
 interval = 60
 icons_format = " "
+[[block.click]]
+button = "left"
+cmd = "~/.config/sway/wsempty.py alacritty -e 'calcurse'"
 
 
 
