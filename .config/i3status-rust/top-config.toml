@@ -21,8 +21,8 @@ format = """ \
 block = "net"
 format = """ \
     <span font_size='22pt' baseline_shift='-8pt' color='grey'>$icon</span> \
-    [$ssid] \
-    $ip \
+    <span background='green'> [$ssid] </span> \
+    <span letter_spacing='-1024'>$ip</span> \
     <span color='yellow' letter_spacing='-512'> $speed_down.eng(3,B,K) ⇵  $speed_up.eng(3,B,K)</span> \
 """
 [[block.click]]
@@ -34,7 +34,7 @@ cmd = "iwgtk"
 block = "backlight"
 device = "nv_backlight"
 format = """ \
-    <span font_size='25pt' letter_spacing="-256" baseline_shift='-2pt' color='cyan'>$icon</span> \
+    <span font_size='25pt' letter_spacing="-512" baseline_shift='-2pt' color='cyan'>$icon</span> \
     <span baseline_shift='4pt'>$brightness</span> \
 """
 
@@ -76,8 +76,8 @@ format = """ \
 block = "cpu"
 interval = 1
 format = """ \
-    <span font_size='13pt' baseline_shift='-6pt' color='cyan' >\
-    $utilization1.bar(6,100)$utilization2.bar(6,100)$utilization3.bar(6,100)$utilization4.bar(6,100) \
+    <span font_size='13pt' letter_spacing='-1024' baseline_shift='-6pt' color='cyan' >\
+    $utilization1.bar(6,100)$utilization2.bar(6,100)$utilization3.bar(6,100)$utilization4.bar(6,100)\
     </span>\
 """
 
