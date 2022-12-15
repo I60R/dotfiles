@@ -133,6 +133,12 @@ icons_format = "<span font_size='25pt' color='skyblue' baseline_shift='-5pt'>{ic
 
 
 [[block]]
+block = "docker"
+format = " <span font_size='20pt' baseline_shift='-4pt'>$icon</span> $running.eng(1) "
+
+
+
+[[block]]
 block = "pacman"
 interval = 600
 format = """ \
