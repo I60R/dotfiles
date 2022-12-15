@@ -1,9 +1,9 @@
+[icons]
 icons = "material-nf"
-icons_format = " <span font_size='135%'>{icon}</span> "
 
 
 [theme]
-name = "gruvbox-dark"
+theme = "gruvbox-dark"
 [theme.overrides]
 separator = ""
 
@@ -12,128 +12,147 @@ separator = ""
 
 [[block]]
 block = "music"
-max_width = 75
-marquee_speed = 0.2
-buttons = []
-dynamic_width = true
-hide_when_empty = true
-format = " {combo} "
-icons_format = " <span font_size='200%' baseline_shift='-3pt' color='grey'>{icon}</span> "
-
+format = """ \
+    <span font_size='13pt' baseline_shift='-3pt' color='grey'>$icon</span> \
+    $combo.str(0,75) | \
+"""
 
 [[block]]
 block = "net"
-format = " {ip}<span color='yellow' letter_spacing='-512'>{speed_down;K}{speed_up;K}</span> "
-icons_format = "  <span font_size='200%' baseline_shift='-5pt'>{icon}</span> "
-hide_inactive = true
-on_click = "iwgtk"
-
-
-[[block]]
-block = "networkmanager"
-primary_only = true
-device_format = "<span letter_spacing='-512'>{ap}</span>"
-connection_format = "{devices}"
-icons_format = ""
-on_click = "iwgtk"
+format = """ \
+    <span font_size='22pt' baseline_shift='-8pt' color='grey'>$icon</span> \
+    [$ssid] \
+    $ip \
+    <span color='yellow' letter_spacing='-512'> $speed_down.eng(3,B,K) ⇵  $speed_up.eng(3,B,K)</span> \
+"""
+[[block.click]]
+button = "left"
+cmd = "iwgtk"
 
 
 [[block]]
 block = "backlight"
 device = "nv_backlight"
-format = "<span baseline_shift='4pt'>{brightness}</span>"
-icons_format = " <span font_size='250%' baseline_shift='-2pt' color='cyan'>{icon}</span> "
+format = """ \
+    <span font_size='25pt' letter_spacing="-256" baseline_shift='-2pt' color='cyan'>$icon</span> \
+    <span baseline_shift='4pt'>$brightness</span> \
+"""
+
 
 [[block]]
-driver = "pulseaudio"
 block = "sound"
+driver = "pulseaudio"
 max_vol = 150
 step_width = 3
 show_volume_when_muted = true
-format = "<span baseline_shift='6pt'>{volume}</span>"
-icons_format = " <span font_size='250%' baseline_shift='-2pt' color='cyan'>{icon}</span> "
-on_click = "~/.config/sway/wsempty.py env WAYLAND_DISPLAY=wayland-0 pavucontrol"
+format = """ \
+    <span font_size='24pt' baseline_shift='-3pt' color='cyan'>$icon</span> \
+    <span baseline_shift='6pt'>$volume</span> \
+"""
+[[block.click]]
+button = "left"
+cmd = "~/.config/sway/wsempty.py env WAYLAND_DISPLAY=wayland-0 pavucontrol"
 
 
 [[block]]
 block = "battery"
-driver = "upower"
-format = "<span font_size='200%' baseline_shift='-3pt'>{percentage} {time}</span>"
-icons_format = " <span font_size='200%' baseline_shift='-2pt'>{icon}</span> "
+driver = "sysfs"
+format = """ \
+    <span font_size='20pt' baseline_shift='-2pt'>$icon</span> \
+    <span font_size='20pt' baseline_shift='-3pt'>$percentage $time</span> \
+"""
+missing_format = " <span font_size='16pt' baseline_shift='-2pt'>$icon</span> "
 
 
 [[block]]
 block = "cpu"
 interval = 1
-format = "{frequency}"
-icons_format = " <span font_size='250%' color='cyan' baseline_shift='-8pt'>{icon}</span> "
+format = """ \
+    <span font_size='25pt' color='cyan' baseline_shift='-8pt'>$icon</span> \
+    $frequency \
+"""
 
 [[block]]
 block = "cpu"
 interval = 1
-format = "  <span font_size='130%' baseline_shift='-6pt' color='cyan'>{utilization1:6#100}{utilization2:6#100}{utilization3:6#100}{utilization4:6#100}</span>"
-icons_format = ""
+format = """ \
+    <span font_size='13pt' baseline_shift='-6pt' color='cyan' >\
+    $utilization1.bar(6,100)$utilization2.bar(6,100)$utilization3.bar(6,100)$utilization4.bar(6,100) \
+    </span>\
+"""
 
 
 [[block]]
 block = "temperature"
-collapsed = false
 interval = 2
 chip = "*-isa-*"
-format = " {min} ~{max}<span baseline_shift='superscript'>max</span>"
-icons_format = ""
+format = " $min ~$max<span baseline_shift='superscript'>max</span> "
 
 [[block]]
 block = "temperature"
-collapsed = false
 interval = 2
 chip = "*-pci-*"
-format = "{average}<span baseline_shift='superscript'>gpu</span>"
-icons_format = ""
+format = " $average<span baseline_shift='superscript'>gpu</span> "
 
 
 [[block]]
 block = "memory"
-format_mem = "<span font_size='97%'>{mem_total_used}<span font_size='90%' baseline_shift='2pt'> ⇄</span>{swap_used}</span> "
-format_swap = " (swap: {swap_used}/{swap_total}, buf: {buffers}, cache: {cached}) "
-icons_format = "  <span font_size='250%' color='yellow' baseline_shift='-5pt'>{icon}</span> "
+format = """ \
+    <span font_size='25pt' color='yellow' baseline_shift='-5pt'>$icon</span> \
+    $mem_total_used \
+    <span font_size='90%' baseline_shift='2pt'>⇄ </span>$swap_used \
+"""
+format_alt = """ \
+    <span font_size='25pt' color='yellow' baseline_shift='-5pt'>$icon</span> \
+    (swap: $swap_used/$swap_total, buf: $buffers, cache: $cached) \
+"""
 
 
 [[block]]
 path = "/"
 block = "disk_space"
-format = "<span color='yellow'>/</span>{available}"
-on_click = '~/.config/sway/wsempty.py krusader --right $HOME --left $(fd . /run/media/$USER -d 1 | read && echo "/run/media/$USER" || echo "/")'
+format = "$icon <span color='yellow'>/</span>$available "
+icons_format = ""
+[[block.click]]
+button = "left"
+cmd = '~/.config/sway/wsempty.py krusader --right $HOME --left $(fd . /run/media/$USER -d 1 | read && echo "/run/media/$USER" || echo "/")'
 
 [[block]]
 path = "~/"
 block = "disk_space"
-format = " <span color='yellow'>~</span>{available} "
-on_click = "~/.config/sway/wsempty.py krusader --right $HOME --left $HOME"
+format = "$icon <span color='yellow'>~</span>$available "
+icons_format = ""
+[[block.click]]
+button = "left"
+cmd = "~/.config/sway/wsempty.py krusader --right $HOME --left $HOME"
 
 
 [[block]]
 block = "uptime"
-icons_format = " <span font_size='250%' color='skyblue' baseline_shift='-5pt'>{icon}</span> "
+icons_format = "<span font_size='25pt' color='skyblue' baseline_shift='-5pt'>{icon}</span> "
 
 
 [[block]]
 block = "pacman"
 interval = 600
-format = " {pacman} + {aur}(AUR) = {both} "
-format_singular = " {both} "
-format_up_to_date = "up to date"
+format = """ \
+    <span font_size='22pt' baseline_shift='-4pt'>$icon</span> \
+    $pacman + $aur(AUR) = $both \
+"""
+format_singular = " $both "
+format_up_to_date = " UP "
 critical_updates_regex = "(linux|linux-lts|)"
 aur_command = "paru -Qua"
-icons_format = "  <span font_size='220%' baseline_shift='-4pt'>{icon}</span> "
-on_click = "~/.config/sway/wsempty.py alacritty -e nvim term://'sudo pacman -Syu && paru -Syu' --cmd 'au TermOpen * ++once normal a'"
+[[block.click]]
+button = "left"
+cmd = "~/.config/sway/wsempty.py alacritty -e nvim term://'sudo pacman -Syu && paru -Syu' --cmd 'au TermOpen * ++once normal a'"
 
 
 
 [[block]]
 block = "keyboard_layout"
 driver = "sway"
-format = "<span font_size='200%'>{layout}</span>"
+format = " <span font_size='20pt'>$layout</span> "
 [block.mappings]
 "English (US)" = "🇺🇸"
 "Russian (N/A)" = "🇷🇺"
