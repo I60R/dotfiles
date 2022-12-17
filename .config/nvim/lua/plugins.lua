@@ -112,7 +112,10 @@ PackerArguments[1] = function(use)
 
     use {
         'akinsho/nvim-bufferline.lua',
-        after = 'map',
+        after = {
+            'map',
+            'gitsigns.nvim'
+        },
         requires = 'kyazdani42/nvim-web-devicons',
         branch = 'main',
         config = function()
@@ -1138,6 +1141,8 @@ PackerArguments[1] = function(use)
                 .leader['hS'] = 'Gitsigns undo_stage_hunk'
             ;(map "Preview hunk")
                 .leader['hh'] = 'Gitsigns preview_hunk'
+            ;(map "Preview hunk")
+                .leader['hr'] = 'Gitsigns reset_hunk'
 
             map:register { as = 'cmd' }
         end
