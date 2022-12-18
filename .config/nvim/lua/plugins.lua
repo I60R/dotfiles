@@ -1143,6 +1143,10 @@ PackerArguments[1] = function(use)
                 .leader['hh'] = 'Gitsigns preview_hunk'
             ;(map "Preview hunk")
                 .leader['hr'] = 'Gitsigns reset_hunk'
+            ;(map "Next hunk")
+                ['g]'] = 'Gitsigns next_hunk'
+            ;(map "Prev hunk")
+                ['g['] = 'Gitsigns prev_hunk'
 
             map:register { as = 'cmd' }
         end
