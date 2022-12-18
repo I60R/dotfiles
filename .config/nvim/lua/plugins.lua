@@ -269,19 +269,7 @@ PackerArguments[1] = function(use)
             vim.g['asterisk#keeppos'] = 1
         end,
         config = function()
-            local g = vim.api.nvim_create_augroup('VMlens', { clear = true })
-            vim.api.nvim_create_autocmd('User', {
-                group = g,
-                pattern = "visual_multi_start",
-                callback = function() require('vmlens').start() end
-            })
-            vim.api.nvim_create_autocmd('User', {
-                group = g,
-                pattern = "visual_multi_exit",
-                callback = function() require('vmlens').exit() end
-            })
-
-            ;(map "Search word")
+            ( map "Search word")
                 ['*'] = { plug = 'asterisk-z*', 'require("hlslens").start()' }
             ;(map "Search word backwards")
                 ['#'] = { plug = 'asterisk-z#', 'require("hlslens").start()' }
@@ -1027,7 +1015,28 @@ PackerArguments[1] = function(use)
             }
         end
     }
-    use 'mg979/vim-visual-multi'
+    use {
+        'mg979/vim-visual-multi',
+        config = function ()
+            local group = vim.api.nvim_create_augroup('VMlens', { clear = true })
+            vim.api.nvim_create_autocmd('User', {
+                group = group,
+                pattern = "visual_multi_start",
+                callback = function()
+                    require('vmlens').start()
+                end
+            })
+            vim.api.nvim_create_autocmd('User', {
+                group = group,
+                pattern = "visual_multi_exit",
+                callback = function()
+                    require('vmlens').exit()
+                end
+            })
+
+
+        end
+    }
 
     use {
         'AndrewRadev/switch.vim',
