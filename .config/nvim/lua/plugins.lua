@@ -1,19 +1,7 @@
-local PackerArguments = {}
-
-PackerArguments.config = {
-    compile_path = vim.fn.stdpath('data') .. '/site/plugin/packer_compiled.vim',
-    display = {
-        open_cmd = '90vnew \\[packer\\]'
-    },
-    autoremove = true,
-}
-
-PackerArguments[1] = function(use)
-
-    use {
+local plugins = {
+    {
         'I60R/map-dsl.nvim',
-        requires = 'folke/which-key.nvim',
-        as = 'map',
+        dependencies = 'folke/which-key.nvim',
         config = function()
             local map_dsl = require('map-dsl')
             local which_key = require('which-key')
@@ -70,31 +58,19 @@ PackerArguments[1] = function(use)
 
             map:register { modes = 'n' }
         end
-    }
+    },
 
-    use {
-        'wbthomason/packer.nvim',
+    {
+        'folke/lazy.nvim',
         config = function()
-            local packer = require('packer')
-            local arguments = require('plugins')
-            packer.startup(arguments)
+            local packer = require('lazy')
+            local plugins = require('plugins')
+            packer.startup(plugins)
         end,
-        cmd = {
-            'PackerSync',
-            'PackerCompile',
-            'PackerClean',
-            'PackerUpdate',
-            'PackerInstall',
-            'PackerStatus',
-            'PackerProfile',
-            'PackerSnapshot',
-            'PackerSnapshotDelete',
-            'PackerSnapshotRollback',
-            'PackerLoad',
-        }
-    }
+        cmd = 'Lazy',
+    },
 
-    use {
+    {
         'rebelot/kanagawa.nvim',
         config = function()
             local kanagawa = require('kanagawa')
@@ -108,16 +84,15 @@ PackerArguments[1] = function(use)
                 ctermbg = 0
             })
         end
-    }
+    },
 
-    use {
+    {
         'akinsho/nvim-bufferline.lua',
-        after = {
-            'map',
-            'gitsigns.nvim'
+        dependencies = {
+            'I60R/map-dsl.nvim',
+            'lewis6991/gitsigns.nvim',
+            'kyazdani42/nvim-web-devicons',
         },
-        requires = 'kyazdani42/nvim-web-devicons',
-        branch = 'main',
         config = function()
             local highlights = {}
             highlights.background = {
@@ -132,7 +107,7 @@ PackerArguments[1] = function(use)
                 'modified', 'duplicate', 'separator', 'indicator', 'pick', 'numbers',
             } do
                 highlights[v .. '_selected'] = {
-                    ctermbg = '#7E9CD8'
+                    bg = '#7E9CD8'
                 }
             end
 
@@ -207,9 +182,9 @@ PackerArguments[1] = function(use)
 
             map:register { as = 'cmd', modes = 'nicxsot' }
         end
-    }
+    },
 
-    use {
+    {
         'chentoast/marks.nvim',
         config = function()
             local marks = require('marks')
@@ -220,8 +195,8 @@ PackerArguments[1] = function(use)
                 link = 'LineNr'
             })
         end
-    }
-    use {
+    },
+    {
         'RRethy/vim-illuminate',
         config = function()
             local illuminate = require('illuminate')
@@ -233,8 +208,8 @@ PackerArguments[1] = function(use)
                 delay = 500,
             }
         end
-    }
-    use {
+    },
+    {
         'norcalli/nvim-colorizer.lua',
         config = function()
             vim.o.termguicolors = true
@@ -247,8 +222,8 @@ PackerArguments[1] = function(use)
                 javascript = { css = true }
             }
         end
-    }
-    use {
+    },
+    {
         'edluffy/specs.nvim',
         config = function()
             local specs = require('specs')
@@ -261,10 +236,10 @@ PackerArguments[1] = function(use)
                 }
             }
         end
-    }
-    use {
+    },
+    {
         'haya14busa/vim-asterisk',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         setup = function()
             vim.g['asterisk#keeppos'] = 1
         end,
@@ -280,10 +255,10 @@ PackerArguments[1] = function(use)
 
             map:register { as = 'lua' }
         end
-    }
-    use {
+    },
+    {
         'kevinhwang91/nvim-hlslens',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function()
             local hlslens = require('hlslens')
             hlslens.setup {
@@ -310,8 +285,8 @@ PackerArguments[1] = function(use)
 
             map:register { remap = false }
         end
-    }
-    use {
+    },
+    {
         'lukas-reineke/indent-blankline.nvim',
         config = function()
             local indent_blankline = require('indent_blankline')
@@ -331,16 +306,16 @@ PackerArguments[1] = function(use)
                 link = 'QuickFixLine'
             })
         end
-    }
-    use {
+    },
+    {
         'winston0410/range-highlight.nvim',
-        requires = 'winston0410/cmd-parser.nvim',
+        dependencies = 'winston0410/cmd-parser.nvim',
         config = function()
             local range_hl = require('range-highlight')
             range_hl.setup {}
         end
-    }
-    use {
+    },
+    {
         'nacro90/numb.nvim',
         config = function()
             local numb = require('numb')
@@ -348,8 +323,8 @@ PackerArguments[1] = function(use)
                 number_only = true
             }
         end
-    }
-    use {
+    },
+    {
         'dstein64/nvim-scrollview',
         config = function()
             local scrollview = require('scrollview')
@@ -363,15 +338,15 @@ PackerArguments[1] = function(use)
                 },
             }
         end
-    }
-    use {
+    },
+    {
         'tpope/vim-characterize',
         keys = 'ga'
-    }
+    },
 
-    use {
+    {
         'folke/zen-mode.nvim',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function()
             vim.api.nvim_set_hl(0, "ZenBg", {
                 ctermbg = 0,
@@ -395,11 +370,11 @@ PackerArguments[1] = function(use)
 
             map:register {}
         end
-    }
+    },
 
-    use {
+    {
         'rainbowhxch/accelerated-jk.nvim',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function()
 
             ( map "Accelerated j")
@@ -409,21 +384,21 @@ PackerArguments[1] = function(use)
 
             map:register {}
         end
-    }
-    use 'kana/vim-repeat'
-    use {
+    },
+    {'kana/vim-repeat'},
+    {
         "kylechui/nvim-surround",
         config = function()
             local surround = require("nvim-surround")
             surround.setup {}
         end
-    }
+    },
 
 
-    use {
+    {
         'kana/vim-textobj-user',
-        after = 'map',
-        requires = {
+        dependencies = {
+            'I60R/map-dsl.nvim',
             'wellle/targets.vim',
             'rhysd/vim-textobj-anyblock',
             'rhysd/vim-textobj-conflict',
@@ -449,12 +424,12 @@ PackerArguments[1] = function(use)
 
             map:register { modes = 'o' }
         end
-    }
+    },
 
 
-    use {
+    {
         'stevearc/aerial.nvim',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function ()
             local aerial = require('aerial')
             aerial.setup {
@@ -502,8 +477,8 @@ PackerArguments[1] = function(use)
                 },
             }
         end
-    }
-    use {
+    },
+    {
         'ray-x/lsp_signature.nvim',
         config = function ()
             local lsp_signature = require('lsp_signature')
@@ -514,8 +489,8 @@ PackerArguments[1] = function(use)
                 }
             }
         end
-    }
-    use {
+    },
+    {
         'j-hui/fidget.nvim',
         config = function ()
             local fidget = require('fidget')
@@ -528,11 +503,11 @@ PackerArguments[1] = function(use)
                 }
             }
         end
-    }
-    use {
+    },
+    {
         "glepnir/lspsaga.nvim",
         branch = "main",
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function()
             local saga = require("lspsaga")
             saga.init_lsp_saga {
@@ -576,29 +551,29 @@ PackerArguments[1] = function(use)
 
             map:register { silent = true }
         end,
-    }
-    use {
+    },
+    {
         'folke/neodev.nvim',
-        after = 'nvim-lspconfig',
+        dependencies = 'neovim/nvim-lspconfig',
         config = function()
             local lua_dev = require('neodev');
             lua_dev.setup {
-                lspconfig = true,
                 library = {
                     enabled = true,
                     runtime = true,
                     types = true,
                     plugins = true,
                 },
+                lspconfig = true,
                 setup_jsonls = false,
             }
         end
-    }
-    use {
+    },
+    {
         'neovim/nvim-lspconfig',
-        after = {
-            'map',
-            'cmp-nvim-lsp',
+        dependencies = {
+            'I60R/map-dsl.nvim',
+            'hrsh7th/cmp-nvim-lsp',
         },
         config = function()
             local lspconfig = require('lspconfig')
@@ -693,7 +668,7 @@ PackerArguments[1] = function(use)
                 }
             }
 
-            -- Use a loop to conveniently both setup defined servers
+            -- a loop to conveniently both setup defined servers
             -- and map buffer local keybindings when the language server attaches
             local servers = {
                 "pyright",
@@ -721,9 +696,9 @@ PackerArguments[1] = function(use)
                 }
             }
         end
-    }
+    },
 
-    use {
+    {
         'windwp/nvim-autopairs',
         config = function()
             local autopairs = require('nvim-autopairs')
@@ -732,19 +707,19 @@ PackerArguments[1] = function(use)
                 enable_check_bracket_line = true,
             }
         end
-    }
-    use {
+    },
+    {
         'L3MON4D3/LuaSnip',
-        requires = {
+        dependencies = {
             'rafamadriz/friendly-snippets'
         },
         config = function()
             require("luasnip/loaders/from_vscode").lazy_load()
         end
-    }
-    use {
+    },
+    {
         'hrsh7th/nvim-cmp',
-        requires = {
+        dependencies = {
             'hrsh7th/cmp-nvim-lua',
             'hrsh7th/cmp-nvim-lsp',
             'hrsh7th/cmp-cmdline',
@@ -843,6 +818,7 @@ PackerArguments[1] = function(use)
                             local active_entry = cmp.get_selected_entry()
                             local cmp_visible = cmp.visible()
                             local cword = vim.fn.expand('<cword>') or ""
+                            local words_before = has_words_before()
 
                             if active_entry ~= nil then
                                 active_entry = active_entry
@@ -855,8 +831,12 @@ PackerArguments[1] = function(use)
                             if line_empty(line) and active_entry == nil then
                                 fallback()
                             elseif cmp_visible and active_entry == nil then
-                                cmp.select_next_item()
-                                cmp.complete()
+                                if words_before then
+                                    cmp.select_next_item()
+                                    cmp.complete()
+                                else
+                                    fallback()
+                                end
                             elseif cmp_visible
                                 and active_entry ~= nil
                                 and begins_with(active_entry, cword)
@@ -867,7 +847,7 @@ PackerArguments[1] = function(use)
                                 cmp.complete()
                             elseif luasnip.expand_or_jumpable() then
                                 luasnip.expand_or_jump()
-                            elseif has_words_before() then
+                            elseif words_before then
                                 cmp.complete()
                             else
                                 fallback()
@@ -913,25 +893,25 @@ PackerArguments[1] = function(use)
             local cmp_autopairs = require('nvim-autopairs.completion.cmp')
             cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done {})
         end
-    }
+    },
 
-    use {
+    {
         'lotabout/skim',
-        requires = 'lotabout/skim.vim',
-        run = './install',
-    }
-    use {
+        dependencies = 'lotabout/skim.vim',
+        build = './install',
+    },
+    {
         'w0rp/ale',
         cmd = 'ALEEnable'
-    }
-    use {
+    },
+    {
         'sbdchd/neoformat',
         cmd = 'Neoformat'
-    }
+    },
 
-    use 'kopischke/vim-stay'
-    use 'tpope/vim-sleuth'
-    use {
+    {'kopischke/vim-stay'},
+    {'tpope/vim-sleuth'},
+    {
         "ahmedkhalf/project.nvim",
         config = function()
             local project = require("project_nvim")
@@ -944,12 +924,12 @@ PackerArguments[1] = function(use)
                 silent_chdir = false,
             }
         end
-    }
-    use 'airodactyl/neovim-ranger'
+    },
+    {'airodactyl/neovim-ranger'},
 
-    use {
+    {
         'phaazon/hop.nvim',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function()
             local hop = require('hop')
             hop.setup {
@@ -971,10 +951,10 @@ PackerArguments[1] = function(use)
 
             map:register { modes = 'n' }
         end
-    }
-    use {
+    },
+    {
         'mfussenegger/nvim-treehopper',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function()
 
             ( map "Jump to a tree node")
@@ -984,10 +964,10 @@ PackerArguments[1] = function(use)
 
             map:register { modes = 'ov' }
         end
-    }
-    use {
+    },
+    {
         'mizlan/iswap.nvim',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function()
 
             ( map "Swap with")
@@ -995,8 +975,8 @@ PackerArguments[1] = function(use)
 
             map:register {}
         end
-    }
-    use {
+    },
+    {
         'chaoren/vim-wordmotion',
         setup = function()
             vim.g.wordmotion_mappings = {
@@ -1014,8 +994,8 @@ PackerArguments[1] = function(use)
                 iW = 'iw',
             }
         end
-    }
-    use {
+    },
+    {
         'mg979/vim-visual-multi',
         config = function ()
             local group = vim.api.nvim_create_augroup('VMlens', { clear = true })
@@ -1036,11 +1016,11 @@ PackerArguments[1] = function(use)
 
 
         end
-    }
+    },
 
-    use {
+    {
         'AndrewRadev/switch.vim',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         keys = 't',
         config = function()
 
@@ -1049,10 +1029,10 @@ PackerArguments[1] = function(use)
 
             map:register { as = 'cmd' }
         end
-    }
-    use {
+    },
+    {
         'junegunn/vim-easy-align',
-        after = 'map',
+        dependencies = 'I60R/map-dsl.nvim',
         config = function()
 
             ( map "Align by symbol")
@@ -1060,11 +1040,11 @@ PackerArguments[1] = function(use)
 
             map:register { modes = 'nxv' }
         end
-    }
-    use 'matze/vim-move'
-    use 'triglav/vim-visual-increment'
-    use 'terryma/vim-expand-region'
-    use {
+    },
+    {'matze/vim-move'},
+    {'triglav/vim-visual-increment'},
+    {'terryma/vim-expand-region'},
+    {
         'numToStr/Comment.nvim',
         config = function()
             local comment = require('Comment')
@@ -1084,8 +1064,8 @@ PackerArguments[1] = function(use)
                 },
             }
         end
-    }
-    use {
+    },
+    {
         'saifulapm/chartoggle.nvim',
         config = function()
             local chartoggle = require('chartoggle')
@@ -1094,39 +1074,39 @@ PackerArguments[1] = function(use)
                 keys = { ',', ';', "'", '"', ' ' }
             }
         end
-    }
-    use {
+    },
+    {
         'tommcdo/vim-exchange',
         keys = 'cx'
-    }
-    use {
+    },
+    {
         'arthurxavierx/vim-caser',
         keys = 'gs'
-    }
+    },
 
 
-    use 'aperezdc/vim-template'
-    use 'antoyo/vim-licenses'
-    use 'chrisbra/unicode.vim'
-    use 'fidian/hexmode'
-    use {
+    {'aperezdc/vim-template'},
+    {'antoyo/vim-licenses'},
+    {'chrisbra/unicode.vim'},
+    {'fidian/hexmode'},
+    {
         'lambdalisue/suda.vim',
         setup = function()
             vim.g['suda#prefix'] = 'sudo://'
             vim.g['suda_smart_edit'] = true
         end
-    }
+    },
 
-    use {
+    {
         'gisphm/vim-gitignore',
         ft = 'gitignore'
-    }
-    use {
+    },
+    {
         'lewis6991/gitsigns.nvim',
-        requires = {
-            'nvim-lua/plenary.nvim'
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+	        'I60R/map-dsl.nvim',
         },
-        after = "map",
         config = function()
             local gitsigns = require('gitsigns')
             gitsigns.setup {
@@ -1159,12 +1139,12 @@ PackerArguments[1] = function(use)
 
             map:register { as = 'cmd' }
         end
-    }
+    },
 
-    use {
+    {
         'nvim-treesitter/nvim-treesitter',
-        run = ":TSUpdate",
-        requires = {
+        build = ":TSUpdate",
+        dependencies = {
             'romgrk/nvim-treesitter-context',
             'RRethy/nvim-treesitter-textsubjects',
             'RRethy/nvim-treesitter-endwise',
@@ -1236,12 +1216,12 @@ PackerArguments[1] = function(use)
                 }
             }
         end,
-    }
-    use {
+    },
+    {
         'Wansmer/treesj',
-        after = 'map',
-        requires = {
-            'nvim-treesitter',
+        dependencies = {
+            'I60R/map-dsl.nvim',
+            'nvim-treesitter/nvim-treesitter',
         },
         config = function()
             local treesj = require('treesj')
@@ -1254,38 +1234,37 @@ PackerArguments[1] = function(use)
 
             map:register { as = 'cmd' }
         end,
-    }
+    },
 
-    use {
+    {
         'plasticboy/vim-markdown',
-        requires = {
+        dependencies = {
             'godlygeek/tabular'
         },
         ft = 'markdown'
-    }
-    use {
+    },
+    {
         "iamcco/markdown-preview.nvim",
-        run = "cd app && npm install",
+        build = "cd app && npm install",
         ft = { "markdown" },
-        setup = function()
+        init = function()
             vim.g.mkdp_filetypes = { "markdown" }
             vim.g.mkdp_browser = "chromium"
         end,
-    }
+    },
 
-    use 'dzeban/vim-log-syntax'
+    {'dzeban/vim-log-syntax'},
 
-    use 'arjunmahishi/run-code.nvim'
-    use 'nvim-treesitter/playground'
+    {'arjunmahishi/run-code.nvim'},
+    {'nvim-treesitter/playground'},
 
-    use {
+    {
         'I60R/nvim-retrail',
         config = function()
             local retrail = require('retrail')
             retrail.setup { }
         end
-    }
-end
+    },
+}
 
-
-return PackerArguments
+return plugins

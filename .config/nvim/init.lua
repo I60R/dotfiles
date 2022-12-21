@@ -1,16 +1,22 @@
 vim.g.no_plugin_maps = true
 
-local packer_path = vim.fn.stdpath('data')
-packer_path = packer_path .. '/site/pack/packer/opt/packer.nvim'
-
-if vim.fn.empty(vim.fn.glob(packer_path)) > 0 then
-    vim.cmd('!git clone https://github.com/wbthomason/packer.nvim ' .. packer_path)
-    vim.cmd 'packadd packer.nvim'
-    local packer = require('packer')
-    local arguments = require('plugins')
-    packer.setup(arguments)
-    packer.sync()
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
+       "git",
+        "clone",
+        "--filter=blob:none",
+        "--single-branch",
+        "https://github.com/folke/lazy.nvim.git",
+        lazypath,
+    })
 end
+vim.opt.runtimepath:prepend(lazypath)
+
+local lazy = require('lazy')
+local plugins = require('plugins')
+lazy.setup(plugins)
+
 
 
 vim.o.title = true
@@ -86,18 +92,10 @@ vim.api.nvim_create_autocmd('CursorHold', {
     command = 'checktime'
 })
 
-vim.api.nvim_create_autocmd('BufWritePost', {
-    pattern = 'plugins.lua, config.lua, init.lua',
-    callback = function()
-        vim.cmd 'source <afile>'
-        vim.cmd 'PackerClean'
-        vim.cmd 'PackerCompile'
-    end,
-})
 
 vim.api.nvim_create_autocmd('User', {
     pattern = 'PageOpen',
-    callback = function()
+        callback = function()
         (map "Close page")
             .ctrl['c'] = {
             function()
