@@ -68,7 +68,7 @@ for_window [app_id="albert"]             floating enable; move up 200 px
 
 ### Misc options
 
-set $focus_color #0000FF33
+set $focus_color #223249
 set $inact_color #00000000
 set $label_color #CCCCCC
 
@@ -325,9 +325,6 @@ bindcode     Ctrl+94 exec ydotool key      $ctrl+$shift+7:1 7:0 42:0 29:0
 bindcode Ctrl+Alt+94 exec ydotool key $ctrl+$alt+$shift+7:1 7:0 42:0 29:0
 bindcode      Alt+94 exec ydotool key       $alt+$shift+7:1 7:0 42:0 56:0
 
-
-bindsym KP_Up exec wtype ⦗
-bindsym KP_Down exec wtype ⦘
 
 
 
