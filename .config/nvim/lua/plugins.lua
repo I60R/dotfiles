@@ -572,6 +572,7 @@ local plugins = {
     {
         'neovim/nvim-lspconfig',
         dependencies = {
+            'folke/neodev.nvim',
             'I60R/map-dsl.nvim',
             'hrsh7th/cmp-nvim-lsp',
         },
@@ -689,6 +690,12 @@ local plugins = {
             lspconfig.sumneko_lua.setup {
                 settings = {
                     Lua = {
+                        diagnostics = {
+                            globals = {
+                                'vim',
+                                'map',
+                            }
+                        },
                         completion = {
                             callSnippet = "Replace"
                         }
