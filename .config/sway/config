@@ -233,15 +233,25 @@ bindsym $Mod+Shift+l move right
 bindsym $Mod+grave workspace back_and_forth
 
 # Switch to workspace
-bindsym $Mod+1 workspace number 1
-bindsym $Mod+2 workspace number 2
-bindsym $Mod+3 workspace number 3
-bindsym $Mod+4 workspace number 4
-bindsym $Mod+5 workspace number 5
-bindsym $Mod+6 workspace number 6
-bindsym $Mod+7 workspace number 7
-bindsym $Mod+8 workspace number 8
-bindsym $Mod+9 workspace number 9
+bindsym --no-repeat $Mod+1 workspace number 1; exec "echo 1 > /tmp/sovpipe"
+bindsym --no-repeat $Mod+2 workspace number 2; exec "echo 1 > /tmp/sovpipe"
+bindsym --no-repeat $Mod+3 workspace number 3; exec "echo 1 > /tmp/sovpipe"
+bindsym --no-repeat $Mod+4 workspace number 4; exec "echo 1 > /tmp/sovpipe"
+bindsym --no-repeat $Mod+5 workspace number 5; exec "echo 1 > /tmp/sovpipe"
+bindsym --no-repeat $Mod+6 workspace number 6; exec "echo 1 > /tmp/sovpipe"
+bindsym --no-repeat $Mod+7 workspace number 7; exec "echo 1 > /tmp/sovpipe"
+bindsym --no-repeat $Mod+8 workspace number 8; exec "echo 1 > /tmp/sovpipe"
+bindsym --no-repeat $Mod+9 workspace number 9; exec "echo 1 > /tmp/sovpipe"
+
+bindsym --release $Mod+1 exec "echo 0 > /tmp/sovpipe"
+bindsym --release $Mod+2 exec "echo 0 > /tmp/sovpipe"
+bindsym --release $Mod+3 exec "echo 0 > /tmp/sovpipe"
+bindsym --release $Mod+4 exec "echo 0 > /tmp/sovpipe"
+bindsym --release $Mod+5 exec "echo 0 > /tmp/sovpipe"
+bindsym --release $Mod+6 exec "echo 0 > /tmp/sovpipe"
+bindsym --release $Mod+7 exec "echo 0 > /tmp/sovpipe"
+bindsym --release $Mod+8 exec "echo 0 > /tmp/sovpipe"
+bindsym --release $Mod+9 exec "echo 0 > /tmp/sovpipe"
 
 # Move focused container to workspace
 bindsym $Mod+Shift+1 move container to workspace number 1
