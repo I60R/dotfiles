@@ -24,16 +24,16 @@ POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR='—'
 POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_FOREGROUND='240'
 
 
-POWERLEVEL9K_LEFT_PROMPT_FIRST_SEGMENT_START_SYMBOL='   —'
-POWERLEVEL9K_RIGHT_PROMPT_LAST_SEGMENT_END_SYMBOL='—   '
+POWERLEVEL9K_LEFT_PROMPT_FIRST_SEGMENT_START_SYMBOL='    '
+POWERLEVEL9K_RIGHT_PROMPT_LAST_SEGMENT_END_SYMBOL='    '
 
 POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="        "
 
 POWERLEVEL9K_EMPTY_LINE_LEFT_PROMPT_LAST_SEGMENT_END_SYMBOL=""
 
 
-POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR='—'
-POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR='—'
+POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=' '
+POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR=' '
 
 POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR=''
 POWERLEVEL9K_RIGHT_SUBSEGMENT_SEPARATOR=''
@@ -170,6 +170,7 @@ alias          gau="git add -u"
 
 alias            f=$FILTER
 alias            p=$PAGER
+alias         page=$PAGER
 alias         less=$PAGER
 alias        zless=$PAGER
 
@@ -180,7 +181,7 @@ alias           cd=z
 alias          rm!='rm -rf'
 alias          mv!='mvf'
 
-alias          '.'='nvr -cc ":term ranger $PWD" -c ":norm! i"'
+alias          '.'='nv -x "term ranger $PWD"'
 alias -g     '<<<'='tail -f '
 alias -g      '~!'='/run/user/$UID'
 alias -g      '\\'=' > $(page) '
@@ -202,19 +203,22 @@ alias           ct='[[ "$(pwd)" == */target/debug ]] && z ... || cd target/debug
 #                              Functions
 
 preexec () {
-    [ -z "$NVIM" ] && return
-    WORDS=(${1// *|*})
-    export PAGE_BUFFER_NAME="${WORDS[@]:0:2}"
+    if [ -z "$NVIM" ]; then
+        export PAGE_BUFFER_NAME="page"
+    else
+        WORDS=(${1// *|*})
+        export PAGE_BUFFER_NAME="${WORDS[@]:0:2}"
+    fi
 }
 
 chpwd () {
-    [ ! -z "$NVIM" ] && nvr -cc "let b:working_dir = '$PWD'"
+    [ ! -z "$NVIM" ] && nv -x "lcd $PWD"
 }
 
 man () {
     PROGRAM="${@[-1]}"
     SECTION="${@[-2]}"
-    page "man://$PROGRAM${SECTION:+($SECTION)}"
+    page -W "man://$PROGRAM${SECTION:+($SECTION)}"
 }
 
 mkd() { mkdir -p $* && cd $1 }
@@ -232,10 +236,12 @@ abd() { P=$1.mount; umount $P && rm -r $P }
 v() {
     if [ -t 1 ] && [ 1 -eq $# ] && [ -d $1 ]; then
         cd $1
+        ls
     else
         nv $*
     fi
 }
+compdef _nv v
 
 
 

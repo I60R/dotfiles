@@ -71,9 +71,9 @@ export HISTFILE="$XDG_DATA_HOME"/zsh/history
 
 
 
-export EDITOR="nv"
-export VISUAL="nv"
-export PAGER="page -O -q 90000"
+export EDITOR="/bin/nv"
+export VISUAL="/bin/nv"
+export PAGER="/bin/page -O -z 90000 -q 90000"
 export BROWSER="firefox"
 export FILTER="fzf --reverse --inline-info --height=40 --ansi --color=dark,bg+:-1,border:0,info:8,prompt:8,hl:34,hl+:34,pointer:34 --bind=tab:down,btab:up"
 
