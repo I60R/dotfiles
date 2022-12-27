@@ -123,3 +123,41 @@ vim.api.nvim_create_autocmd('TextYankPost', {
         }
     end
 })
+
+
+vim.api.nvim_create_autocmd('BufWinEnter', {
+    pattern = '*/Mind/*',
+    callback = function()
+        if vim.bo.filetype ~= 'norg' then
+            return
+        end
+        vim.wo.number = false
+
+        vim.loop.spawn('alacritty', {
+            args = {
+                'msg',
+                'config',
+                '--window-id=' .. os.getenv('ALACRITTY_WINDOW_ID'),
+                'font.size=24'
+            },
+        })
+
+        vim.api.nvim_create_autocmd('BufWinLeave', {
+            buffer = 0,
+            callback = function()
+                vim.wo.number = true
+
+                vim.loop.spawn('alacritty', {
+                    args = {
+                        'msg',
+                        'config',
+                        '--window-id=' .. os.getenv('ALACRITTY_WINDOW_ID'),
+                        'font.size=12'
+                    },
+                })
+            end
+        })
+    end
+})
+
+

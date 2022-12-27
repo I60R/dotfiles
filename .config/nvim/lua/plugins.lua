@@ -366,7 +366,7 @@ local plugins = {
 
 
             ;(map "Toggle zen mode")
-                ['<F11>'] = function() require('zen-mode').toggle() end
+                ['<F11>'] = function() require('zen-mode.view').toggle() end
 
             map:register {}
         end
@@ -475,18 +475,6 @@ local plugins = {
                 treesitter = {
                     update_delay = 1000
                 },
-            }
-        end
-    },
-    {
-        'ray-x/lsp_signature.nvim',
-        config = function ()
-            local lsp_signature = require('lsp_signature')
-            lsp_signature.setup {
-                bind = false,
-                handler_opts = {
-                    border = "none"
-                }
             }
         end
     },
@@ -724,6 +712,15 @@ local plugins = {
             require("luasnip/loaders/from_vscode").lazy_load()
         end
     },
+     {
+        'saecki/crates.nvim',
+        event = 'BufRead Cargo.toml',
+        dependencies = 'nvim-lua/plenary.nvim',
+        config = function()
+            local crates = require('crates')
+            crates.setup {}
+        end,
+    },
     {
         'hrsh7th/nvim-cmp',
         dependencies = {
@@ -732,6 +729,9 @@ local plugins = {
             'hrsh7th/cmp-cmdline',
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-buffer',
+            'hrsh7th/cmp-nvim-lsp-signature-help',
+            'hrsh7th/cmp-nvim-lsp-document-symbol',
+            'saecki/crates.nvim',
             'saadparwaiz1/cmp_luasnip',
             'onsails/lspkind-nvim',
         },
@@ -878,16 +878,20 @@ local plugins = {
                 sources = cmp.config.sources {
                     { name = 'luasnip', group_index = 1 },
                     { name = 'nvim_lsp', group_index = 2 },
-                    { name = 'buffer', group_index = 3 },
-                    { name = 'path', group_index = 4 },
-                    { name = 'cmdline', group_index = 5 },
-                    { name = 'nvim_lua', group_index = 6 },
+                    { name = 'cmp_tabnine', group_index = 3 },
+                    { name = 'buffer', group_index = 4 },
+                    { name = 'path', group_index = 5 },
+                    { name = 'cmdline', group_index = 6 },
+                    { name = 'nvim_lua', group_index = 7 },
+                    { name = 'nvim_lsp_signature_help', group_index = 8 },
+                    { name = 'crates', group_index = 9 },
                 }
             }
             cmp.setup.cmdline('/', {
                 sources = {
                     { name = 'buffer', group_index = 1 },
                     { name = 'path', group_index = 2 },
+                    { name = 'nvim_lsp_document_symbol', group_index = 3 },
                 }
             })
             cmp.setup.cmdline(':', {
@@ -901,7 +905,11 @@ local plugins = {
             cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done {})
         end
     },
-
+    {
+        'tzachar/cmp-tabnine',
+        build = './install.sh',
+        dependencies = 'hrsh7th/nvim-cmp'
+    },
     {
         'lotabout/skim',
         dependencies = 'lotabout/skim.vim',
@@ -912,8 +920,14 @@ local plugins = {
         cmd = 'ALEEnable'
     },
     {
-        'sbdchd/neoformat',
-        cmd = 'Neoformat'
+        'mhartington/formatter.nvim',
+        key = '<Leader>f',
+        dependencies = 'I60R/map-dsl.nvim',
+        config = function ()
+            ( map "Format code")
+                .leader['f'] = 'Format'
+            map:register { as = 'cmd', silent = true }
+        end
     },
 
     {'kopischke/vim-stay'},
@@ -1093,7 +1107,6 @@ local plugins = {
 
 
     {'aperezdc/vim-template'},
-    {'antoyo/vim-licenses'},
     {'chrisbra/unicode.vim'},
     {'fidian/hexmode'},
     {
@@ -1240,6 +1253,31 @@ local plugins = {
                 .ctrl['J'] = 'TSJToggle'
 
             map:register { as = 'cmd' }
+        end,
+    },
+
+    {
+        "nvim-neorg/neorg",
+        dependencies = "nvim-lua/plenary.nvim",
+        ft = 'norg',
+        build = function ()
+            require('neorg')
+            vim.cmd 'Neorg sync-parsers'
+        end,
+        config = function()
+            local neorg = require("neorg")
+            neorg.setup {
+                load = {
+                    ['core.norg.completion'] = {
+                        config = {
+                            engine = 'nvim-cmp'
+                        }
+                    },
+                    ['core.norg.concealer'] = {
+                        config = { }
+                    }
+                }
+            }
         end,
     },
 
