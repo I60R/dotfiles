@@ -92,9 +92,12 @@ font $font
 ### Launcher key bindings:
 
 # Start a terminal
-set $term_args --working-directory="$(swaycwd)" -e nvim term://zsh --cmd 'au TermOpen * ++once normal a'
-set $term alacritty msg create-window $term_args || alacritty $term_args
-bindsym $Mod+Return exec $term
+
+#set $term_args --working-directory="$(swaycwd)" -e nvim term://zsh --cmd 'au TermOpen * ++once normal a'
+# set $term alacritty msg create-window $term_args || alacritty $term_args
+
+
+bindsym $Mod+Return exec neovide term://zsh
 
 
 # Start an empty workspace
@@ -152,7 +155,7 @@ bindsym $Mod+Insert exec ~/.config/sway/screenshot.sh
 
 # Start color picker
 
-bindsym $Mod+Shift+Insert exec wl-color-picker
+bindsym $Mod+Shift+Insert exec wl-copy $(hyprpicker)
 
 
 # Start sound config
