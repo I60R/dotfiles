@@ -41,7 +41,7 @@ def assign_generic_name(i3, e):
         con = i3.get_tree().find_focused()
         if con.type == 'workspace':  # avoid renaming new empty workspaces on 'binding' event
             ws = con.workspace()
-            ws_new_name = "%s<span color='lightgreen'>+</span>" % ws.num
+            ws_new_name = "%s<span color='lightgreen' baseline_shift='superscript'>+</span>" % ws.num
 
             i3.command('rename workspace to "%s"' % ws_new_name)
 
