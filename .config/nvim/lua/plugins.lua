@@ -156,20 +156,8 @@ local function treesitter_plugins() return {
             }
             local tree_sitter_context = require('treesitter-context')
             tree_sitter_context.setup {
-                max_lines = 1,
-                patterns = {
-                    default = {
-                        'class',
-                        'function',
-                        'method',
-                        'field',
-                        'for',
-                        'while',
-                        'if',
-                        'switch',
-                        'case',
-                    }
-                }
+                max_lines = 0,
+                separator = ' ',
             }
         end,
     },
@@ -221,6 +209,7 @@ local function appearance_plugins() return {
             }
         end
     },
+
     {
         'akinsho/nvim-bufferline.lua',
         dependencies = {
@@ -231,7 +220,8 @@ local function appearance_plugins() return {
         config = function()
             local highlights = {}
             highlights.background = {
-                bold = true
+                bold = true,
+                fg = '#727169'
             }
 
             for _, v in ipairs {
@@ -242,7 +232,10 @@ local function appearance_plugins() return {
                 'modified', 'duplicate', 'separator', 'indicator', 'pick', 'numbers',
             } do
                 highlights[v .. '_selected'] = {
-                    bg = '#7E9CD8'
+                    italic = false,
+                    fg = '#C8C093',
+                    underline = true,
+                    sp = '#2D4F67'
                 }
             end
 
@@ -256,6 +249,11 @@ local function appearance_plugins() return {
                         local icon = level:match("error") and " " or " "
                         return " " .. icon .. count
                     end,
+                    hover = {
+                        enabled = true,
+                        delay = 200,
+                        reveal = { 'close' }
+                    },
                     show_buffer_close_icons = false,
                     show_close_icon = false,
                     always_show_bufferline = false,
@@ -264,30 +262,34 @@ local function appearance_plugins() return {
                     end,
                     separator_style = { '', '' },
                     indicator = {
-                        style = 'icon'
+                        style = 'none'
                     },
                     color_icons = true,
                     show_tab_indicators = false,
                     custom_areas = {
                         right = function()
                             local result = {}
+                            local git = vim.b.gitsigns_blame_line_dict
+                            if git ~= nil and git.abbrev_sha ~= nil and git.abbrev_sha ~= '00000000' then
+                                result[#result + 1] = { text =  git.abbrev_sha .. '  ', fg = '#2D4F67' }
+                            end
                             local git = vim.b.gitsigns_status_dict
-                            local added = git['added']
-                            if added > 0 then
-                                result[#result + 1] = { text = tostring(added), fg = 'grey' }
-                                result[#result + 1] = { text = '樂', fg = 'DarkGreen' }
-                            end
-                            local removed = git['removed']
-                            if removed > 0 then
-                                result[#result + 1] = { text = tostring(removed), fg = 'grey' }
-                                result[#result + 1] = { text = ' ', fg = 'DarkRed' }
-                            end
-                            local changed = git['changed']
+                            local changed = git.changed
                             if changed > 0 then
-                                result[#result + 1] = { text = tostring(changed), fg = 'grey' }
-                                result[#result + 1] = { text = 'ﰣ ', fg = 'DarkYellow' }
+                                result[#result + 1] = { text = tostring(changed), fg = '#727169' }
+                                result[#result + 1] = { text = 'ﰣ ', fg = '#DCA561' }
                             end
-                            result[#result + 1] = { text = ' ' .. git.head, fg = 'white', bold = true }
+                            local removed = git.removed
+                            if removed > 0 then
+                                result[#result + 1] = { text = tostring(removed), fg = '#727169' }
+                                result[#result + 1] = { text = ' ', fg = '#C34043' }
+                            end
+                            local added = git.added
+                            if added > 0 then
+                                result[#result + 1] = { text = tostring(added), fg = '#727169' }
+                                result[#result + 1] = { text = '樂', fg = '#76946A' }
+                            end
+                            result[#result + 1] = { text = ' ' .. git.head, fg = '#DCD7BA', bold = true }
                             return result
                         end,
                     },
@@ -541,6 +543,39 @@ local function os_integration_plugins() return {
             map:register { as = 'cmd' }
         end
     },
+
+    {
+        'chrisgrieser/nvim-genghis',
+        dependencies = 'I60R/map-dsl.nvim',
+        config = function()
+            local genghis = require("genghis")
+
+            map.leader['/'] = { name = "+file:" }
+
+            ;(map "file: copy path")
+                .leader['/c'] = genghis.copyFilepath
+            ;(map "file: copy name")
+                .leader['/C'] = genghis.copyFilename
+            ;(map "file: chmodx")
+                .leader['/x'] = genghis.chmodx
+            ;(map "file: rename")
+                .leader['/m'] = genghis.renameFile
+            ;(map "file: move and rename")
+                .leader['/M'] = genghis.moveAndRenameFile
+            ;(map "file: create new")
+                .leader['/n'] = genghis.createNewFile
+            ;(map "file: duplicate")
+                .leader['/N'] = genghis.duplicateFile
+            ;(map "file: from selection")
+                .leader['/y'] = genghis.moveSelectionToNewFile
+            ;(map "file: trash")
+                .leader['/t'] = function ()
+                    genghis.trashFile { trashLocation = "$HOME/.Trash" }
+                end
+
+            map:register { mode = 'nv' }
+        end
+    }
 } end
 
 local function motion_plugins() return {
@@ -826,6 +861,23 @@ local function ui_extension_plugins() return {
                     update_delay = 1000
                 },
             }
+        end
+    },
+    {
+        'mbbill/undotree',
+        cmd = {
+            'UndotreeShow',
+            'UndotreeToggle',
+        },
+        config = function()
+            vim.g.undotree_WindowLayout = 3
+            vim.g.undotree_ShortIndicators = 1
+            vim.g.undotree_SplitWidth = 30
+            vim.g.undotree_TreeNodeShape = '◉'
+            vim.g.undotree_CursorLine = 0
+            vim.g.undotree_HelpLine = 0
+            vim.g.undotree_DiffpanelHeight = 13
+            vim.g.undotree_DiffAutoOpen = 0
         end
     },
 
@@ -1281,12 +1333,9 @@ local function meta_plugins() return {
                 },
                 layout = {
                     align = 'center',
-                    width = { min = 0, max = 200 },
                 },
                 window = {
                     position = 'top',
-                    margin = { 3, 8, 3, 8 },
-                    padding = { 3, 8, 3, 8 },
                     winblend = 23
                 },
             }
@@ -1304,18 +1353,11 @@ local function meta_plugins() return {
                 ['<Esc><Esc><Esc>'] = 'stopinsert | call timer_start(100, { -> execute("keepjumps norm M") }, {})'
 
             ;(map "Prev command")
-                .ctrl.alt['i'] = 'stopinsert | call search("160R", "bW")'
+                .ctrl.alt['i'] = { 'stopinsert | call search("-→", "bW")', mode = 'n' }
             ;(map "Next command")
-                .ctrl.alt['o'] = 'stopinsert | call search("160R", "W")'
+                .ctrl.alt['o'] = {'stopinsert | call search("-→", "W")', mode = 'n' }
 
             map:split { as = 'cmd', modes = 't', remap = false }
-
-            ;(map "Prev command")
-                .ctrl.alt['i'] = 'call search("160R", "bW")'
-            ;(map "Next command")
-                .ctrl.alt['o'] = 'call search("160R", "W")'
-
-
 
             ;(map "Close all non-file windows")
                 ['<Esc><Esc>'] = { 'helpclose | lclose | cclose | nohlsearch', as = 'cmd' }
