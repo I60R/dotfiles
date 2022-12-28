@@ -46,14 +46,17 @@ def assign_generic_name(i3, e):
             i3.command('rename workspace to "%s"' % ws_new_name)
 
         else:
+            ws = con.workspace()
+            leaves = ws.leaves()
+            leaves_len = len(leaves)
+
             if e.change == 'new':
                 # In sway we may open a new window w/o moving focus; let's give the workspace a name anyway.
                 con = i3.get_tree().find_by_id(e.container.id)
                 name = con.app_id or con.window_class or con.window_instance
 
-                ws = con.workspace()
                 ws_name = "%s<span baseline_shift='superscript' color='cyan'>%s</span><span color='orange'>%s</span>" % (
-                        ws.num, len(ws.leaves()), name
+                        ws.num, leaves_len, name
                 )
 
                 i3.command('rename workspace "%s" to %s' % (ws.num, ws_name))
@@ -61,21 +64,31 @@ def assign_generic_name(i3, e):
             else:
 
                 if con.type == 'floating_con':
-                    split_text = ''
+                    split_text = '▪' if leaves_len == 0 else '▣'
                 else:
-                    if con.parent.layout == 'splith':
-                        split_text = '╌'
+                    if leaves_len == 1:
+                        split_text = '■'
+                    elif con.parent.layout == 'splith':
+                        if leaves_len == 2:
+                            split_text = '◧' if leaves[0] == con else '◨'
+                        else:
+                            split_text = ''
+                            for x in range(0, leaves_len):
+                                split_text += '▮' if leaves[x] == con else '▯'
+
                     elif con.parent.layout == 'splitv':
-                        split_text = ':'
+                        if leaves_len == 2:
+                            split_text = '⬒' if leaves[0] == con else '⬓'
+                        else:
+                            split_text = '▤'
                     else:
-                        split_text = '='
+                        split_text = '□'
 
                 name = con.app_id or con.window_class or con.window_instance
 
-                ws = con.workspace()
                 ws_old_name = ws.name
                 ws_name = "%s<span baseline_shift='superscript' color='cyan'>%s</span> <span color='orange'>%s %s</span>" % (
-                        ws.num, len(ws.leaves()), split_text, name
+                        ws.num, leaves_len, split_text, name
                 )
 
                 i3.command('rename workspace "%s" to %s' % (ws_old_name, ws_name))
