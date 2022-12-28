@@ -1,5 +1,14 @@
 vim.g.no_plugin_maps = true
 
+if vim.g.neovide then
+    vim.o.guifont = 'JetBrains Mono:h13'
+    vim.g.neovide_transparency = 0.0
+    vim.g.neovide_floating_blur_amount_x = 2.0
+    vim.g.neovide_floating_blur_amount_y = 2.0
+    vim.g.neovide_confirm_quit = false
+    vim.g.neovide_scroll_animation_length = 0.0
+end
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -58,7 +67,8 @@ vim.o.foldenable = false
 vim.o.inccommand = 'split'
 vim.o.wildignorecase = true
 vim.o.completeopt = 'menu,menuone,noselect'
-vim.o.pumblend = 15
+vim.o.pumblend = 25
+vim.o.wildoptions = 'pum'
 vim.o.smartindent = true
 vim.o.matchtime = 2
 vim.o.showmatch = true
@@ -126,35 +136,18 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 
 vim.api.nvim_create_autocmd('BufWinEnter', {
-    pattern = '*/Mind/*',
+    pattern = '*/home/*.md',
     callback = function()
-        if vim.bo.filetype ~= 'norg' then
-            return
-        end
-        vim.wo.number = false
-
-        vim.loop.spawn('alacritty', {
-            args = {
-                'msg',
-                'config',
-                '--window-id=' .. os.getenv('ALACRITTY_WINDOW_ID'),
-                'font.size=24'
-            },
-        })
+        vim.defer_fn(function()
+            require('zen-mode').open()
+        end, 100)
 
         vim.api.nvim_create_autocmd('BufWinLeave', {
             buffer = 0,
             callback = function()
-                vim.wo.number = true
-
-                vim.loop.spawn('alacritty', {
-                    args = {
-                        'msg',
-                        'config',
-                        '--window-id=' .. os.getenv('ALACRITTY_WINDOW_ID'),
-                        'font.size=12'
-                    },
-                })
+                vim.defer_fn(function()
+                    require('zen-mode').open()
+                end, 100)
             end
         })
     end
