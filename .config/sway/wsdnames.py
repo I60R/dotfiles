@@ -4,9 +4,10 @@
 """
 This script uses the i3ipc python library to create dynamic workspace names in Sway / i3
 
-Modified by: 160R@protonmail.com
+Modified by: 160R
+e-mail: 160R@protonmail.com
 
-Author: Piotr Miller
+Creator: Piotr Miller
 e-mail: nwg.piotr@gmail.com
 Project: https://github.com/nwg-piotr/swayinfo
 License: GPL3
