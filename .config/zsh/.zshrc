@@ -109,6 +109,9 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="standout"
 ZSH_HACKER_QUOTES_ENABLE_WHEN_INTERACTIVE=1
 
 
+ZSH_DOTENV_PROMPT=false
+
+
 
 #                             Plugins
 
