@@ -1,75 +1,202 @@
-local plugins = {
+local function textobject_plugins() return {
     {
-        'I60R/map-dsl.nvim',
-        dependencies = 'folke/which-key.nvim',
+        'chrisgrieser/nvim-various-textobjs',
         config = function()
-            local map_dsl = require('map-dsl')
-            local which_key = require('which-key')
-            which_key.setup {
-                icons = {
-                    separator = ''
-                },
-                layout = {
-                    align = 'center',
-                    width = { min = 0, max = 200 },
-                },
-                window = {
-                    position = 'top',
-                    margin = { 3, 8, 3, 8 },
-                    padding = { 3, 8, 3, 8 },
-                    winblend = 23
-                },
+            local various_textobjs = require('various-textobjs')
+            various_textobjs.setup {
+                useDefaultKeymaps = true,
             }
+        end
+    },
+    {
+        'kana/vim-textobj-user',
+        dependencies = {
+            'I60R/map-dsl.nvim',
+            'wellle/targets.vim',
+            'rhysd/vim-textobj-anyblock',
+            'rhysd/vim-textobj-conflict',
+            'glts/vim-textobj-comment',
+            'kana/vim-textobj-lastpat',
+            'kana/vim-textobj-line',
+            'I60R/vim-textobj-nonwhitespace'
+        },
+        setup = function()
+            vim.g.textobj_lastpat_no_default_key_mappings = true
+        end,
+        config = function()
 
-            ;(map "Unmap space")
-                ['<Space>'] = '<Nop>'
-            ;(map "Space is the leader key!")
-                ['<Space>'] = '<Leader>'
+            ( map "Last pattern")
+                ['an'] = { plug = 'textobj-lastpat-n' }
+            ;(map "Previous pattern")
+                ['aN'] = { plug = 'textobj-lastpat-N' }
 
-            map:split { remap = true }
+            map:register { modes = 'o' }
+        end
+    },
+} end
 
-            ;(map "Exit from terminal mode")
-                ['<Esc><Esc>'] = 'stopinsert'
-            ;(map "Exit from terminal mode and focus on center")
-                ['<Esc><Esc><Esc>'] = 'stopinsert | call timer_start(100, { -> execute("norm M") }, {})'
-
-            map:split { as = 'cmd', modes = 't', remap = false }
-
-            ;(map "Close all non-file windows")
-                ['<Esc><Esc>'] = { 'helpclose | lclose | cclose | nohlsearch', as = 'cmd' }
-
-            local toggle = require('toggle')
-
-            ;(map "Toggle scrolloff")
-                ['MM'] = { toggle.scrolloff, remap = false }
-            ;(map "Toggle cursorcolumn")
-                ['MC'] = { toggle.cursorcolumn, remap = false }
-
-            ;(map "Undo")
-                ['U'] = '<C-r>'
-
-            ;(map "Swap go to mark line with go to mark position")
-                ["'"] = '`'
-            ;(map "Swap go to mark position with go to mark line")
-                ['`'] = "'"
-
-            ;(map "Create new file")
-                .ctrl['t'] = { '<Esc><Esc>:enew<CR>:redraw<CR>:w ~/', remap = true, modes = 'vto' }
-
-            map:register { modes = 'n' }
+local function language_plugins() return {
+    {
+        'folke/neodev.nvim',
+        dependencies = 'neovim/nvim-lspconfig',
+        config = function()
+            local lua_dev = require('neodev');
+            lua_dev.setup {
+                library = {
+                    enabled = true,
+                    runtime = true,
+                    types = true,
+                    plugins = true,
+                },
+                lspconfig = true,
+                setup_jsonls = false,
+            }
         end
     },
 
     {
-        'folke/lazy.nvim',
-        config = function()
-            local packer = require('lazy')
-            local plugins = require('plugins')
-            packer.startup(plugins)
+        'plasticboy/vim-markdown',
+        dependencies = 'godlygeek/tabular',
+        ft = 'markdown'
+    },
+    {
+        'SidOfc/mkdx',
+        ft = 'markdown',
+    },
+    {
+        "iamcco/markdown-preview.nvim",
+        build = "cd app && npm install",
+        ft = "markdown",
+        init = function()
+            vim.g.mkdp_filetypes = { "markdown" }
+            vim.g.mkdp_browser = "chromium"
         end,
-        cmd = 'Lazy',
     },
 
+    {
+        'dzeban/vim-log-syntax',
+        ft = 'log',
+    },
+
+    {
+        'arjunmahishi/flow.nvim'
+    },
+    {
+        'saecki/crates.nvim',
+        event = 'BufRead Cargo.toml',
+        dependencies = 'nvim-lua/plenary.nvim',
+        config = function()
+            local crates = require('crates')
+            crates.setup {}
+        end,
+    },
+    {
+        'tpope/vim-characterize',
+        keys = 'ga'
+    },
+} end
+
+local function treesitter_plugins() return {
+    {
+        'nvim-treesitter/nvim-treesitter',
+        build = ":TSUpdate",
+        dependencies = {
+            'romgrk/nvim-treesitter-context',
+            'RRethy/nvim-treesitter-textsubjects',
+            'RRethy/nvim-treesitter-endwise',
+            'windwp/nvim-ts-autotag',
+        },
+        config = function()
+            vim.api.nvim_set_hl(0, 'TreesitterContext', {
+                link = 'QuickFixLine'
+            })
+            vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', {
+                link = 'QuickFixLine'
+            })
+
+            local tree_sitter = require('nvim-treesitter.configs')
+            tree_sitter.setup {
+                ensure_installed = 'all',
+                highlight = {
+                    enable = true
+                },
+                indent = {
+                    enable = true
+                },
+                endwise = {
+                    enable = true
+                },
+                autotag = {
+                    enable = true,
+                    filetypes = {
+                        'html',
+                        'javascript',
+                        'javascriptreact',
+                        'typescriptreact',
+                        'svelte',
+                        'vue',
+                        'markdown',
+                    }
+                },
+                textsubjects = {
+                    enable = true,
+                    keymaps = {
+                        ['<Space>'] = 'textsubjects-smart'
+                    }
+                },
+                incremental_selection = {
+                    enable = true,
+                    keymaps = {
+                        init_selection = '<CR>',
+                        scope_incremental = '<Tab>',
+                        node_incremental = '<CR>',
+                        node_decremental = '<S-Tab>',
+                    },
+                },
+            }
+            local tree_sitter_context = require('treesitter-context')
+            tree_sitter_context.setup {
+                max_lines = 1,
+                patterns = {
+                    default = {
+                        'class',
+                        'function',
+                        'method',
+                        'field',
+                        'for',
+                        'while',
+                        'if',
+                        'switch',
+                        'case',
+                    }
+                }
+            }
+        end,
+    },
+    {
+        'nvim-treesitter/playground'
+    },
+    {
+        'Wansmer/treesj',
+        dependencies = {
+            'I60R/map-dsl.nvim',
+            'nvim-treesitter/nvim-treesitter',
+        },
+        config = function()
+            local treesj = require('treesj')
+            treesj.setup {
+                use_default_keymaps = false,
+            }
+
+            ;(map "Split/join node")
+                .ctrl['J'] = 'TSJToggle'
+
+            map:register { as = 'cmd' }
+        end,
+    },
+} end
+
+local function appearance_plugins() return {
     {
         'rebelot/kanagawa.nvim',
         config = function()
@@ -85,7 +212,15 @@ local plugins = {
             })
         end
     },
-
+    {
+        'xiyaowong/nvim-transparent',
+        config = function ()
+            local transparent = require('transparent')
+            transparent.setup {
+                enable = true,
+            }
+        end
+    },
     {
         'akinsho/nvim-bufferline.lua',
         dependencies = {
@@ -183,7 +318,6 @@ local plugins = {
             map:register { as = 'cmd', modes = 'nicxsot' }
         end
     },
-
     {
         'chentoast/marks.nvim',
         config = function()
@@ -235,25 +369,6 @@ local plugins = {
                     winhl = 'TermCursor',
                 }
             }
-        end
-    },
-    {
-        'haya14busa/vim-asterisk',
-        dependencies = 'I60R/map-dsl.nvim',
-        setup = function()
-            vim.g['asterisk#keeppos'] = 1
-        end,
-        config = function()
-            ( map "Search word")
-                ['*'] = { plug = 'asterisk-z*', 'require("hlslens").start()' }
-            ;(map "Search word backwards")
-                ['#'] = { plug = 'asterisk-z#', 'require("hlslens").start()' }
-            ;(map "Go to search word")
-                ['g*'] = { plug = 'asterisk-gz*', 'require("hlslens").start()' }
-            ;(map "Go to search word backwards")
-                ['g#'] = { plug = 'asterisk-gz#', 'require("hlslens").start()' }
-
-            map:register { as = 'lua' }
         end
     },
     {
@@ -339,11 +454,297 @@ local plugins = {
             }
         end
     },
+} end
+
+local function os_integration_plugins() return {
     {
-        'tpope/vim-characterize',
-        keys = 'ga'
+        'kopischke/vim-stay'
+    },
+    {
+        'tpope/vim-sleuth'
     },
 
+    {
+        "ahmedkhalf/project.nvim",
+        config = function()
+            local project = require("project_nvim")
+            project.setup {
+                detection_methods = {
+                    "pattern",
+                    "lsp",
+                },
+                patterns = { "^.config" },
+                silent_chdir = false,
+            }
+        end
+    },
+    {
+        'airodactyl/neovim-ranger'
+    },
+    {
+        'aperezdc/vim-template'
+    },
+    {
+        'chrisbra/unicode.vim'
+    },
+    {
+        'fidian/hexmode'
+    },
+    {
+        'lambdalisue/suda.vim',
+        setup = function()
+            vim.g['suda#prefix'] = 'sudo://'
+            vim.g['suda_smart_edit'] = true
+        end
+    },
+
+    {
+        'gisphm/vim-gitignore',
+        ft = 'gitignore'
+    },
+    {
+        'lewis6991/gitsigns.nvim',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+	        'I60R/map-dsl.nvim',
+        },
+        config = function()
+            local gitsigns = require('gitsigns')
+            gitsigns.setup {
+                watch_gitdir = {
+                    interval = 5000,
+                    follow_files = true,
+                },
+                numhl = true,
+                current_line_blame = true,
+                current_line_blame_opts = {
+                    virt_text = true,
+                    virt_text_pos = 'eol',
+                    delay = 1000,
+                    ignore_whitespace = false,
+                }
+            }
+
+            ;(map "Stage hunk")
+                .leader['hs'] = 'Gitsigns stage_hunk'
+            ;(map "Undo stage hunk")
+                .leader['hS'] = 'Gitsigns undo_stage_hunk'
+            ;(map "Preview hunk")
+                .leader['hh'] = 'Gitsigns preview_hunk'
+            ;(map "Preview hunk")
+                .leader['hr'] = 'Gitsigns reset_hunk'
+            ;(map "Next hunk")
+                ['g]'] = 'Gitsigns next_hunk'
+            ;(map "Prev hunk")
+                ['g['] = 'Gitsigns prev_hunk'
+
+            map:register { as = 'cmd' }
+        end
+    },
+} end
+
+local function motion_plugins() return {
+    {
+        'haya14busa/vim-asterisk',
+        dependencies = 'I60R/map-dsl.nvim',
+        setup = function()
+            vim.g['asterisk#keeppos'] = 1
+        end,
+        config = function()
+            ( map "Search word")
+                ['*'] = { plug = 'asterisk-z*', 'require("hlslens").start()' }
+            ;(map "Search word backwards")
+                ['#'] = { plug = 'asterisk-z#', 'require("hlslens").start()' }
+            ;(map "Go to search word")
+                ['g*'] = { plug = 'asterisk-gz*', 'require("hlslens").start()' }
+            ;(map "Go to search word backwards")
+                ['g#'] = { plug = 'asterisk-gz#', 'require("hlslens").start()' }
+
+            map:register { as = 'lua' }
+        end
+    },
+
+    {
+        'kana/vim-repeat'
+    },
+    {
+        "kylechui/nvim-surround",
+        config = function()
+            local surround = require("nvim-surround")
+            surround.setup {}
+        end
+    },
+
+    {
+        'phaazon/hop.nvim',
+        dependencies = 'I60R/map-dsl.nvim',
+        config = function()
+            local hop = require('hop')
+            hop.setup {
+                inclusive_jump = true,
+                uppercase_labels = true,
+            }
+
+            ;(map "Jump to a line")
+                ['f'] = function() vim.cmd 'norm V'; hop.hint_lines_skip_whitespace() end
+            ;(map "Jump to a letter")
+                ['F'] = function() hop.hint_words() end
+
+            map:split { modes = 'o' }
+
+            ;(map "Jump to a line and focus on it")
+                ['f'] = function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end
+            ;(map "Jump to a letter")
+                ['F'] = function() hop.hint_words() end
+
+            map:register { modes = 'n' }
+        end
+    },
+    {
+        'mfussenegger/nvim-treehopper',
+        dependencies = 'I60R/map-dsl.nvim',
+        config = function()
+
+            ( map "Jump to a tree node")
+                ['m'] = function() require('tsht').nodes() end
+            ;(map "Jump to a tree node")
+                ['m'] = { function() require('tsht').nodes() end, remap = false }
+
+            map:register { modes = 'ov' }
+        end
+    },
+    {
+        'mizlan/iswap.nvim',
+        dependencies = 'I60R/map-dsl.nvim',
+        config = function()
+
+            ( map "Swap with")
+                ['s'] = { 'ISwapWith', as = 'cmd' }
+
+            map:register {}
+        end
+    },
+    {
+        'chaoren/vim-wordmotion',
+        setup = function()
+            vim.g.wordmotion_mappings = {
+                w = 'W',
+                b = 'B',
+                e = 'E',
+                ge = 'gE',
+                aw = 'aW',
+                iw = 'iW',
+                W = 'w',
+                B = 'b',
+                E = 'e',
+                gE = 'ge',
+                aW = 'aw',
+                iW = 'iw',
+            }
+        end
+    },
+    {
+        'mg979/vim-visual-multi',
+        config = function ()
+            local group = vim.api.nvim_create_augroup('VMlens', { clear = true })
+            vim.api.nvim_create_autocmd('User', {
+                group = group,
+                pattern = "visual_multi_start",
+                callback = function()
+                    require('vmlens').start()
+                end
+            })
+            vim.api.nvim_create_autocmd('User', {
+                group = group,
+                pattern = "visual_multi_exit",
+                callback = function()
+                    require('vmlens').exit()
+                end
+            })
+        end
+    },
+
+    {
+        'AndrewRadev/switch.vim',
+        dependencies = 'I60R/map-dsl.nvim',
+        keys = 't',
+        config = function()
+
+            ( map "Toggle value")
+                ['t'] = 'Switch'
+
+            map:register { as = 'cmd' }
+        end
+    },
+    {
+        'junegunn/vim-easy-align',
+        dependencies = 'I60R/map-dsl.nvim',
+        config = function()
+
+            ( map "Align by symbol")
+                ['|'] = { plug = 'EasyAlign' }
+
+            map:register { modes = 'nxv' }
+        end
+    },
+    {
+        'matze/vim-move'
+    },
+    {
+        'triglav/vim-visual-increment'
+    },
+    {
+        'terryma/vim-expand-region'
+    },
+    {
+        'numToStr/Comment.nvim',
+        config = function()
+            local comment = require('Comment')
+            comment.setup {
+                toggler = {
+                    line = ';;h',
+                    block = ';;;h',
+                },
+                opleader = {
+                    line = ';;',
+                    block = ';;;',
+                },
+                extra = {
+                    above = ';;k',
+                    below = ';;j',
+                    eol = ';;l',
+                },
+            }
+        end
+    },
+    {
+        'saifulapm/chartoggle.nvim',
+        config = function()
+            local chartoggle = require('chartoggle')
+            chartoggle.setup {
+                leader = '<Leader>',
+                keys = { '.', ',', ';', "'", '"', ' ', ')', '}', ']' }
+            }
+        end
+    },
+    {
+        'tommcdo/vim-exchange',
+        keys = 'cx'
+    },
+    {
+        'arthurxavierx/vim-caser',
+        keys = 'gs'
+    },
+    {
+        'I60R/nvim-retrail',
+        config = function()
+            local retrail = require('retrail')
+            retrail.setup { }
+        end
+    },
+} end
+
+local function ui_extension_plugins() return {
     {
         'folke/zen-mode.nvim',
         dependencies = 'I60R/map-dsl.nvim',
@@ -357,11 +758,15 @@ local plugins = {
             zen_mode.setup {
                 window = {
                     backdrop = 1.0,
-                    width = 120,
+                    width = 100,
                     height = 0.85,
                 },
-                on_open = toggle.scrolloff,
-                on_close = toggle.scrolloff,
+                on_open = function()
+                    vim.o.guifont = 'JetBrains Mono:h18'
+                end,
+                on_close = function()
+                    vim.o.guifont = 'JetBrains Mono:h13'
+                end,
             }
 
 
@@ -373,61 +778,6 @@ local plugins = {
     },
 
     {
-        'rainbowhxch/accelerated-jk.nvim',
-        dependencies = 'I60R/map-dsl.nvim',
-        config = function()
-
-            ( map "Accelerated j")
-                ['j'] = { plug = 'accelerated_jk_j', modes = 'n' }
-            ;(map "Accelerated k")
-                ['k'] = { plug = 'accelerated_jk_k', modes = 'n' }
-
-            map:register {}
-        end
-    },
-    {'kana/vim-repeat'},
-    {
-        "kylechui/nvim-surround",
-        config = function()
-            local surround = require("nvim-surround")
-            surround.setup {}
-        end
-    },
-
-
-    {
-        'kana/vim-textobj-user',
-        dependencies = {
-            'I60R/map-dsl.nvim',
-            'wellle/targets.vim',
-            'rhysd/vim-textobj-anyblock',
-            'rhysd/vim-textobj-conflict',
-            'glts/vim-textobj-comment',
-            'kana/vim-textobj-lastpat',
-            'kana/vim-textobj-indent',
-            'kana/vim-textobj-line',
-            'I60R/vim-textobj-nonwhitespace'
-        },
-        setup = function()
-            vim.g.textobj_lastpat_no_default_key_mappings = true
-        end,
-        config = function()
-
-            ( map "Inner indent")
-                ['ai'] = { plug = 'textobj-indent-a' }
-            ;(map "Outer indent")
-                ['iI'] = { plug = 'textobj-indent-i' }
-            ;(map "Last pattern")
-                ['an'] = { plug = 'textobj-lastpat-n' }
-            ;(map "Previous pattern")
-                ['aN'] = { plug = 'textobj-lastpat-N' }
-
-            map:register { modes = 'o' }
-        end
-    },
-
-
-    {
         'stevearc/aerial.nvim',
         dependencies = 'I60R/map-dsl.nvim',
         config = function ()
@@ -435,10 +785,10 @@ local plugins = {
             aerial.setup {
                 on_attach = function(bufnr)
 
-                    ( map "Jump next aerial")
-                        ['{'] = 'AerialPrev'
-                    ;(map "Jump next aerial")
-                        ['}'] = 'AerialNext'
+                    ( map "jump next aerial")
+                        ['{'] = 'aerialprev'
+                    ;(map "jump next aerial")
+                        ['}'] = 'aerialnext'
 
                     map:register {
                         as = 'cmd',
@@ -478,6 +828,7 @@ local plugins = {
             }
         end
     },
+
     {
         'j-hui/fidget.nvim',
         config = function ()
@@ -492,6 +843,7 @@ local plugins = {
             }
         end
     },
+
     {
         "glepnir/lspsaga.nvim",
         branch = "main",
@@ -507,31 +859,31 @@ local plugins = {
                 }
             }
 
-            ;(map "LSP actions")
+            ;(map "Lsp actions")
                 ['<F3>'] = 'Lspsaga code_action'
-            ;(map "LSP rename")
+            ;(map "Lsp rename")
                 ['<F2>'] = 'Lspsaga rename'
-            ;(map "LSP peek definition")
+            ;(map "Lsp peek definition")
                 .leader['d'] = 'Lspsaga peek_definition'
-            ;(map "LSP line diagnostic")
+            ;(map "Lsp line diagnostic")
                 .leader['l'] = 'Lspsaga show_line_diagnostics'
-            ;(map "LSP cursor diagnostic")
+            ;(map "Lsp cursor diagnostic")
                 .leader['c'] = 'Lspsaga show_cursor_diagnostics'
-            ;(map "LSP hover doc")
+            ;(map "Lsp hover doc")
                 ['K'] = 'Lspsaga hover_doc'
-            ;(map "LSP hover doc")
+            ;(map "Lsp hover doc")
                 .ctrl['K'] = 'Lspsaga lsp_finder'
 
 
             map:split { as = 'cmd', silent = true }
 
 
-            ;(map "LSP next diagnostic")
+            ;(map "Lsp next diagnostic")
                 ['<F8>'] = function()
                     require("lspsaga.diagnostic")
                         .goto_prev({ severity = vim.diagnostic.severity.ERROR })
                 end
-            ;(map "LSP next diagnostic")
+            ;(map "Lsp next diagnostic")
                 .shift['<F8>'] = function()
                     require("lspsaga.diagnostic")
                         .goto_next({ severity = vim.diagnostic.severity.ERROR })
@@ -540,23 +892,9 @@ local plugins = {
             map:register { silent = true }
         end,
     },
-    {
-        'folke/neodev.nvim',
-        dependencies = 'neovim/nvim-lspconfig',
-        config = function()
-            local lua_dev = require('neodev');
-            lua_dev.setup {
-                library = {
-                    enabled = true,
-                    runtime = true,
-                    types = true,
-                    plugins = true,
-                },
-                lspconfig = true,
-                setup_jsonls = false,
-            }
-        end
-    },
+} end
+
+local function completion_plugins() return {
     {
         'neovim/nvim-lspconfig',
         dependencies = {
@@ -583,7 +921,7 @@ local plugins = {
             capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
             local function on_attach(client, bufnr)
-                -- Mappings.
+                -- mappings.
                 ( map "Workspace folders")
                     .leader['wl'] = function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end
                 ;(map "Add workspace folder")
@@ -657,7 +995,7 @@ local plugins = {
                 }
             }
 
-            -- a loop to conveniently both setup defined servers
+            -- A loop to conveniently both setup defined servers
             -- and map buffer local keybindings when the language server attaches
             local servers = {
                 "pyright",
@@ -712,15 +1050,7 @@ local plugins = {
             require("luasnip/loaders/from_vscode").lazy_load()
         end
     },
-     {
-        'saecki/crates.nvim',
-        event = 'BufRead Cargo.toml',
-        dependencies = 'nvim-lua/plenary.nvim',
-        config = function()
-            local crates = require('crates')
-            crates.setup {}
-        end,
-    },
+
     {
         'hrsh7th/nvim-cmp',
         dependencies = {
@@ -911,405 +1241,126 @@ local plugins = {
         dependencies = 'hrsh7th/nvim-cmp'
     },
     {
-        'lotabout/skim',
-        dependencies = 'lotabout/skim.vim',
-        build = './install',
-    },
-    {
-        'w0rp/ale',
-        cmd = 'ALEEnable'
-    },
-    {
         'mhartington/formatter.nvim',
         key = '<Leader>f',
         dependencies = 'I60R/map-dsl.nvim',
-        config = function ()
+        config = function()
             ( map "Format code")
                 .leader['f'] = 'Format'
             map:register { as = 'cmd', silent = true }
         end
     },
+} end
 
-    {'kopischke/vim-stay'},
-    {'tpope/vim-sleuth'},
+local function behavior_plugins() return {
     {
-        "ahmedkhalf/project.nvim",
-        config = function()
-            local project = require("project_nvim")
-            project.setup {
-                detection_methods = {
-                    "pattern",
-                    "lsp",
-                },
-                patterns = { "^.config" },
-                silent_chdir = false,
-            }
-        end
-    },
-    {'airodactyl/neovim-ranger'},
-
-    {
-        'phaazon/hop.nvim',
+        'rainbowhxch/accelerated-jk.nvim',
         dependencies = 'I60R/map-dsl.nvim',
         config = function()
-            local hop = require('hop')
-            hop.setup {
-                inclusive_jump = true,
-                uppercase_labels = true,
+
+            ( map "Accelerated j")
+                ['j'] = { plug = 'accelerated_jk_j', modes = 'n' }
+            ;(map "Accelerated k")
+                ['k'] = { plug = 'accelerated_jk_k', modes = 'n' }
+
+            map:register {}
+        end
+    },
+} end
+
+local function meta_plugins() return {
+    {
+        'I60R/map-dsl.nvim',
+        dependencies = 'folke/which-key.nvim',
+        config = function()
+            local map_dsl = require('map-dsl')
+            local which_key = require('which-key')
+            which_key.setup {
+                icons = {
+                    separator = ''
+                },
+                layout = {
+                    align = 'center',
+                    width = { min = 0, max = 200 },
+                },
+                window = {
+                    position = 'top',
+                    margin = { 3, 8, 3, 8 },
+                    padding = { 3, 8, 3, 8 },
+                    winblend = 23
+                },
             }
 
-            ;(map "Jump to a line")
-                ['f'] = function() vim.cmd 'norm V'; hop.hint_lines_skip_whitespace() end
-            ;(map "Jump to a letter")
-                ['F'] = function() hop.hint_words() end
+            ;(map "Unmap space")
+                ['<Space>'] = '<Nop>'
+            ;(map "Space is the leader key!")
+                ['<Space>'] = '<Leader>'
 
-            map:split { modes = 'o' }
+            map:split { remap = true }
 
-            ;(map "Jump to a line and focus on it")
-                ['f'] = function() hop.hint_lines_skip_whitespace(); vim.cmd 'norm zz' end
-            ;(map "Jump to a letter")
-                ['F'] = function() hop.hint_words() end
+            ;(map "Exit from terminal mode")
+                ['<Esc><Esc>'] = 'stopinsert'
+            ;(map "Exit from terminal mode and focus on center")
+                ['<Esc><Esc><Esc>'] = 'stopinsert | call timer_start(100, { -> execute("keepjumps norm M") }, {})'
+
+            ;(map "Prev command")
+                .ctrl.alt['i'] = 'stopinsert | call search("160R", "bW")'
+            ;(map "Next command")
+                .ctrl.alt['o'] = 'stopinsert | call search("160R", "W")'
+
+            map:split { as = 'cmd', modes = 't', remap = false }
+
+            ;(map "Prev command")
+                .ctrl.alt['i'] = 'call search("160R", "bW")'
+            ;(map "Next command")
+                .ctrl.alt['o'] = 'call search("160R", "W")'
+
+
+
+            ;(map "Close all non-file windows")
+                ['<Esc><Esc>'] = { 'helpclose | lclose | cclose | nohlsearch', as = 'cmd' }
+
+            local toggle = require('toggle')
+
+            ;(map "Toggle scrolloff")
+                ['MM'] = { toggle.scrolloff, remap = false }
+            ;(map "toggle cursorcolumn")
+                ['MC'] = { toggle.cursorcolumn, remap = false }
+
+            ;(map "Undo")
+                ['U'] = '<C-r>'
+
+            ;(map "Swap go to mark line with go to mark position")
+                ["'"] = '`'
+            ;(map "Swap go to mark position with go to mark line")
+                ['`'] = "'"
+
+            ;(map "Create new file")
+                .ctrl['t'] = { '<Esc><Esc>:enew<Cr>:redraw<Cr>:w ~/', remap = true, modes = 'vto' }
 
             map:register { modes = 'n' }
         end
     },
     {
-        'mfussenegger/nvim-treehopper',
-        dependencies = 'I60R/map-dsl.nvim',
+        'folke/lazy.nvim',
         config = function()
-
-            ( map "Jump to a tree node")
-                ['m'] = function() require('tsht').nodes() end
-            ;(map "Jump to a tree node")
-                ['m'] = { function() require('tsht').nodes() end, remap = false }
-
-            map:register { modes = 'ov' }
-        end
-    },
-    {
-        'mizlan/iswap.nvim',
-        dependencies = 'I60R/map-dsl.nvim',
-        config = function()
-
-            ( map "Swap with")
-                ['s'] = { 'ISwapWith', as = 'cmd' }
-
-            map:register {}
-        end
-    },
-    {
-        'chaoren/vim-wordmotion',
-        setup = function()
-            vim.g.wordmotion_mappings = {
-                w = 'W',
-                b = 'B',
-                e = 'E',
-                ge = 'gE',
-                aw = 'aW',
-                iw = 'iW',
-                W = 'w',
-                B = 'b',
-                E = 'e',
-                gE = 'ge',
-                aW = 'aw',
-                iW = 'iw',
-            }
-        end
-    },
-    {
-        'mg979/vim-visual-multi',
-        config = function ()
-            local group = vim.api.nvim_create_augroup('VMlens', { clear = true })
-            vim.api.nvim_create_autocmd('User', {
-                group = group,
-                pattern = "visual_multi_start",
-                callback = function()
-                    require('vmlens').start()
-                end
-            })
-            vim.api.nvim_create_autocmd('User', {
-                group = group,
-                pattern = "visual_multi_exit",
-                callback = function()
-                    require('vmlens').exit()
-                end
-            })
-
-
-        end
-    },
-
-    {
-        'AndrewRadev/switch.vim',
-        dependencies = 'I60R/map-dsl.nvim',
-        keys = 't',
-        config = function()
-
-            ( map "Toggle value")
-                ['t'] = 'Switch'
-
-            map:register { as = 'cmd' }
-        end
-    },
-    {
-        'junegunn/vim-easy-align',
-        dependencies = 'I60R/map-dsl.nvim',
-        config = function()
-
-            ( map "Align by symbol")
-                ['|'] = { plug = 'EasyAlign' }
-
-            map:register { modes = 'nxv' }
-        end
-    },
-    {'matze/vim-move'},
-    {'triglav/vim-visual-increment'},
-    {'terryma/vim-expand-region'},
-    {
-        'numToStr/Comment.nvim',
-        config = function()
-            local comment = require('Comment')
-            comment.setup {
-                toggler = {
-                    line = ';h',
-                    block = ';;h',
-                },
-                opleader = {
-                    line = ';',
-                    block = ';;',
-                },
-                extra = {
-                    above = ';k',
-                    below = ';j',
-                    eol = ';l',
-                },
-            }
-        end
-    },
-    {
-        'saifulapm/chartoggle.nvim',
-        config = function()
-            local chartoggle = require('chartoggle')
-            chartoggle.setup {
-                leader = '<Leader>',
-                keys = { ',', ';', "'", '"', ' ' }
-            }
-        end
-    },
-    {
-        'tommcdo/vim-exchange',
-        keys = 'cx'
-    },
-    {
-        'arthurxavierx/vim-caser',
-        keys = 'gs'
-    },
-
-
-    {'aperezdc/vim-template'},
-    {'chrisbra/unicode.vim'},
-    {'fidian/hexmode'},
-    {
-        'lambdalisue/suda.vim',
-        setup = function()
-            vim.g['suda#prefix'] = 'sudo://'
-            vim.g['suda_smart_edit'] = true
-        end
-    },
-
-    {
-        'gisphm/vim-gitignore',
-        ft = 'gitignore'
-    },
-    {
-        'lewis6991/gitsigns.nvim',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-	        'I60R/map-dsl.nvim',
-        },
-        config = function()
-            local gitsigns = require('gitsigns')
-            gitsigns.setup {
-                watch_gitdir = {
-                    interval = 5000,
-                    follow_files = true,
-                },
-                numhl = true,
-                current_line_blame = true,
-                current_line_blame_opts = {
-                    virt_text = true,
-                    virt_text_pos = 'eol',
-                    delay = 1000,
-                    ignore_whitespace = false,
-                }
-            }
-
-            ;(map "Stage hunk")
-                .leader['hs'] = 'Gitsigns stage_hunk'
-            ;(map "Undo stage hunk")
-                .leader['hS'] = 'Gitsigns undo_stage_hunk'
-            ;(map "Preview hunk")
-                .leader['hh'] = 'Gitsigns preview_hunk'
-            ;(map "Preview hunk")
-                .leader['hr'] = 'Gitsigns reset_hunk'
-            ;(map "Next hunk")
-                ['g]'] = 'Gitsigns next_hunk'
-            ;(map "Prev hunk")
-                ['g['] = 'Gitsigns prev_hunk'
-
-            map:register { as = 'cmd' }
-        end
-    },
-
-    {
-        'nvim-treesitter/nvim-treesitter',
-        build = ":TSUpdate",
-        dependencies = {
-            'romgrk/nvim-treesitter-context',
-            'RRethy/nvim-treesitter-textsubjects',
-            'RRethy/nvim-treesitter-endwise',
-            'windwp/nvim-ts-autotag',
-        },
-        config = function()
-            vim.api.nvim_set_hl(0, 'TreesitterContext', {
-                link = 'QuickFixLine'
-            })
-            vim.api.nvim_set_hl(0, 'TreesitterContextLineNumber', {
-                link = 'QuickFixLine'
-            })
-
-            local tree_sitter = require('nvim-treesitter.configs')
-            tree_sitter.setup {
-                ensure_installed = 'all',
-                highlight = {
-                    enable = true
-                },
-                indent = {
-                    enable = true
-                },
-                endwise = {
-                    enable = true
-                },
-                autotag = {
-                    enable = true,
-                    filetypes = {
-                        'html',
-                        'javascript',
-                        'javascriptreact',
-                        'typescriptreact',
-                        'svelte',
-                        'vue',
-                        'markdown',
-                    }
-                },
-                textsubjects = {
-                    enable = true,
-                    keymaps = {
-                        ['<Space>'] = 'textsubjects-smart'
-                    }
-                },
-                incremental_selection = {
-                    enable = true,
-                    keymaps = {
-                        init_selection = '<CR>',
-                        scope_incremental = '<Tab>',
-                        node_incremental = '<CR>',
-                        node_decremental = '<S-Tab>',
-                    },
-                },
-            }
-            local tree_sitter_context = require('treesitter-context')
-            tree_sitter_context.setup {
-                max_lines = 1,
-                patterns = {
-                    default = {
-                        'class',
-                        'function',
-                        'method',
-                        'field',
-                        'for',
-                        'while',
-                        'if',
-                        'switch',
-                        'case',
-                    }
-                }
-            }
+            local packer = require('lazy')
+            local plugins = require('plugins')
+            packer.setup(plugins)
         end,
+        cmd = 'Lazy',
     },
-    {
-        'Wansmer/treesj',
-        dependencies = {
-            'I60R/map-dsl.nvim',
-            'nvim-treesitter/nvim-treesitter',
-        },
-        config = function()
-            local treesj = require('treesj')
-            treesj.setup {
-                use_default_keymaps = false,
-            }
+} end
 
-            ;(map "Split/join node")
-                .ctrl['J'] = 'TSJToggle'
-
-            map:register { as = 'cmd' }
-        end,
-    },
-
-    {
-        "nvim-neorg/neorg",
-        dependencies = "nvim-lua/plenary.nvim",
-        ft = 'norg',
-        build = function ()
-            require('neorg')
-            vim.cmd 'Neorg sync-parsers'
-        end,
-        config = function()
-            local neorg = require("neorg")
-            neorg.setup {
-                load = {
-                    ['core.norg.completion'] = {
-                        config = {
-                            engine = 'nvim-cmp'
-                        }
-                    },
-                    ['core.norg.concealer'] = {
-                        config = { }
-                    }
-                }
-            }
-        end,
-    },
-
-    {
-        'plasticboy/vim-markdown',
-        dependencies = {
-            'godlygeek/tabular'
-        },
-        ft = 'markdown'
-    },
-    {
-        "iamcco/markdown-preview.nvim",
-        build = "cd app && npm install",
-        ft = { "markdown" },
-        init = function()
-            vim.g.mkdp_filetypes = { "markdown" }
-            vim.g.mkdp_browser = "chromium"
-        end,
-    },
-
-    {'dzeban/vim-log-syntax'},
-
-    {'arjunmahishi/run-code.nvim'},
-    {'nvim-treesitter/playground'},
-
-    {
-        'I60R/nvim-retrail',
-        config = function()
-            local retrail = require('retrail')
-            retrail.setup { }
-        end
-    },
-}
-
+local plugins = {}
+for _, v in pairs(meta_plugins())           do plugins[#plugins + 1] = v end
+for _, v in pairs(appearance_plugins())     do plugins[#plugins + 1] = v end
+for _, v in pairs(behavior_plugins())       do plugins[#plugins + 1] = v end
+for _, v in pairs(textobject_plugins())     do plugins[#plugins + 1] = v end
+for _, v in pairs(completion_plugins())     do plugins[#plugins + 1] = v end
+for _, v in pairs(motion_plugins())         do plugins[#plugins + 1] = v end
+for _, v in pairs(os_integration_plugins()) do plugins[#plugins + 1] = v end
+for _, v in pairs(ui_extension_plugins()) do plugins[#plugins + 1] = v end
+for _, v in pairs(treesitter_plugins())     do plugins[#plugins + 1] = v end
+for _, v in pairs(language_plugins())       do plugins[#plugins + 1] = v end
 return plugins
