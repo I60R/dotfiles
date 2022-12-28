@@ -1360,7 +1360,7 @@ for _, v in pairs(textobject_plugins())     do plugins[#plugins + 1] = v end
 for _, v in pairs(completion_plugins())     do plugins[#plugins + 1] = v end
 for _, v in pairs(motion_plugins())         do plugins[#plugins + 1] = v end
 for _, v in pairs(os_integration_plugins()) do plugins[#plugins + 1] = v end
-for _, v in pairs(ui_extension_plugins()) do plugins[#plugins + 1] = v end
+for _, v in pairs(ui_extension_plugins())   do plugins[#plugins + 1] = v end
 for _, v in pairs(treesitter_plugins())     do plugins[#plugins + 1] = v end
 for _, v in pairs(language_plugins())       do plugins[#plugins + 1] = v end
 return plugins

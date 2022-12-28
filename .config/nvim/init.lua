@@ -140,16 +140,16 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
     callback = function()
         vim.defer_fn(function()
             require('zen-mode').open()
-        end, 100)
 
-        vim.api.nvim_create_autocmd('BufWinLeave', {
-            buffer = 0,
-            callback = function()
-                vim.defer_fn(function()
-                    require('zen-mode').open()
-                end, 100)
-            end
-        })
+            vim.api.nvim_create_autocmd('BufWinLeave', {
+                buffer = 0,
+                callback = function()
+                    vim.defer_fn(function()
+                        require('zen-mode').close()
+                    end, 100)
+                end
+            })
+        end, 100)
     end
 })
 
