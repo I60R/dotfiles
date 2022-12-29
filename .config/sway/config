@@ -293,6 +293,9 @@ bindsym $Mod+Shift+w floating toggle
 # Swap focus between the tiling area and the floating area
 bindsym $Mod+w focus mode_toggle
 
+# Enable window sticky
+bindsym $Mod+Shift+p sticky toggle
+
 
 # Move the currently focused window to the scratchpad
 bindsym $Mod+Shift+0 move scratchpad
