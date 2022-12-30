@@ -31,7 +31,6 @@ launch albert
 launch javelin firefox:-200 code:-250 chromium:-200 gthumb:200
 launch ~/.config/sway/inactive-windows-transparency.py -o 0.72
 launch ~/.config/sway/wsdnames.py
-launch ~/.config/sway/sov.sh
 launch flashfocus -t 160 -n 2 -o 0.86 --flash-lone-windows=always
 launch systembus-notify
 launch ydotoold

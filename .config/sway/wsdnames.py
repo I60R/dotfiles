@@ -112,6 +112,7 @@ def assign_icon(app_id):
         case 'org.twosheds.iwgtk': return '直'
         case 'org.gnome.Weather':  return ''
         case 'org.kde.krusader':   return ''
+        case 'albert':             return ''
         case _:                    return '?'
 
 def main():
