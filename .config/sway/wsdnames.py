@@ -42,7 +42,7 @@ def assign_generic_name(i3, e):
         con = i3.get_tree().find_focused()
         if con.type == 'workspace':  # avoid renaming new empty workspaces on 'binding' event
             ws = con.workspace()
-            ws_new_name = "%s<span color='lightgreen' baseline_shift='superscript'>＋</span>" % ws.num
+            ws_new_name = "%s<span color='lightgreen' baseline_shift='superscript' font_size='10pt'>＋</span>" % ws.num
 
             i3.command('rename workspace to "%s"' % ws_new_name)
 
@@ -57,8 +57,8 @@ def assign_generic_name(i3, e):
                 name = con.app_id or con.window_class or con.window_instance
 
                 ws_name = "<span color='orange' baseline_shift='2pt'>%s</span>" % name
-                ws_name = "%s<span baseline_shift='superscript' color='cyan'>%s</span>%s" % (
-                        ws.num, leaves_len, ws_name
+                ws_name = "%s<span baseline_shift='superscript' color='green'>%s</span>%s" % (
+                        ws.num, assign_icon(name), ws_name
                 )
 
                 i3.command('rename workspace "%s" to %s' % (ws.num, ws_name))
@@ -86,19 +86,33 @@ def assign_generic_name(i3, e):
                     else:
                         split_text = '□'
 
+                split_text = "<span font_size='16pt' color='lightgreen'>%s</span>" % (split_text)
+
                 name = con.app_id or con.window_class or con.window_instance
 
                 ws_old_name = ws.name
 
-                ws_name = "<span color='orange' baseline_shift='2pt'>%s %s</span>" % (split_text, name)
-                ws_name = "%s<span baseline_shift='superscript' color='cyan'>%s</span> %s" % (
-                        ws.num, leaves_len, ws_name
+                ws_name = "%s <span color='orange' baseline_shift='2pt'> %s </span>" % (split_text, name)
+                ws_name = "%s<span baseline_shift='superscript' font_size='12pt' color='green'>%s</span> %s" % (
+                        ws.num, assign_icon(name), ws_name
                 )
 
                 i3.command('rename workspace "%s" to %s' % (ws_old_name, ws_name))
     except:
         pass
 
+def assign_icon(app_id):
+    match app_id:
+        case 'firefox':            return ''
+        case 'neovide':            return ''
+        case 'Code':               return ''
+        case 'Chromium':           return ''
+        case 'gthumb':             return ''
+        case 'swappy':             return ''
+        case 'org.twosheds.iwgtk': return '直'
+        case 'org.gnome.Weather':  return ''
+        case 'org.kde.krusader':   return ''
+        case _:                    return '?'
 
 def main():
     # Subscribe to events
