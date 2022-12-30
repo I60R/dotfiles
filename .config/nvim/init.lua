@@ -135,18 +135,19 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 
-vim.api.nvim_create_autocmd('BufWinEnter', {
-    pattern = '*/home/*.md',
+vim.api.nvim_create_autocmd('BufEnter', {
+    pattern = '/home/*/*.md',
     callback = function()
+        local buf = vim.api.nvim_get_current_buf()
+
         vim.defer_fn(function()
             require('zen-mode').open()
 
-            vim.api.nvim_create_autocmd('BufWinLeave', {
-                buffer = 0,
+            vim.api.nvim_create_autocmd('BufLeave', {
+                buffer = buf,
+                once = true,
                 callback = function()
-                    vim.defer_fn(function()
-                        require('zen-mode').close()
-                    end, 100)
+                    require('zen-mode').close()
                 end
             })
         end, 100)

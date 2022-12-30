@@ -782,11 +782,21 @@ local function motion_plugins() return {
 local function ui_extension_plugins() return {
     {
         'folke/zen-mode.nvim',
-        dependencies = 'I60R/map-dsl.nvim',
+        dependencies = {
+            'I60R/map-dsl.nvim',
+            'folke/twilight.nvim',
+        },
         config = function()
             vim.api.nvim_set_hl(0, "ZenBg", {
                 ctermbg = 0,
             })
+
+            local twilight = require('twilight')
+            twilight.setup {
+                dimming = {
+                    alpha = 0.65
+                }
+            }
 
             local toggle = require('toggle')
             local zen_mode = require('zen-mode')
@@ -797,13 +807,24 @@ local function ui_extension_plugins() return {
                     height = 0.85,
                 },
                 on_open = function()
+                    vim.o.number = false
+                    vim.o.scrolloff = 999
                     vim.o.guifont = 'JetBrains Mono:h18'
+                    require('indent_blankline.commands').disable()
+                    require('twilight.view').enable()
+                    vim.cmd 'MarksToggleSigns'
+                    vim.cmd 'Gitsigns toggle_signs'
                 end,
                 on_close = function()
+                    vim.o.number = true
+                    vim.o.scrolloff = 0
                     vim.o.guifont = 'JetBrains Mono:h13'
+                    require('indent_blankline.commands').enable()
+                    require('twilight.view').disable()
+                    vim.cmd 'MarksToggleSigns'
+                    vim.cmd 'Gitsigns toggle_signs'
                 end,
             }
-
 
             ;(map "Toggle zen mode")
                 ['<F11>'] = function() require('zen-mode.view').toggle() end
