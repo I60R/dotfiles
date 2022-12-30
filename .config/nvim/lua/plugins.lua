@@ -224,7 +224,7 @@ local function appearance_plugins() return {
                 fg = '#727169'
             }
 
-            for _, v in ipairs {
+            for _, v in pairs {
                 'tab', 'close_button', 'buffer', 'diagnostic',
                 'info', 'info_diagnostic',
                 'warning', 'warning_diagnostic',
@@ -459,6 +459,9 @@ local function appearance_plugins() return {
 } end
 
 local function os_integration_plugins() return {
+    {
+        "ellisonleao/dotenv.nvim"
+    },
     {
         'kopischke/vim-stay'
     },
