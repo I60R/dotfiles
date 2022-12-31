@@ -236,25 +236,15 @@ bindsym $Mod+Shift+l move right
 bindsym $Mod+grave workspace back_and_forth
 
 # Switch to workspace
-bindsym --no-repeat $Mod+1 workspace number 1; exec "echo 1 > /tmp/sovpipe"
-bindsym --no-repeat $Mod+2 workspace number 2; exec "echo 1 > /tmp/sovpipe"
-bindsym --no-repeat $Mod+3 workspace number 3; exec "echo 1 > /tmp/sovpipe"
-bindsym --no-repeat $Mod+4 workspace number 4; exec "echo 1 > /tmp/sovpipe"
-bindsym --no-repeat $Mod+5 workspace number 5; exec "echo 1 > /tmp/sovpipe"
-bindsym --no-repeat $Mod+6 workspace number 6; exec "echo 1 > /tmp/sovpipe"
-bindsym --no-repeat $Mod+7 workspace number 7; exec "echo 1 > /tmp/sovpipe"
-bindsym --no-repeat $Mod+8 workspace number 8; exec "echo 1 > /tmp/sovpipe"
-bindsym --no-repeat $Mod+9 workspace number 9; exec "echo 1 > /tmp/sovpipe"
-
-bindsym --release $Mod+1 exec "echo 0 > /tmp/sovpipe"
-bindsym --release $Mod+2 exec "echo 0 > /tmp/sovpipe"
-bindsym --release $Mod+3 exec "echo 0 > /tmp/sovpipe"
-bindsym --release $Mod+4 exec "echo 0 > /tmp/sovpipe"
-bindsym --release $Mod+5 exec "echo 0 > /tmp/sovpipe"
-bindsym --release $Mod+6 exec "echo 0 > /tmp/sovpipe"
-bindsym --release $Mod+7 exec "echo 0 > /tmp/sovpipe"
-bindsym --release $Mod+8 exec "echo 0 > /tmp/sovpipe"
-bindsym --release $Mod+9 exec "echo 0 > /tmp/sovpipe"
+bindsym $Mod+1 workspace number 1
+bindsym $Mod+2 workspace number 2
+bindsym $Mod+3 workspace number 3
+bindsym $Mod+4 workspace number 4
+bindsym $Mod+5 workspace number 5
+bindsym $Mod+6 workspace number 6
+bindsym $Mod+7 workspace number 7
+bindsym $Mod+8 workspace number 8
+bindsym $Mod+9 workspace number 9
 
 # Move focused container to workspace
 bindsym $Mod+Shift+1 move container to workspace number 1
@@ -334,12 +324,12 @@ bindsym Shift+KP_Insert exec ydotool key $ctrl $shift 20:1 20:0 29:0 42:0 #t
 bindsym KP_Begin exec ydotool     key 106:1 106:0 #KEY_RIGHT
 bindsym KP_Right exec ydotool     key 158:1 158:0 #KEY_BACK
 
-bindcode    Shift+94 exec ydotool key 159:1 159:0 #KEY_FORWARD
 
-bindcode          94 exec ydotool key            $shift+7:1 7:0 42:0 #6
-bindcode     Ctrl+94 exec ydotool key      $ctrl+$shift+7:1 7:0 42:0 29:0
-bindcode Ctrl+Alt+94 exec ydotool key $ctrl+$alt+$shift+7:1 7:0 42:0 29:0
-bindcode      Alt+94 exec ydotool key       $alt+$shift+7:1 7:0 42:0 56:0
+bindcode          94 exec ydotool key                    106:1 106:0
+bindcode    Shift+94 exec ydotool key            $shift+ 106:1 106:0
+bindcode     Ctrl+94 exec ydotool key      $ctrl+$shift+ 106:1 106:0
+bindcode Ctrl+Alt+94 exec ydotool key $ctrl+$alt+$shift+ 106:1 106:0
+bindcode      Alt+94 exec ydotool key       $alt+$shift+ 106:1 106:0
 
 
 
@@ -473,9 +463,6 @@ bar {
     colors {
         background #00000000
         focused_background #00000000
-        active_workspace #53326D #53326D #FFFFFF
-        focused_workspace #53326D #53326D #FFFFFF
-        inactive_workspace #00000000 #00000000 #FFFFFF
     }
 }
 
