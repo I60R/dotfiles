@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# _*_ coding: utf-8 _*_
 
 """
 This script uses the i3ipc python library to create dynamic workspace names in Sway / i3
@@ -29,7 +28,6 @@ in your ~/.config/sway/config or ~/.config/i3/config file.
 
 from i3ipc import Connection, Event
 
-# Create the Connection object that can be used to send commands and subscribe to events.
 i3 = Connection()
 
 
@@ -51,13 +49,14 @@ def assign_generic_name(i3, e):
             leaves = ws.leaves()
             leaves_len = len(leaves)
 
+            name = con.app_id or con.window_class or con.window_instance
+
             if e.change == 'new':
                 # In sway we may open a new window w/o moving focus; let's give the workspace a name anyway.
                 con = i3.get_tree().find_by_id(e.container.id)
-                name = con.app_id or con.window_class or con.window_instance
 
                 ws_name = "<span color='orange' baseline_shift='2pt'>%s</span>" % name
-                ws_name = "%s<span baseline_shift='superscript' color='green'>%s</span>%s" % (
+                ws_name = "%s<span baseline_shift='superscript' color='lightgreen'>%s</span>%s" % (
                         ws.num, assign_icon(name), ws_name
                 )
 
@@ -88,12 +87,10 @@ def assign_generic_name(i3, e):
 
                 split_text = "<span font_size='16pt' color='lightgreen'>%s</span>" % (split_text)
 
-                name = con.app_id or con.window_class or con.window_instance
-
                 ws_old_name = ws.name
 
                 ws_name = "%s <span color='orange' baseline_shift='2pt'> %s </span>" % (split_text, name)
-                ws_name = "%s<span baseline_shift='superscript' font_size='12pt' color='green'>%s</span> %s" % (
+                ws_name = "%s<span baseline_shift='superscript' font_size='12pt' color='lightgreen'>%s</span> %s" % (
                         ws.num, assign_icon(name), ws_name
                 )
 
@@ -103,17 +100,18 @@ def assign_generic_name(i3, e):
 
 def assign_icon(app_id):
     match app_id:
-        case 'firefox':            return ''
-        case 'neovide':            return ''
-        case 'Code':               return ''
-        case 'Chromium':           return ''
-        case 'gthumb':             return ''
-        case 'swappy':             return ''
-        case 'org.twosheds.iwgtk': return '直'
-        case 'org.gnome.Weather':  return ''
-        case 'org.kde.krusader':   return ''
-        case 'albert':             return ''
-        case _:                    return '?'
+        case 'firefox':               return ''
+        case 'neovide':               return ''
+        case 'Code':                  return ''
+        case 'Chromium':              return ''
+        case 'gthumb':                return ''
+        case 'swappy':                return ''
+        case 'org.twosheds.iwgtk':    return '直'
+        case 'org.gnome.Weather':     return ''
+        case 'org.kde.krusader':      return ''
+        case 'albert':                return ''
+        case 'gnome_system_monitor':  return ''
+        case _:                       return '?'
 
 def main():
     # Subscribe to events
