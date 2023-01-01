@@ -101,7 +101,7 @@ bindsym $Mod+Return exec neovide term://zsh
 
 
 # Start an empty workspace
-bindsym $Mod+Shift_R exec fullspawn
+bindsym $Mod+Shift_R exec newspawn
 
 
 # Start a browser
