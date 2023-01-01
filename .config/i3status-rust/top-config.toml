@@ -51,7 +51,7 @@ format = """ \
 """
 [[block.click]]
 button = "left"
-cmd = "~/.config/sway/wsempty.py env WAYLAND_DISPLAY=wayland-0 pavucontrol"
+cmd = "env WAYLAND_DISPLAY=wayland-0 newspawn pavucontrol"
 
 
 [[block]]
@@ -61,7 +61,7 @@ format = """ \
     <span font_size='20pt' baseline_shift='-2pt'>$icon</span> \
     <span font_size='20pt' baseline_shift='-3pt'>$percentage $time</span> \
 """
-missing_format = " <span font_size='16pt' baseline_shift='-2pt'>$icon</span> "
+missing_format = " <span font_size='25pt' baseline_shift='-2pt'>$icon</span> "
 
 
 [[block]]
@@ -115,7 +115,7 @@ format = "$icon <span color='yellow'>/</span>$available "
 icons_format = ""
 [[block.click]]
 button = "left"
-cmd = '~/.config/sway/wsempty.py krusader --right $HOME --left $(fd . /run/media/$USER -d 1 | read && echo "/run/media/$USER" || echo "/")'
+cmd = 'newspawn krusader --right $HOME --left $(fd . /run/media/$USER -d 1 | read && echo "/run/media/$USER" || echo "/")'
 
 [[block]]
 path = "~/"
@@ -124,7 +124,7 @@ format = "$icon <span color='yellow'>~</span>$available "
 icons_format = ""
 [[block.click]]
 button = "left"
-cmd = "~/.config/sway/wsempty.py krusader --right $HOME --left $HOME"
+cmd = "newspawn krusader --right $HOME --left $HOME"
 
 
 [[block]]
@@ -151,7 +151,7 @@ critical_updates_regex = "(linux|linux-lts|)"
 aur_command = "paru -Qua"
 [[block.click]]
 button = "left"
-cmd = "~/.config/sway/wsempty.py alacritty -e nvim term://'sudo pacman -Syu && paru -Syu' --cmd 'au TermOpen * ++once normal a'"
+cmd = "newspawn alacritty -e nvim term://'sudo pacman -Syu && paru -Syu' --cmd 'au TermOpen * ++once normal a'"
 
 
 
