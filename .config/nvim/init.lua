@@ -7,6 +7,20 @@ if vim.g.neovide then
     vim.g.neovide_floating_blur_amount_y = 2.0
     vim.g.neovide_confirm_quit = false
     vim.g.neovide_scroll_animation_length = 0.0
+
+    vim.api.nvim_create_autocmd('FocusGained', {
+        pattern = '*',
+        callback = function()
+            vim.g.neovide_transparency = 0.50
+        end
+    })
+
+    vim.api.nvim_create_autocmd('FocusLost', {
+        pattern = '*',
+        callback = function()
+            vim.g.neovide_transparency = 0.15
+        end
+    })
 end
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
