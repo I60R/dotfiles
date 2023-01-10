@@ -1,0 +1,28 @@
+[applications] # requires nerd fonts
+firefox = ""
+neovide = ""
+Code = ""
+Chromium = ""
+gthumb = ""
+swappy = ""
+"org.twosheds.iwgtk" = "直"
+"org.gnome.Weather" = ""
+"org.kde.krusader" = ""
+albert = ""
+gnome_system_monitor = ""
+
+[styles] # pango markup
+layout = "font_size='16pt' color='lightgreen'"
+icon = "baseline_shift='superscript' font_size='12pt' color='lightgreen'"
+name = "color='orange' baseline_shift='2pt'"
+
+[icons]
+floating = "▪"
+floating_unfocused = "▣"
+split_horizontal_two_windows_focus_left = "◧"
+split_horizontal_two_windows_focus_right = "◨"
+split_horizontal_focused = "▮"
+split_horizontal_unfocused = "▯"
+split_vertical_focus_top = "⬒"
+split_vertical_focus_bottom = "⬓"
+split_vertical_many_windows = "<span font_size='24pt' baseline_shift='-3pt'></span>"
