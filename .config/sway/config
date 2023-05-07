@@ -54,14 +54,15 @@ seat seat0 xcursor_theme Fuchsia 22
 
 ### Modify windows
 
-for_window [app_id="fmit"]               fullscreen enable
-for_window [class="vlc"]                 floating enable
-for_window [app_id="org.twosheds.iwgtk"] floating enable
-for_window [title="Copying.*Krusader"]   floating enable
-for_window [title="Moving.*Krusader"]    floating enable
-for_window [app_id="iwgtk"]              floating enable
-for_window [app_id="guitarix"]           floating enable
-for_window [app_id="albert"]             floating enable; move up 200 px
+for_window [app_id="fmit"]                     fullscreen enable
+for_window [class="vlc"]                       floating enable
+for_window [app_id="org.twosheds.iwgtk"]       floating enable
+for_window [title="Copying.*Krusader"]         floating enable
+for_window [title="Moving.*Krusader"]          floating enable
+for_window [app_id="iwgtk"]                    floating enable
+for_window [app_id="guitarix"]                 floating enable
+for_window [app_id="com.Webcamoid.webcamoid"]  floating enable
+for_window [app_id="albert"]                   floating enable; move up 200 px
 
 
 
@@ -97,7 +98,7 @@ font $font
 # set $term alacritty msg create-window $term_args || alacritty $term_args
 
 
-bindsym $Mod+Return exec neovide term://zsh
+bindsym $Mod+Return exec alacritty
 
 
 # Start an empty workspace
