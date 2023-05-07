@@ -204,9 +204,7 @@ local function appearance_plugins() return {
         'xiyaowong/nvim-transparent',
         config = function ()
             local transparent = require('transparent')
-            transparent.setup {
-                enable = true,
-            }
+            transparent.setup {}
         end
     },
 
@@ -215,7 +213,7 @@ local function appearance_plugins() return {
         dependencies = {
             'I60R/map-dsl.nvim',
             'lewis6991/gitsigns.nvim',
-            'kyazdani42/nvim-web-devicons',
+            'nvim-tree/nvim-web-devicons',
         },
         config = function()
             local highlights = {}
@@ -922,11 +920,11 @@ local function ui_extension_plugins() return {
 
     {
         "glepnir/lspsaga.nvim",
-        branch = "main",
         dependencies = 'I60R/map-dsl.nvim',
+        event = 'LspAttach',
         config = function()
             local saga = require("lspsaga")
-            saga.init_lsp_saga {
+            saga.setup {
                 border_style = "bold",
                 saga_winblend = 25,
                 max_preview_lines = 60,
@@ -1089,20 +1087,27 @@ local function completion_plugins() return {
                 }
             end
 
-            lspconfig.sumneko_lua.setup {
+            lspconfig.lua_ls.setup {
                 settings = {
                     Lua = {
-                        diagnostics = {
-                            globals = {
-                                'vim',
-                                'map',
-                            }
+                        runtime = {
+                            -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                            version = 'LuaJIT',
                         },
-                        completion = {
-                            callSnippet = "Replace"
-                        }
-                    }
-                }
+                        diagnostics = {
+                            -- Get the language server to recognize the `vim` global
+                            globals = {'vim'},
+                        },
+                        workspace = {
+                            -- Make the server aware of Neovim runtime files
+                            library = vim.api.nvim_get_runtime_file("", true),
+                        },
+                        -- Do not send telemetry data containing a randomized but unique identifier
+                        telemetry = {
+                            enable = false,
+                        },
+                    },
+                },
             }
         end
     },
