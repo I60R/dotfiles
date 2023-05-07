@@ -12,7 +12,7 @@ icons = "material-nf"
 
 [[block]]
 block = "focused_window"
-format = "<span font_size='12pt' font_weight='heavy' color='skyblue'>$title.rot-str(100,0.1)</span> |"
+format = "<span font_size='12pt' font_weight='heavy' color='skyblue'>$title.str(max_w:100, rot_interval:0.1)</span> |"
 [[block.click]]
 button = "left"
 cmd = "swaymsg gaps inner current toggle 30"
@@ -42,15 +42,15 @@ weather_snow = "❄️"
 
 [[block]]
 block = "time"
-format = """\
-    <span baseline_shift='3pt' color='gray'>%a \
-    <span color='white' font_size='12pt'>%e\
-    </span>.%b </span>\
-    <span font_size='18pt'>%H:%M</span>\
-"""
 timezone = "Europe/Warsaw"
 interval = 60
-icons_format = " "
+[block.format]
+full = """\
+    <span baseline_shift='3pt' color='gray'> $timestamp.datetime(f:%a)\
+    <span color='white' font_size='12pt'>$timestamp.datetime(f:%e)\
+    </span>.$timestamp.datetime(f:%b) </span>\
+    <span font_size='18pt'>$timestamp.datetime(f:'%H:%M')</span>\
+"""
 [[block.click]]
 button = "left"
 cmd = "~/.config/sway/wsempty.py alacritty -e 'calcurse'"

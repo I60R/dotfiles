@@ -1,11 +1,10 @@
-[icons]
-icons = "material-nf"
-
-
 [theme]
 theme = "gruvbox-dark"
 [theme.overrides]
 separator = ""
+
+[icons]
+icons = "material-nf"
 
 
 #
@@ -14,16 +13,16 @@ separator = ""
 block = "music"
 format = """ \
     <span font_size='13pt' baseline_shift='-3pt' color='grey'>$icon</span> \
-    $combo.str(0,75) | \
+    $combo.str(min_w:0, max_w:75) | \
 """
 
 [[block]]
 block = "net"
 format = """ \
-    <span font_size='22pt' baseline_shift='-8pt' color='grey'>$icon</span> \
+    <span font_size='24pt' baseline_shift='-4pt' color='grey'>$icon</span> \
     <span background='green'> [$ssid] </span> \
     <span letter_spacing='-1024'>$ip</span> \
-    <span color='yellow' letter_spacing='-512'> $speed_down.eng(3,B,K) ⇵  $speed_up.eng(3,B,K)</span> \
+    <span color='yellow' letter_spacing='-512'> $speed_down.eng(prefix:K) ⇵ $speed_up.eng(prefix:K)</span> \
 """
 [[block.click]]
 button = "left"
@@ -52,6 +51,8 @@ format = """ \
 [[block.click]]
 button = "left"
 cmd = "env WAYLAND_DISPLAY=wayland-0 newspawn pavucontrol"
+[block.icons_overrides]
+volume_muted = "<span font_size='36pt'>󰝟</span>"
 
 
 [[block]]
@@ -68,7 +69,7 @@ missing_format = " <span font_size='25pt' baseline_shift='-2pt'>$icon</span> "
 block = "cpu"
 interval = 1
 format = """ \
-    <span font_size='25pt' color='cyan' baseline_shift='-8pt'>$icon</span> \
+    <span font_size='25pt' color='cyan' baseline_shift='-4pt'>$icon</span> \
     $frequency \
 """
 
@@ -77,7 +78,7 @@ block = "cpu"
 interval = 1
 format = """ \
     <span font_size='13pt' letter_spacing='-1024' baseline_shift='-6pt' color='cyan' >\
-    $utilization1.bar(6,100)$utilization2.bar(6,100)$utilization3.bar(6,100)$utilization4.bar(6,100)\
+    $utilization1.bar(w:6,max_value:100)$utilization2.bar(w:6,max_value:100)$utilization3.bar(w:6,max_value:100)$utilization4.bar(w:6,max_value:100)\
     </span>\
 """
 
@@ -129,24 +130,20 @@ cmd = "newspawn krusader --right $HOME --left $HOME"
 
 [[block]]
 block = "uptime"
-icons_format = "<span font_size='25pt' color='skyblue' baseline_shift='-5pt'>{icon}</span> "
-
-
-[[block]]
-block = "docker"
-format = " <span font_size='20pt' baseline_shift='-4pt'>$icon</span> $running.eng(1) "
+format = "<span font_size='25pt' color='skyblue' baseline_shift='-5pt'>$icon</span> $text "
 
 
 
 [[block]]
 block = "pacman"
+signal = 1
 interval = 600
 format = """ \
     <span font_size='22pt' baseline_shift='-4pt'>$icon</span> \
     $pacman + $aur(AUR) = $both \
 """
 format_singular = " $both "
-format_up_to_date = " UP "
+format_up_to_date = " <span font_size='22pt' baseline_shift='-4pt'>$icon</span> "
 critical_updates_regex = "(linux|linux-lts|)"
 aur_command = "paru -Qua"
 [[block.click]]
