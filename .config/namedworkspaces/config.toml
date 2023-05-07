@@ -12,6 +12,7 @@ swappy = ""
 "org.inkscape.Inkscape" = ""
 albert = ""
 gnome_system_monitor = ""
+Alacritty = ""
 
 [styles] # pango markup
 layout = "font_size='16pt' color='lightgreen'"
