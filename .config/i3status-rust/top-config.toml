@@ -12,14 +12,14 @@ icons = "material-nf"
 [[block]]
 block = "music"
 format = """ \
-    <span font_size='13pt' baseline_shift='-3pt' color='grey'>$icon</span> \
+    <span size='13pt' baseline_shift='-3pt' color='grey'>$icon</span> \
     $combo.str(min_w:0, max_w:75) | \
 """
 
 [[block]]
 block = "net"
 format = """ \
-    <span font_size='24pt' baseline_shift='-4pt' color='grey'>$icon</span> \
+    <span size='24pt' baseline_shift='-4pt' color='grey'>$icon</span> \
     <span background='green'> [$ssid] </span> \
     <span letter_spacing='-1024'>$ip</span> \
     <span color='yellow' letter_spacing='-512'> $speed_down.eng(prefix:K) ⇵ $speed_up.eng(prefix:K)</span> \
@@ -33,7 +33,7 @@ cmd = "iwgtk"
 block = "backlight"
 device = "nv_backlight"
 format = """ \
-    <span font_size='25pt' letter_spacing="-512" baseline_shift='-2pt' color='cyan'>$icon</span> \
+    <span size='25pt' letter_spacing="-512" baseline_shift='-2pt' color='cyan'>$icon</span> \
     <span baseline_shift='4pt'>$brightness</span> \
 """
 
@@ -45,31 +45,31 @@ max_vol = 150
 step_width = 3
 show_volume_when_muted = true
 format = """ \
-    <span font_size='24pt' baseline_shift='-3pt' color='cyan'>$icon</span> \
+    <span size='24pt' baseline_shift='-5pt' color='cyan'>$icon</span> \
     <span baseline_shift='6pt'>$volume</span> \
 """
 [[block.click]]
 button = "left"
 cmd = "env WAYLAND_DISPLAY=wayland-0 newspawn pavucontrol"
 [block.icons_overrides]
-volume_muted = "<span font_size='36pt'>󰝟</span>"
+volume_muted = "<span size='36pt' baseline_shift='3pt'>󰝟</span>"
 
 
 [[block]]
 block = "battery"
 driver = "sysfs"
 format = """ \
-    <span font_size='20pt' baseline_shift='-2pt'>$icon</span> \
-    <span font_size='20pt' baseline_shift='-3pt'>$percentage $time</span> \
+    <span size='20pt' baseline_shift='-2pt'>$icon</span> \
+    <span size='20pt' baseline_shift='-3pt'>$percentage $time</span> \
 """
-missing_format = " <span font_size='25pt' baseline_shift='-2pt'>$icon</span> "
+missing_format = " <span size='25pt' baseline_shift='-2pt'>$icon</span> "
 
 
 [[block]]
 block = "cpu"
 interval = 1
 format = """ \
-    <span font_size='25pt' color='cyan' baseline_shift='-4pt'>$icon</span> \
+    <span size='25pt' color='cyan' baseline_shift='-4pt'>$icon</span> \
     $frequency \
 """
 
@@ -77,7 +77,7 @@ format = """ \
 block = "cpu"
 interval = 1
 format = """ \
-    <span font_size='13pt' letter_spacing='-1024' baseline_shift='-6pt' color='cyan' >\
+    <span size='13pt' letter_spacing='-1024' baseline_shift='-6pt' color='cyan' >\
     $utilization1.bar(w:6,max_value:100)$utilization2.bar(w:6,max_value:100)$utilization3.bar(w:6,max_value:100)$utilization4.bar(w:6,max_value:100)\
     </span>\
 """
@@ -99,12 +99,12 @@ format = " $average<span baseline_shift='superscript'>gpu</span> "
 [[block]]
 block = "memory"
 format = """ \
-    <span font_size='25pt' color='yellow' baseline_shift='-5pt'>$icon</span> \
+    <span size='25pt' color='yellow' baseline_shift='-5pt'>$icon</span> \
     $mem_total_used \
-    <span font_size='90%' baseline_shift='2pt'>⇄ </span>$swap_used \
+    <span size='90%' baseline_shift='2pt'>⇄ </span>$swap_used \
 """
 format_alt = """ \
-    <span font_size='25pt' color='yellow' baseline_shift='-5pt'>$icon</span> \
+    <span size='25pt' color='yellow' baseline_shift='-5pt'>$icon</span> \
     (swap: $swap_used/$swap_total, buf: $buffers, cache: $cached) \
 """
 
@@ -112,8 +112,7 @@ format_alt = """ \
 [[block]]
 path = "/"
 block = "disk_space"
-format = "$icon <span color='yellow'>/</span>$available "
-icons_format = ""
+format = " <span color='yellow' baseline_shift='2pt'>/</span>$available "
 [[block.click]]
 button = "left"
 cmd = 'newspawn krusader --right $HOME --left $(fd . /run/media/$USER -d 1 | read && echo "/run/media/$USER" || echo "/")'
@@ -121,8 +120,7 @@ cmd = 'newspawn krusader --right $HOME --left $(fd . /run/media/$USER -d 1 | rea
 [[block]]
 path = "~/"
 block = "disk_space"
-format = "$icon <span color='yellow'>~</span>$available "
-icons_format = ""
+format = " <span color='yellow' baseline_shift='2pt'>~/</span> $available "
 [[block.click]]
 button = "left"
 cmd = "newspawn krusader --right $HOME --left $HOME"
@@ -130,7 +128,7 @@ cmd = "newspawn krusader --right $HOME --left $HOME"
 
 [[block]]
 block = "uptime"
-format = "<span font_size='25pt' color='skyblue' baseline_shift='-5pt'>$icon</span> $text "
+format = " <span size='28pt' color='skyblue' baseline_shift='-5pt'>󱫣</span> <u>$text</u> "
 
 
 
@@ -138,14 +136,11 @@ format = "<span font_size='25pt' color='skyblue' baseline_shift='-5pt'>$icon</sp
 block = "pacman"
 signal = 1
 interval = 600
-format = """ \
-    <span font_size='22pt' baseline_shift='-4pt'>$icon</span> \
-    $pacman + $aur(AUR) = $both \
-"""
-format_singular = " $both "
-format_up_to_date = " <span font_size='22pt' baseline_shift='-4pt'>$icon</span> "
+format = " <span size='22pt' baseline_shift='-4pt'>$icon</span> $aur "
+format_singular = " $aur "
+format_up_to_date = " <span size='22pt' baseline_shift='-5pt'>$icon</span> "
 critical_updates_regex = "(linux|linux-lts|)"
-aur_command = "paru -Qua"
+aur_command = "paru -Qu"
 [[block.click]]
 button = "left"
 cmd = "newspawn alacritty -e nvim term://'sudo pacman -Syu && paru -Syu' --cmd 'au TermOpen * ++once normal a'"
@@ -155,7 +150,7 @@ cmd = "newspawn alacritty -e nvim term://'sudo pacman -Syu && paru -Syu' --cmd '
 [[block]]
 block = "keyboard_layout"
 driver = "sway"
-format = " <span font_size='20pt'>$layout</span> "
+format = " <span size='20pt'>$layout</span> "
 [block.mappings]
 "English (US)" = "🇺🇸"
 "Russian (N/A)" = "🇷🇺"
