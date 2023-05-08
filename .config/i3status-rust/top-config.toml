@@ -52,7 +52,7 @@ format = """ \
 button = "left"
 cmd = "env WAYLAND_DISPLAY=wayland-0 newspawn pavucontrol"
 [block.icons_overrides]
-volume_muted = "<span size='36pt' rise='3pt'>󰝟</span>"
+volume_muted = "<span size='36pt' rise='-3pt'>󰝟</span>"
 
 
 [[block]]

@@ -12,7 +12,7 @@ icons = "material-nf"
 
 [[block]]
 block = "focused_window"
-format = "<span size='12pt' font_weight='heavy' color='skyblue'>$title.str(max_w:100, rot_interval:0.1)</span> |"
+format = "<span size='12pt' stretch='extracondensed' color='skyblue'>$title.str(max_w:100, rot_interval:0.1)</span> |"
 [[block.click]]
 button = "left"
 cmd = "swaymsg gaps inner current toggle 30"
