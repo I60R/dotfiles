@@ -23,10 +23,10 @@ idle_bg = "#00000000"
 [[block]]
 block = "weather"
 format = """ \
-    <span baseline_shift='2pt' size='13pt'>$icon</span> \
-    <span baseline_shift='4pt'>$weather_verbose</span> \
-    <span color='cyan'>$temp $humidity<span size='10pt' baseline_shift='superscript'>🌢</span> \
-    $wind<span size='10pt' baseline_shift='superscript'>~m/s</span></span> \
+    <span rise='2pt' size='13pt'>$icon</span> \
+    <span rise='4pt'>$weather_verbose</span> \
+    <span color='cyan'>$temp $humidity<span size='10pt' rise='5pt'>🌢</span> \
+    $wind<span size='10pt' rise='5pt'>~m/s</span></span> \
 """
 service = { name = "openweathermap", api_key = "212dbd65c18ac42f9d884dde9b49692a", city_id = "7530791", units = "metric" }
 [[block.click]]
@@ -46,7 +46,7 @@ timezone = "Europe/Warsaw"
 interval = 60
 [block.format]
 full = """\
-    <span baseline_shift='3pt' color='gray'> $timestamp.datetime(f:%a)\
+    <span rise='3pt' color='gray'> $timestamp.datetime(f:%a)\
     <span color='white' size='12pt'>$timestamp.datetime(f:%e)\
     </span>.$timestamp.datetime(f:%b) </span>\
     <span size='18pt'>$timestamp.datetime(f:'%H:%M')</span>\
