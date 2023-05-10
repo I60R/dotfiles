@@ -13,6 +13,7 @@ swappy = ""
 albert = ""
 gnome_system_monitor = ""
 Alacritty = ""
+Waydroid = ""
 
 [styles] # pango markup
 layout = "font_size='16pt' color='lightgreen'"
