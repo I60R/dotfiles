@@ -210,6 +210,41 @@ local function appearance_plugins() return {
     },
 
     {
+        "luukvbaal/statuscol.nvim",
+        config = function()
+            local statuscol = require("statuscol")
+            local builtin = require("statuscol.builtin")
+            statuscol.setup {
+                segments = {
+                    {
+                        sign = {
+                            name = { "Git.*" },
+                            maxwidth = 1,
+                            auto = true,
+                        },
+                        click = "v:lua.ScSa"
+                    },
+                    {
+                        text = {
+                            " ",
+                            builtin.lnumfunc,
+                            "  ",
+                        }
+                    },
+                    {
+                        sign = {
+                            name = { "Diagnostic" },
+                            colwidth = 1,
+                            auto = true,
+                        },
+                        click = "v:lua.ScSa"
+                    },
+                }
+            }
+        end,
+    },
+
+    {
         'akinsho/nvim-bufferline.lua',
         dependencies = {
             'I60R/map-dsl.nvim',
@@ -317,18 +352,6 @@ local function appearance_plugins() return {
                 ['<F14>'] = 'BufferLineCycleNext'
 
             map:register { as = 'cmd', modes = 'nicxsot' }
-        end
-    },
-    {
-        'chentoast/marks.nvim',
-        config = function()
-            local marks = require('marks')
-            marks.setup {
-                builtin_marks = { ".", "^", "'", '"', "`" },
-            }
-            vim.api.nvim_set_hl(0, 'MarkSignNumHL', {
-                link = 'LineNr'
-            })
         end
     },
     {
@@ -727,9 +750,6 @@ local function motion_plugins() return {
         'triglav/vim-visual-increment'
     },
     {
-        'terryma/vim-expand-region'
-    },
-    {
         'numToStr/Comment.nvim',
         config = function()
             local comment = require('Comment')
@@ -923,9 +943,33 @@ local function ui_extension_plugins() return {
                 saga_winblend = 25,
                 max_preview_lines = 60,
                 code_action_lightbulb = {
-                    virtual_text = false
+                    virtual_text = false,
+                },
+                symbol_in_winbar = {
+                    enable = false,
                 }
             }
+
+            vim.api.nvim_create_autocmd('CursorHold', {
+                callback = function()
+                    vim.o.laststatus = 3
+                    vim.wo.statusline = '  '
+                        .. (require('lspsaga.symbolwinbar'):get_winbar() or '')
+                        .. '%*'
+                end,
+                buffer = 0,
+            })
+
+            vim.api.nvim_create_autocmd('BufEnter', {
+                callback = function() vim.o.laststatus = 3 end,
+                buffer = 0,
+            })
+
+            vim.api.nvim_create_autocmd('BufLeave', {
+                callback = function() vim.o.laststatus = 0 end,
+                buffer = 0,
+            })
+
 
             ;(map "Lsp actions")
                 ['<F3>'] = 'Lspsaga code_action'
