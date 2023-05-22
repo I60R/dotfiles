@@ -95,7 +95,6 @@ vim.o.lazyredraw = true
 vim.o.hlsearch = false
 
 vim.o.fillchars = ''
-vim.o.signcolumn = 'yes:3'
 vim.o.showtabline = 2
 vim.o.laststatus = 0
 vim.o.shortmess = 'oOWAIcFS'
@@ -167,5 +166,4 @@ vim.api.nvim_create_autocmd('BufEnter', {
         end, 100)
     end
 })
-
 

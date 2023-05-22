@@ -205,6 +205,7 @@ local function appearance_plugins() return {
         config = function ()
             local transparent = require('transparent')
             transparent.setup {}
+            vim.cmd 'TransparentEnable'
         end
     },
 
@@ -296,7 +297,7 @@ local function appearance_plugins() return {
             }
 
             for n = 1, 9 do
-                local function focus_nth_buffer() require('bufferline').go_to_buffer(n) end
+                local function focus_nth_buffer() require('bufferline').go_to(n) end
 
                 ;(map "Go to (" .. n .. ") buffer")
                     .alt[n] = { focus_nth_buffer, remap = false, silent = true };
@@ -509,7 +510,7 @@ local function os_integration_plugins() return {
         'lewis6991/gitsigns.nvim',
         dependencies = {
             'nvim-lua/plenary.nvim',
-	        'I60R/map-dsl.nvim',
+            'I60R/map-dsl.nvim',
         },
         config = function()
             local gitsigns = require('gitsigns')
@@ -601,10 +602,8 @@ local function motion_plugins() return {
     },
 
     {
-        'kana/vim-repeat'
-    },
-    {
         "kylechui/nvim-surround",
+        event = "VeryLazy",
         config = function()
             local surround = require("nvim-surround")
             surround.setup {}
@@ -642,9 +641,7 @@ local function motion_plugins() return {
         config = function()
 
             ( map "Jump to a tree node")
-                ['m'] = function() require('tsht').nodes() end
-            ;(map "Jump to a tree node")
-                ['m'] = { function() require('tsht').nodes() end, remap = false }
+                .ctrl['f'] = { function() require('tsht').nodes() end, remap = false }
 
             map:register { modes = 'ov' }
         end
@@ -655,7 +652,7 @@ local function motion_plugins() return {
         config = function()
 
             ( map "Swap with")
-                ['s'] = { 'ISwapWith', as = 'cmd' }
+                .ctrl.shift['f'] = { 'ISwapWith', as = 'cmd' }
 
             map:register {}
         end
@@ -799,7 +796,6 @@ local function ui_extension_plugins() return {
                 }
             }
 
-            local toggle = require('toggle')
             local zen_mode = require('zen-mode')
             zen_mode.setup {
                 window = {
@@ -813,7 +809,6 @@ local function ui_extension_plugins() return {
                     vim.o.guifont = 'JetBrains Mono:h18'
                     require('indent_blankline.commands').disable()
                     require('twilight.view').enable()
-                    vim.cmd 'MarksToggleSigns'
                     vim.cmd 'Gitsigns toggle_signs'
                 end,
                 on_close = function()
@@ -822,7 +817,6 @@ local function ui_extension_plugins() return {
                     vim.o.guifont = 'JetBrains Mono:h13'
                     require('indent_blankline.commands').enable()
                     require('twilight.view').disable()
-                    vim.cmd 'MarksToggleSigns'
                     vim.cmd 'Gitsigns toggle_signs'
                 end,
             }
@@ -1096,7 +1090,7 @@ local function completion_plugins() return {
                         },
                         diagnostics = {
                             -- Get the language server to recognize the `vim` global
-                            globals = {'vim'},
+                            globals = { 'vim' },
                         },
                         workspace = {
                             -- Make the server aware of Neovim runtime files
@@ -1187,7 +1181,7 @@ local function completion_plugins() return {
                         return true
                     else
                         return not context.in_treesitter_capture("comment")
-                          and not context.in_syntax_group("Comment")
+                            and not context.in_syntax_group("Comment")
                     end
                 end,
                 mapping = cmp.mapping.preset.insert {
