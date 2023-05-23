@@ -94,11 +94,10 @@ font $font
 
 # Start a terminal
 
-#set $term_args --working-directory="$(swaycwd)" -e nvim term://zsh --cmd 'au TermOpen * ++once normal a'
-# set $term alacritty msg create-window $term_args || alacritty $term_args
+set $term_args --working-directory="$(swaycwd)" -e nvim term://zsh --cmd 'au TermOpen * ++once normal a'
+set $term alacritty msg create-window $term_args || alacritty $term_args
 
-
-bindsym $Mod+Return exec alacritty
+bindsym $Mod+Return exec $term
 
 
 # Start an empty workspace
