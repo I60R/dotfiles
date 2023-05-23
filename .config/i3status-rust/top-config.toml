@@ -45,8 +45,8 @@ max_vol = 150
 step_width = 3
 show_volume_when_muted = true
 format = """ \
-    <span size='24pt' rise='-5pt' color='cyan'>$icon</span> \
-    <span rise='6pt'>$volume</span> \
+    <span size='24pt' rise='-2pt' color='cyan'>$icon</span> \
+    <span rise='4pt'>$volume</span>  \
 """
 [[block.click]]
 button = "left"
@@ -138,7 +138,7 @@ signal = 1
 interval = 600
 format = " <span size='22pt' rise='-4pt'>$icon</span> $aur "
 format_singular = " $aur "
-format_up_to_date = " <span size='22pt' rise='-5pt'>$icon</span> "
+format_up_to_date = " <span size='22pt' rise='-5pt' color='green'>$icon</span> "
 critical_updates_regex = "(linux|linux-lts|)"
 aur_command = "paru -Qu"
 [[block.click]]

@@ -12,7 +12,7 @@ icons = "material-nf"
 
 [[block]]
 block = "focused_window"
-format = "<span size='12pt' stretch='extracondensed' color='skyblue'>$title.str(max_w:100, rot_interval:0.1)</span> |"
+format = "<span size='12pt' stretch='extracondensed' color='skyblue'>$title.str(max_w:110, rot_interval:0.1)</span> |"
 [[block.click]]
 button = "left"
 cmd = "swaymsg gaps inner current toggle 30"
@@ -24,14 +24,14 @@ idle_bg = "#00000000"
 block = "weather"
 format = """ \
     <span rise='2pt' size='13pt'>$icon</span> \
-    <span rise='4pt'>$weather_verbose</span> \
+    <span rise='4pt'>$weather_verbose</span>  \
     <span color='cyan'>$temp $humidity<span size='10pt' rise='5pt'>🌢</span> \
     $wind<span size='10pt' rise='5pt'>~m/s</span></span> \
 """
 service = { name = "openweathermap", api_key = "212dbd65c18ac42f9d884dde9b49692a", city_id = "7530791", units = "metric" }
 [[block.click]]
 button = "left"
-cmd = "~/.config/sway/wsempty.py gnome-weather"
+cmd = "newspawn gnome-weather"
 [block.icons_overrides]
 weather_sun = "☀️"
 weather_rain = "🌧️"
@@ -46,14 +46,14 @@ timezone = "Europe/Warsaw"
 interval = 60
 [block.format]
 full = """\
-    <span rise='3pt' color='gray'> $timestamp.datetime(f:%a)\
+    <span rise='3pt' color='gray'> $timestamp.datetime(f:%a) \
     <span color='white' size='12pt'>$timestamp.datetime(f:%e)\
     </span>.$timestamp.datetime(f:%b) </span>\
     <span size='18pt'>$timestamp.datetime(f:'%H:%M')</span>\
 """
 [[block.click]]
 button = "left"
-cmd = "~/.config/sway/wsempty.py alacritty -e 'calcurse'"
+cmd = "newspawn alacritty -e 'calcurse'"
 
 
 
