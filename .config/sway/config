@@ -321,8 +321,9 @@ bindsym Shift+KP_Delete exec ydotool key $ctrl $shift 15:1 15:0 29:0 42:0
 bindsym       KP_Insert exec ydotool key        $ctrl 17:1 17:0 29:0      #w
 bindsym Shift+KP_Insert exec ydotool key $ctrl $shift 20:1 20:0 29:0 42:0 #t
 
-bindsym KP_Begin exec ydotool     key 106:1 106:0 #KEY_RIGHT
-bindsym KP_Right exec ydotool     key 158:1 158:0 #KEY_BACK
+bindsym       KP_Begin exec ydotool     key 106:1 106:0 #KEY_RIGHT
+bindsym       KP_Right exec ydotool     key 158:1 158:0 #KEY_BACK
+bindsym Shift+KP_Right exec ydotool     key 159:1 159:0 #KEY_FORWARD
 
 
 bindcode          94 exec ydotool key                    106:1 106:0
