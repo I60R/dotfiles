@@ -11,9 +11,11 @@ swappy = ""
 "org.telegram.desktop" = "切"
 "org.inkscape.Inkscape" = ""
 albert = ""
+findex = ""
 gnome_system_monitor = ""
 Alacritty = ""
 Waydroid = ""
+"com.github.wwmm.easyeffects" = ""
 
 [styles] # pango markup
 layout = "font_size='16pt' color='lightgreen'"
