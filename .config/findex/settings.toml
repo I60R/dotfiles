@@ -1,0 +1,13 @@
+default_window_width = 800
+min_content_height = 0
+max_content_height = 800
+name_match_highlight_color = "Orange"
+decorate_window = false
+close_window_on_losing_focus = true
+query_placeholder = "Search for applications"
+icon_size = 64
+toggle_key = "<Shift>space"
+min_score = 5
+result_size = 9
+
+[plugins]
