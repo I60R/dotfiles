@@ -1453,9 +1453,9 @@ local function meta_plugins() return {
     {
         'folke/lazy.nvim',
         config = function()
-            local packer = require('lazy')
+            local lazy = require('lazy')
             local plugins = require('plugins')
-            packer.setup(plugins)
+            lazy.setup(plugins)
         end,
         cmd = 'Lazy',
     },
