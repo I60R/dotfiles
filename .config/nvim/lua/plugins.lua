@@ -538,6 +538,11 @@ local function os_integration_plugins() return {
         config = function()
             local gitsigns = require('gitsigns')
             gitsigns.setup {
+                signs = {
+                    untracked = {
+                        text = ''
+                    }
+                },
                 watch_gitdir = {
                     interval = 5000,
                     follow_files = true,
