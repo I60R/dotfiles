@@ -62,7 +62,7 @@ for_window [title="Moving.*Krusader"]          floating enable
 for_window [app_id="iwgtk"]                    floating enable
 for_window [app_id="guitarix"]                 floating enable
 for_window [app_id="com.Webcamoid.webcamoid"]  floating enable
-for_window [app_id="albert"]                   floating enable; move up 200 px
+for_window [app_id="findex"]                   floating enable; move up 200 px
 
 
 
@@ -122,7 +122,7 @@ for_window [app_id="org.gnome.Calculator"] floating enable
 
 
 # Start launcher
-bindsym $Mod+Menu exec albert toggle
+bindsym $Mod+Menu exec echo 1 > ~/.config/findex/toggle_file
 
 
 # Start galery app

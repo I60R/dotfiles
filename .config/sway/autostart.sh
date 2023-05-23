@@ -27,7 +27,7 @@ launch () {
 }
 
 launch dunst
-launch albert
+launch findex-daemon
 launch javelin firefox:-200 code:-250 chromium:-200 gthumb:200
 launch inactivetransparency 0.77
 launch namedworkspaces
